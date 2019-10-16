@@ -1,0 +1,3689 @@
+
+Reset error connection on done.
+
+Build in this directory:
+/home/isd/michalos/build/gzrcs
+
+
+Tue 30 Oct 2018 12:00:53 PM EDT
+diference between curPose and cmdPose exceeds tolerance - take 2
+angular units are degrees not radians
+
+thread:AprsJframe.1.-run-394-motoman MoveTo Failed : diference between curPose and cmdPose exceeds tolerance.
+curPose ={pt={x=8.05669724216484,y=-7.96614447839888E-4,z=1753.30753833249},xAxis={i=0.999999500002042,j=-1.99999650021067E-9,k=9.99997833333842E-4},zAxis={i=-9.99997833335842E-4,j=-1.99999733333551E-6,k=0.999999500000042}}
+cmdPose={pt={x=195.344,y=-534.0882128626172,z=49.809734904587316},xAxis={i=1.0,j=0.0,k=0.0},zAxis={i=0.0,j=-0.08715574274765789,k=-0.9961946980917462}}
+
+. . .
+
+expectedEndPoseTolerance=crcl.base.PoseToleranceType@75b0f36, angleType=DEGREE
+X Point positions 8.05669724216484 and 195.344 differ by 187.28730275783516 over tolerance of 3.0
+
+Tue 30 Oct 2018 10:31:02 AM EDT
+- attempt using manual pddl action -> crcl executor failed as destination was too far away from commanded crcl position due to offset in gearing grasping from gear centroid
+        may have to adjust centroid of gear? where it says gear is located.
+        remove all gear pose grasping offsets in gzrcs
+
+
+Thread:AprsJframe.1.-run-050-motoman MoveTo Failed : diference between curPose and cmdPose exceeds tolerance.
+curPose ={pt={x=0.00805669724216484,y=-7.96614447839888E-7,z=1.75330753833249},xAxis={i=0.999999500002042,j=-1.99999650021067E-9,k=9.99997833333842E-4},zAxis={i=-9.99997833335842E-4,j=-1.99999733333551E-6,k=0.999999500000042}}
+cmdPose={pt={x=195.344,y=-534.0882128626172,z=49.809734904587316},xAxis={i=1.0,j=0.0,k=0.0},zAxis={i=0.0,j=-0.08715574274765789,k=-0.9961946980917462}}
+
+Mon 29 Oct 2018 10:31:02 AM EDT
+
+- generate pddl actions text file based on mini demo  - way obsolete
+- use pose cache and example motoman pddl action file to hand craft pddl action file
+- reads up until take part
+- part names in pose cache MUST match those name in pddl action file
+
+
+Fri 26 Oct 2018 04:11:48 PM EDT
+Try CRAC planner
+Planner Program Executable: /home/isd/michalos/src/crac/build/bin/popf3-clp
+Arguments to Executable: -I -n
+
+PDDL Domain File: C:\Users\michalos\Documents\APRS\iora\PDDLplans\domain-kitting.pddl
+PDDL Problem File: C:\Users\michalos\Documents\APRS\iora\PDDLplans\a2b1c1\problem-a2b1c1.pddl
+
+popf3-clp  -I -n domanFile probFile
+
+/home/isd/michalos/src/crac/build/bin/popf3-clp -I -n domanFile probFile
+
+
+sku_kit_s2l2_vessel,0,147.261,-701.542,0.95,KT,
+sku_large_gear_vessel,0,140.269,-541.795,0.95,PT,
+sku_part_large_gear,0,195.344,-538.446,0.95,P,
+sku_part_large_gear,0,85.441,-542.957,0.95,P,
+
+
+Fri 26 Oct 2018 03:31:48 PM EDT
+Added error check on failed IK.
+
+Raw:<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance>
+<CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="MoveToType">
+<CommandID>14677</CommandID><MoveStraight>true</MoveStraight><EndPosition><Point>
+<X>0.00805669724216484</X>
+<Y>-7.96614447839888E-7</Y>
+<Z>51.75330753833249</Z>
+</Point><XAxis><I>0.999999500002042</I><J>-1.99999650021067E-9</J><K>9.99997833333842E-4</K></XAxis><ZAxis><I>-9.99997833335842E-4</I><J>-1.99999733333551E-6</J><K>0.999999500000042</K></ZAxis></EndPosition></CRCLCommand><ProgramIndex>5</ProgramIndex><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+ROS command: ======================================================
+Timestamp =       2018-Oct-26 19:30:06.356308
+Command =         CANON_MOVE_TO
+CommandNum =      11
+Final Pose =         0.00,  -0.00,   0.05|Q= 9.99999e-07,-0.000499999,-5e-10,1
+Joints =
+JointNum =
+bStraight =       0
+dwell_seconds =   0
+bCoordinated =    0
+eepercent =       0
+parameter_names =
+parameter_values =
+
+Can't run general serial inverse kinematics General Error
+tf:
+        xyz=0.000100581,-2.46205e-07,1.4424
+        q=9.99999e-07,-0.000499999,-5e-10,1
+        rpy=2e-06,-0.000999998,-2e-09
+go:
+        xyz=0.000100581,-2.46205e-07,1.4424
+        q=9.99999e-07,-0.000499999,-5e-10,1
+        rpy=2e-06,-0.000999998,-2e-09
+[ERROR] [1540582215.089847257]: poll failed with error Interrupted system call
+IK failed next pose=    0.00,  -0.00,   1.44|Q= 9.99999e-07,-0.000499999,-5e-10,1
+
+
+Fri 26 Oct 2018 02:40:29 PM EDT
+Command instance type also contains program file index and lenth. All optional.
+class CRCLCommandInstanceType: public ::DataThingType
+{
+  public:
+  // CRCLCommand
+  //
+
+. . .
+  ProgramFile_optional ProgramFile_;
+  ProgramIndex_optional ProgramIndex_;
+  ProgramLength_optional ProgramLength_;
+
+
+Fri 26 Oct 2018 10:40:29 AM EDT
+nist_robotsnc Version 0.9: Compiled Oct 26 2018 11:01:37
+Connecting to ROS master
+Connecting to gazebo server
+1: 0.000 0.000 0.410 / 0.000 -0.000 0.000 / 0.000 0.000 1.000
+2: 0.000 0.000 0.000 / 0.000 -0.000 0.000 / 0.000 1.000 0.000
+3: 0.000 0.000 0.490 / 0.000 -0.000 0.000 / 0.000 0.000 1.000
+4: 0.000 0.000 0.000 / 0.000 -0.000 0.000 / 0.000 -1.000 0.000
+5: 0.000 0.000 0.420 / 0.000 -0.000 0.000 / 0.000 0.000 -1.000
+6: 0.000 0.000 0.000 / 0.000 -0.000 0.000 / 0.000 -1.000 0.000
+7: 0.000 0.000 0.169 / 0.000 -0.000 0.000 / 0.000 0.000 -1.000
+robotKinematics MotomanSia20d
+Trajectory generator GoTraj
+Trajectory finger contact algorithm 2=force
+Gazebo finger contact /gazebo/default/sia20d/motoman_sia20d/motoman_left_finger/left_finger_contact subscriber started
+Gazebo finger contact /gazebo/default/sia20d/motoman_sia20d/motoman_right_finger/right_finger_contact subscriber started
+Gazebo model reader subscriber started
+>   Listening socket is readable
+  New incoming connection - 34
+
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="InitCanonType"><CommandID>14041</CommandID></CRCLCommand><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14040</CommandID><StopCondition>Fast</StopCondition></CRCLCommand><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14040</CommandID><StopCondition>Fast</StopCondition></CRCLCommand><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetEndEffectorType"><CommandID>14674</CommandID><Setting>1.0</Setting></CRCLCommand><ProgramIndex>3</ProgramIndex><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetTransSpeedType"><CommandID>14675</CommandID><TransSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TransSpeedAbsoluteType"><Setting>75.0</Setting></TransSpeed></CRCLCommand><ProgramIndex>4</ProgramIndex><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="MoveToType"><CommandID>14677</CommandID><MoveStraight>true</MoveStraight><EndPosition><Point><X>0.00805669724216484</X><Y>-7.96614447839888E-7</Y><Z>51.75330753833249</Z></Point><XAxis><I>0.999999500002042</I><J>-1.99999650021067E-9</J><K>9.99997833333842E-4</K></XAxis><ZAxis><I>-9.99997833335842E-4</I><J>-1.99999733333551E-6</J><K>0.999999500000042</K></ZAxis></EndPosition></CRCLCommand><ProgramIndex>5</ProgramIndex><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+Can't run general serial inverse kinematics General Error
+tf:
+        xyz=0.000100581,-2.46205e-07,1.4424
+        q=9.99999e-07,-0.000499999,-5e-10,1
+        rpy=2e-06,-0.000999998,-2e-09
+go:
+        xyz=0.000100581,-2.46205e-07,1.4424
+        q=9.99999e-07,-0.000499999,-5e-10,1
+        rpy=2e-06,-0.000999998,-2e-09
+
+. . .
+
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14676</CommandID><StopCondition>Fast</StopCondition></CRCLCommand><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14676</CommandID><StopCondition>Fast</StopCondition></CRCLCommand><ProgramLength>13</ProgramLength></CRCLCommandInstance>
+
+
+Locals
+        _pSession	@0x26654f0	CCrclSession
+        crclcmd	"<?xml version="1.0" encoding="UTF-8"?><CRCLCommandInstance><CRCLCommand xmlns:xsi="http://www.w3.org"... (213)	std::__cxx11::string
+        crclstatus	@0x7f4a997b9c00	Crcl::CrclStatus
+                Alarm	""	std::__cxx11::string
+                _CommandID	113	unsigned long long
+                _CommandStatus	@0x7f4a997b9c38	Crcl::CommandStateEnum
+                _CurrentJoints	@0x7f4a997b9e50	Crcl::JointStatusSequence
+                _CurrentPose	@0x7f4a997b9d60	Crcl::PoseType
+                _GoalJoints	@0x7f4a997b9e30	Crcl::JointStatusSequence
+                _GoalPose	@0x7f4a997b9dc8	Crcl::PoseType
+                _Gripper	@0x7f4a997b9d38	Crcl::GripperStatus
+                _Rates	@0x7f4a997b9c80	RCS::IRate
+                _StatusID	230	unsigned long long
+                _angleConversion	0.017453292519943295	double
+                _angleUnit	1	int
+                _bCoordinatedMotion	true	bool
+                _endPoseTolerance	@0x7f4a997b9ee8	Crcl::PoseToleranceType
+                _forceConversion	1.0	double
+                _forceUnit	0	int
+                _gripperPoseTolerance	@0x7f4a997b9f70	Crcl::PoseToleranceType
+                _intermediatePoseTolerance	@0x7f4a997b9ff8	Crcl::PoseToleranceType
+                _lengthConversion	1.0	double
+                _lengthUnit	0	int
+                _rotAccel	6.9148627071298e-310	double
+                _rotSpeed	2.670988e-317	double
+                _speeds	<0 items>	std::vector<double, std::allocator<double> >
+                _torqueConversion	1.0	double
+                _torqueUnit	0	int
+                _translationAccel	6.91486270711556e-310	double
+                _translationSpeed	6.9148627071274e-310	double
+                _vJointReport	<0 items>	std::vector<Crcl::JointReport, std::allocator<Crcl::JointReport> >
+                gripper	@0x7f4a997b9c00	Crcl::GripperStatus
+                        _Name	""	std::__cxx11::string
+                        _Position	0.0	double
+                jointnames	<0 items>	std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >
+                sCommandState	""	std::__cxx11::string
+        lock	@0x7f4a997b97a0	boost::mutex::scoped_lock
+        msg	@0x7f4a997b9a00	CrclMessage
+        ret	Crcl::CANON_STATUSREPLY (1)	Crcl::CrclReturn
+        sStatus	"\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000F-8" stau\000\000\000\000\000\000\000��\000|J\177\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000ȝ{�J\177\000\000\000\000\000\000\000\000\000\000p"\001|"... (1596)	std::__cxx11::string
+        this	@0x26684a0	CCrcl2RosMsg
+                [RCS::Thread]	@0x26684a0	RCS::Thread
+                _crclmutex	@0x26686a0	std::mutex
+                axis	<14 items>	std::vector<tf::Vector3, std::allocator<tf::Vector3> >
+                baseLink	"motoman_base_link"	std::__cxx11::string
+                cncmutex	@0x7f4ae4195540	boost::mutex
+                crclcmdsq	@0x25fe510	RCS::CrclMessageQueue
+                crclinterface	@0x7f4a7c0008c0	boost::shared_ptr<Crcl::CrclServerDelegateInterface>
+                        [vptr]	_vptr.CrclServerDelegateInterface
+                        _nCommandNum	113	unsigned long long
+                        crclwm	@0x7f4a7c0008c0	Crcl::CrclStatus
+                                Alarm	<not accessible>	std::__cxx11::string
+                                _CommandID	4294967297	unsigned long long
+                                _CommandStatus	@0x7f4a7c0008f8	Crcl::CommandStateEnum
+                                _CurrentJoints	@0x7f4a7c000b10	Crcl::JointStatusSequence
+                                        [xsd::cxx::tree::sequence_common]	@0x7f4a7c000b10	xsd::cxx::tree::sequence_common
+                                                container_	0x6174732022382d46	xsd::cxx::tree::container*
+                                                v_	<not accessible>	std::vector<xsd::cxx::tree::sequence_common::ptr, std::allocator<xsd::cxx::tree::sequence_common::ptr> >
+                                _CurrentPose	@0x7f4a7c000a20	Crcl::PoseType
+                                _GoalJoints	@0x7f4a7c000af0	Crcl::JointStatusSequence
+                                _GoalPose	@0x7f4a7c000a88	Crcl::PoseType
+                                _Gripper	@0x7f4a7c0009f8	Crcl::GripperStatus
+                                _Rates	@0x7f4a7c000940	RCS::IRate
+                                _StatusID	139957884684480	unsigned long long
+                                _angleConversion	4.370822874364519e-19	double
+                                _angleUnit	1635013423	int
+                                _bCoordinatedMotion	32	bool
+                                _endPoseTolerance	@0x7f4a7c000ba8	Crcl::PoseToleranceType
+                                _forceConversion	2.056193939980437e+16	double
+                                _forceUnit	1835888451	int
+                                _gripperPoseTolerance	@0x7f4a7c000c30	Crcl::PoseToleranceType
+                                _intermediatePoseTolerance	@0x7f4a7c000cb8	Crcl::PoseToleranceType
+                                _lengthConversion	1.040408950509816e-18	double
+                                _lengthUnit	1970561396	int
+                                _rotAccel	5.981593970817857e-154	double
+                                _rotSpeed	2.0686201737840473e+161	double
+                                _speeds	<not accessible>	std::vector<double, std::allocator<double> >
+                                _torqueConversion	5.32723670159701e+93	double
+                                _torqueUnit	1866751820	int
+                                _translationAccel	9.759322023913592e-72	double
+                                _translationSpeed	1.2988090128869125e+219	double
+                                _vJointReport	<not accessible>	std::vector<Crcl::JointReport, std::allocator<Crcl::JointReport> >
+                                gripper	@0x7f4a7c0008c0	Crcl::GripperStatus
+                                jointnames	<not accessible>	std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >
+                                sCommandState	<not accessible>	std::__cxx11::string
+                jointEffort	<14 items>	std::vector<double, std::allocator<double> >
+                jointHasLimits	<14 items>	std::vector<bool, std::allocator<bool> >
+                jointMax	<14 items>	std::vector<double, std::allocator<double> >
+                jointMin	<14 items>	std::vector<double, std::allocator<double> >
+                jointNames	<14 items>	std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >
+                jointVelmax	<14 items>	std::vector<double, std::allocator<double> >
+                jointvalues	<0 items>	std::vector<double, std::allocator<double> >
+                linkNames	<14 items>	std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >
+                msgq	@0x2668628	CMessageQueue
+                robotName	"motoman_sia20d"	std::__cxx11::string
+                rpyorigin	<14 items>	std::vector<tf::Vector3, std::allocator<tf::Vector3> >
+                tipLink	"motoman_link_t"	std::__cxx11::string
+                xmlString	"<?xml version="1.0" encoding="UTF-8"?>\r\n<!-- ======================================================="... (12193)	std::__cxx11::string
+                xyzorigin	<14 items>	std::vector<tf::Vector3, std::allocator<tf::Vector3> >
+Inspector
+Expressions
+Return Value
+Tooltip
+        crclinterface	@0x7f4a7c0008c0	boost::shared_ptr<Crcl::CrclServerDelegateInterface>
+        std	<no such value>
+
+
+
+
+In motoman finger joints
+<physics>
+    <provide_feedback>1</provide_feedback>
+    <ode>
+        <provide_feedback>1</provide_feedback>
+        <implicit_spring_damper>1</implicit_spring_damper>
+        <limit>
+            <cfm>0.000</cfm>
+            <erp>0.2</erp>
+        </limit>
+    </ode>
+</physics>
+
+
+gz topic -e /gazebo/default/model/modify
+
+
+Wed 17 Oct 2018 03:19:34 PM EDT
+michalos@woodsy:~> gz topic -e /gazebo/default/model/modify
+name: "sku_part_large_gear5"
+id: 138
+link {
+  id: 139
+  name: "sku_part_large_gear5::link1"
+  kinematic: false
+}
+
+name: "sku_part_large_gear5"
+id: 138
+link {
+  id: 139
+  name: "sku_part_large_gear5::link1"
+  kinematic: true
+}
+====================
+michalos@woodsy:~> gz topic -e /gazebo/default/model/modify
+
+name: "sku_part_large_gear5"
+id: 138
+is_static: false
+link {
+  id: 139
+  name: "sku_part_large_gear5::link1"
+  kinematic: false
+}
+
+
+Tue 16 Oct 2018 03:01:51 PM EDT
+<!--
+<model name="motoman_camera">
+    <include>
+        <static>true</static>
+        <uri>model://motoman_camera_test</uri>
+    </include>
+    <pose frame="">0.030841 -0.690050 2.004991 1.570000 0.000029 1.605689</pose>
+</model>
+<model name="fanuc_camera">
+    <include>
+        <static>true</static>
+        <uri>model://fanuc_camera_test</uri>
+    </include>
+    <pose frame="">0.359072 -1.157344 1.962614 1.570000 0.000029 1.605689</pose>
+</model> -->
+
+Mon 15 Oct 2018 02:11:31 PM EDT
+michalos@onyx:~$ gz topic -i /gazebo/default/model/modify
+Type: gazebo.msgs.Model
+
+Publishers:
+        192.168.1.12:38551
+        192.168.1.12:40261
+
+Subscribers:
+        192.168.1.12:38551
+
+
+void Link::SetKinematic(const bool &/*_kinematic*/)
+{
+}
+
+void Link::FillMsg(msgs::Link &_msg)
+{
+  math::Pose relPose = this->GetRelativePose();
+
+  _msg.set_id(this->GetId());
+  _msg.set_name(this->GetScopedName());
+  _msg.set_self_collide(this->GetSelfCollide());
+  _msg.set_gravity(this->GetGravityMode());
+  _msg.set_kinematic(this->GetKinematic());
+  _msg.set_enabled(this->GetEnabled());
+  msgs::Set(_msg.mutable_pose(), relPose);
+
+
+"sku_part_large_gear5::link1::collision1"
+"sia20d::motoman_sia20d::motoman_right_finger::motoman_right_finger_collision"
+myname:
+"motoman_right_finger"
+
+
+Wed 26 Sep 2018 04:31:48 PM EDT
+collision closing failed to actually close all the way due to a limit in joint range
+that I changed
+
+Tue 25 Sep 2018 08:29:49 PM EDT
+https://stackoverflow.com/questions/13842468/comma-in-c-c-macro
+how to handle , in preprocessor macro
+
+SPEEDS COMMANDED ISSUE:
+
+void CrclApi::MoveTo(tf::Pose pose)
+{
+    // correct pose for minor error
+    pose=pose * _cnc->Correction().inverse();
+
+    nistcrcl::CrclCommandMsg cmd;
+    CanonCmd::set_ros_msg_timestamp(cmd.header);
+    cmd.crclcommandnum = crclcommandnum++;
+    cmd.crclcommand = CanonCmdType::CANON_MOVE_TO;
+    cmd.profile.push_back(GetSpeeds()); <<<<<<<<<<<<<<<<<<<<<<<<
+    cmd.finalpose = Convert<tf::Pose, geometry_msgs::Pose> (pose);
+    _cnc->crclcmds.AddMsgQueue(cmd);
+}
+where:
+::nistcrcl::CrclMaxProfileMsg CrclApi::GetSpeeds()
+{
+    ::nistcrcl::CrclMaxProfileMsg profile;
+    profile.maxvel=rates.CurrentTransSpeed();
+    profile.maxacc=10.*rates.CurrentTransSpeed();
+    profile.maxjerk= 100.*rates.CurrentTransSpeed();
+    return profile;
+}
+
+
+int GoInterpreter::ParseMovetoCommand(nistcrcl::CrclCommandMsg &incmd,
+                                     RCS::CanonCmd &outcmd,
+                                     RCS::CanonWorldModel instatus,
+                                     RCS::CanonWorldModel &outstatus)
+{
+
+. . .
+// Check for speeds - if any set gotraj profile
+std::vector< ::nistcrcl::CrclMaxProfileMsg> profiles = incmd.profile;
+if(profiles.size() > 0)
+{
+    ::nistcrcl::CrclMaxProfileMsg profile = profiles[0];
+    _nc->set_linear_speeds( profile.maxvel);
+}
+
+SO THE RATES ARE PASSED WITH COMMAND ESPECIALLY FOR MOVETO command
+
+
+Fri 07 Sep 2018 12:18:03 PM EDT
+>slower;slower;auto
+speed:
+        robot joint vel=0.05speed:
+        jgripper    vel=0.00625
+        linear            vel=0.0625
+        rotational vel=       0.05
+
+> auto with flag for speeds
+
+
+Thu 06 Sep 2018 10:34:51 AM EDT
+
+gazebo aprs-V2.world -e simbody --verbose --minimal_comms
+
+result:
+
+
+Gazebo multi-robot simulator, version 7.13.1
+Copyright (C) 2012 Open Source Robotics Foundation.
+Released under the Apache 2 License.
+http://gazebosim.org
+
+Gazebo multi-robot simulator, version 7.13.1
+Copyright (C) 2012 Open Source Robotics Foundation.
+Released under the Apache 2 License.
+http://gazebosim.org
+
+[Msg] Waiting for master.
+[Msg] Connected to gazebo master @ http://127.0.0.1:11345
+[Msg] Publicized address: 129.6.32.69
+[Msg] Waiting for master.
+[Msg] Connected to gazebo master @ http://127.0.0.1:11345
+[Msg] Publicized address: 129.6.32.69
+Warning [parser.cc:835] XML Element[cfm_damping], child of element[ode] not defined in SDF. Ignoring[cfm_damping]. You may have an incorrect SDF file, or an sdformat version that doesn't support this element.
+Warning [parser.cc:835] XML Element[max_contacts], child of element[link] not defined in SDF. Ignoring[max_contacts]. You may have an incorrect SDF file, or an sdformat version that doesn't support this element.
+Warning [parser.cc:835] XML Element[max_contacts], child of element[link] not defined in SDF. Ignoring[max_contacts]. You may have an incorrect SDF file, or an sdformat version that doesn't support this element.
+[Err] [SimbodyJoint.cc:477] Not implement in Simbody
+[Err] [SimbodyJoint.cc:477] Not implement in Simbody
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodySliderJoint.cc:55] SetAxis Not implemented...
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodySliderJoint.cc:55] SetAxis Not implemented...
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodySliderJoint.cc:55] SetAxis Not implemented...
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodySliderJoint.cc:55] SetAxis Not implemented...
+[Err] [SimbodyJoint.cc:384] SimbodyJoint::SetAnchor:  Not implement in Simbody. Anchor is set during joint construction in SimbodyPhysics.cc
+[Dbg] [SimbodyHingeJoint.cc:55] SetAxis: setting axis is not yet implemented.  The axis are set  during joint construction in SimbodyPhysics.cc for now.
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [Joint.cc:549] GetParam unrecognized parameter [friction]
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:1529] Collision type [33619968] unimplemented
+[Err] [SimbodyMesh.cc:52] SimbodyMesh is not supported
+[Err] [SimbodyPhysics.cc:326] EXCEPTION: Simbody build EXCEPTION: SimTK Exception thrown at MassProperties.h:559:
+  Error detected by Simbody method Inertia::setInertia(xx,yy,zz,xy,xz,yz): The magnitude of a product of inertia was too large to be physical.
+  (Required condition 'Ixx+Slop>=std::abs(2*Iyz) && Iyy+Slop>=std::abs(2*Ixz) && Izz+Slop>=std::abs(2*Ixy)' was not met.)
+
+
+[Err] [SimbodyPhysics.cc:326] EXCEPTION: Simbody build EXCEPTION: SimTK Exception thrown at MassProperties.h:559:
+  Error detected by Simbody method Inertia::setInertia(xx,yy,zz,xy,xz,yz): The magnitude of a product of inertia was too large to be physical.
+  (Required condition 'Ixx+Slop>=std::abs(2*Iyz) && Iyy+Slop>=std::abs(2*Ixz) && Izz+Slop>=std::abs(2*Ixy)' was not met.)
+
+
+
+
+
+
+
+Wed 05 Sep 2018 07:52:32 PM EDT
+add closest slot in kit to place part (sorting distance, picking closest)
+
+
+Existing gazebo plugin to set physics parameters via topic
+https://github.com/JenniferBuehler/gazebo-pkgs/blob/master/gazebo_test_tools/src/SetGazeboPhysicsClient.cpp
+
+
+<physics type="ode">
+     <max_step_size>0.001</max_step_size>
+     <real_time_factor>1</real_time_factor>
+     <real_time_update_rate>500</real_time_update_rate>
+     <gravity>0 0 -9.8</gravity>
+     <ode>
+         <cfm_damping>1</cfm_damping>
+         <constraints>
+             <cfm>0.001000</cfm>
+             <erp>0.200000</erp>
+             <contact_max_correcting_vel>100.000000</contact_max_correcting_vel>
+             <contact_surface_layer>0.001000</contact_surface_layer>
+         </constraints>
+     </ode>
+ </physics>
+
+Base of motoman was unstable and jumped with "doubled" to 0.002
+ <cfm>0.001000</cfm>
+
+
+Thu 30 Aug 2018 04:20:39 PM EDT
+
+tuning contact amount - not just contact but some "squeezing"
+Contact amount = 9.77651e-05
+Contact amount = 9.77651e-05
+Contact amount = 0.000145616
+Contact amount = 0.000389503
+
+
+
+Thu 30 Aug 2018 02:43:05 PM EDT
+Gripper/finger naming indexing problem.
+
+finger_contact_topic=/gazebo/default/sia20d/motoman_sia20d/motoman_left_finger/left_finger_contact,
+finger_contact_topic+=/gazebo/default/sia20d/motoman_sia20d/motoman_right_finger/right_finger_contact
+
+fingernames=motoman_left_finger,motoman_right_finger
+fingerjoints.motoman_left_finger=motoman_left_finger_joint
+fingerjoints.motoman_right_finger=motoman_right_finger_joint
+
+
+// Get gazebo contact topic name for each finger link
+ncs[i]->fingerContactTopics()= RCS::robotconfig.GetTokens<std::string>( robots[i]   + ".finger_contact_topic", ",");
+
+
+// This creates a gazebo contact subscriber with
+for(size_t k=0; k< fingerNames().size(); k++)
+{
+    contact_reader[fingerNames()[k]] = new CGzContactReader();
+    contact_reader[fingerNames()[k]]->Start(this->fingerContactTopics()[k]);
+}
+
+if(_nc->contact_reader[_nc->fingerNames()[k]]->IsContact())
+ELSE INCREMENT GRIPPER JOINT POSITION
+sensor_msgs::JointState gripperpotential =_nc->gripper.increment(gripperjoints, fingerjoints, incr);
+if(!joint_compare(gripperpotential.position,_nc->gripperJointsHardclose() ))
+{
+    outcmd.next_gripper_goal_joints= gripperjoints; // use last joints
+    return CanonStatusType::CANON_DONE; // maybe error?
+}
+
+
+// This appears to be unused
+ncs[i]->gzLeftFingerContactTopic()=RCS::robotconfig.GetSymbolValue<std::string>(robots[i] + ".gzLeftFingerContactTopic", "ERROR");
+ncs[i]->gzRightFingerContactTopic()=RCS::robotconfig.GetSymbolValue<std::string>(robots[i] + ".gzRightFingerContactTopic", "ERROR");
+
+
+
+Thu 30 Aug 2018 09:09:42 AM EDT
+DEFINES+=QT_NO_VERSION_TAGGING
+gets rid of "undefined reference to qt_version_tag"
+
+
+
+Collision between sku_part_large_gear5::link1::collision1andsia20d::motoman_sia20d::motoman_finger_1::motoman_finger_1_collision
+Depth is 0.000527062
+
+
+Locals
+        pose	@0x7ffc1f219a70	tf::Pose
+                m_basis	@0x7ffc1f219a70	tf::Matrix3x3
+                m_origin	@0x7ffc1f219ad0	tf::Vector3
+                        m_floats	@0x7ffc1f219ad0	tfScalar[4]
+                                [0]	0.20530724594759087	tfScalar
+                                [1]	-0.5333776923624166	tfScalar
+                                [2]	-0.0008225129120568572	tfScalar
+                                [3]	0.0	tfScalar
+Inspector
+Expressions
+Return Value
+Tooltip
+
+Locals
+        endPose	@0x7ffc1f219b70	tf::Pose
+         pose	@0x7ffc1f219a70	tf::Pose
+                m_basis	@0x7ffc1f219a70	tf::Matrix3x3
+                m_origin	@0x7ffc1f219ad0	tf::Vector3
+                        m_floats	@0x7ffc1f219ad0	tfScalar[4]
+                                [0]	0.1953409281398197	tfScalar
+                                [1]	-0.5384465367759274	tfScalar
+                                [2]	0.0041754192269506385	tfScalar
+                                [3]	0.0	tfScalar
+Inspector
+Expressions
+Return Value
+Tooltip
+
+
+Tue 28 Aug 2018 12:42:15 PM EDT
+redid controller so there is a "homing" macro call at the beginning of operation.
+For motoman, this means it goto the "nothome" joint position (all .1 joint values) so
+the gokin interpalator can operate without a singularity.
+
+> where
+Status Joints   = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+FK Robot Pose   =   0.00,  -0.00,   1.49|Q= 9.99999e-07,-0.000499999,-5e-10,1
+FK World Pose   =   0.01,  -0.00,   2.66|Q= 9.99999e-07,-0.000499999,-5e-10,1
+FK World Base   =   0.00,  -0.00,   2.40|Q= 9.99999e-07,-0.000499999,-5e-10,1
+IK Robot Joints = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+
+
+#Motoman gears
+sku_part_large_gear6 at    0.08,  -0.54,  -0.26|Q= 0.000218483,-0.000177637,0.0016925,0.999999
+sku_part_large_gear5 at    0.19,  -0.53,  -0.26|Q= 0.0117357,-0.00117841,0.0204994,0.99972
+sku_part_large_gear7 at   -0.30,  -0.71,  -0.26|Q= 0.000383724,-8.41396e-05,0.00171696,0.999998
+sku_part_large_gear8 at   -0.41,  -0.71,  -0.26|Q= -0.000154403,0.000186556,0.00140194,0.999999
+sku_part_small_gear10 at   -0.03,  -0.57,  -0.26|Q= 0.00058077,-0.000896959,0.00152736,0.999998
+sku_part_small_gear11 at   -0.03,  -0.52,  -0.26|Q= 0.000458263,-0.00488507,0.00832582,0.999953
+sku_part_small_gear12 at   -0.08,  -0.52,  -0.26|Q= 0.00464056,-0.00637884,0.00630883,0.999949
+sku_part_small_gear13 at   -0.09,  -0.58,  -0.26|Q= -0.00290893,0.00298583,0.0072472,0.999965
+
+#Fanuc gears
+sku_part_medium_gear17 at    0.22,  -1.19,  -0.26|Q= 0.00501255,-0.0060912,0.0216501,0.999734
+sku_part_medium_gear18 at    0.14,  -1.20,  -0.26|Q= 0.0017931,-0.00167047,0.0171425,0.99985
+sku_part_medium_gear19 at    0.14,  -1.28,  -0.26|Q= 0.00168445,-0.00203485,0.0173166,0.999847
+sku_part_medium_gear20 at    0.23,  -1.27,  -0.26|Q= 0.00563027,-0.00695762,0.0135295,0.999868
+sku_part_large_gear22 at    0.38,  -1.21,  -0.25|Q= 0.00148914,-0.000906212,0.0159247,0.999872
+sku_part_large_gear23 at    0.39,  -1.32,  -0.25|Q= -0.00545851,-0.00295799,0.187613,0.982223
+
+
+Tue 28 Aug 2018 10:49:16 AM EDT
+removed
+//        // Update joints to gazebo if enabled.
+//            if(Globals.bGazebo)
+//            {
+//                //jntupdaterthread.push_back(boost::thread(boost::bind(&CController::GzPublishJointStates, ncs[i]->gzTopicName())));
+//                CController::gz_joint_updater =  std::shared_ptr<GzJointUpdater>(new GzJointUpdater("GzJointUpdater", 0.05));
+//                CController::gz_joint_updater->Start();
+//            }
+//            else
+//            {
+//                //jntupdaterthread.push_back(boost::thread(boost::bind(&CController::LogPublishJointStates, ncs[i]->gzTopicName())));
+//            }
+
+#ifdef GOKIN
+
+                else if (kinsolver == "FanucGoKin") {
+                    kin = std::shared_ptr<IKinematics>(new FanucLRMate200idGoSerkin(ncs[i]));
+
+                    std::cerr << "Status Joints   -0.063,-0.153,-0.592,-0.000,-1.000, 0.000\n";
+                    std::vector<double> joints={-0.063, -0.153, -0.592, 0.0, -1.0, 0.0};
+                    std::vector<double> hint={0,0,0, 0.0, 1.0, 0.0};
+                    tf::Pose pose = KinUtils::FK_test(kin.get(), joints );
+                    std::cerr << "FK pose            =" << DumpPoseSimple(pose)<< "\n";
+                    KinUtils::IK_test(kin.get(), pose, hint, joints );
+                    std::cerr << "KinTest IK Joints  =" << RCS::VectorDump(joints,",") << "\n";
+                    std::vector<double> dbls={0.41 ,  -0.06,  0.16,  0.00,  0.00,  0.00};
+                    pose = CreateRPYPose (dbls);
+                    KinUtils::IK_test(kin.get(), pose, hint, joints );
+                    std::cerr << "Test pose          =" << DumpPoseSimple(pose)<< "\n";
+                    std::cerr << "KinTest IK Joints  =" << RCS::VectorDump(joints,",") << "\n";
+                    pose = KinUtils::FK_test(kin.get(), joints );
+                    std::cerr << "KinTest FK pose    =" << DumpPoseSimple(pose)<< "\n";
+                }
+#endif
+
+
+
+// Move robots to "safe position"
+if(Globals.bCannedDemo)
+    for (size_t j = 0; j < ncs.size(); j++) {
+        crclApi->MoveHome();
+        crclApi->MoveSafe();
+#if 0
+        while (ncs[j]->IsBusy()) {
+            ncs[j]->Sleep();
+        }
+#endif
+    }
+
+Locals
+        newjoints	<7 items>	std::vector<double, std::allocator<double> > &
+                        0	double
+                        0	double
+                        0	double
+                        0	double
+                        0	double
+                        0	double
+                        0	double
+        oldjoints	<7 items>	std::vector<double, std::allocator<double> >
+                        474.8795368834102	double
+                        1389.563050266625	double
+                        -1769.27364426782	double
+                        3108.544591224299	double
+                        0.6314688638646645	double
+                        -1642.215061685404	double
+                        -1256.346737962734	double
+        pose	@0x7f6341bf40a0	tf::Pose
+                m_basis	@0x7f6341bf40a0	tf::Matrix3x3
+                m_origin	@0x7f6341bf4100	tf::Vector3
+                        m_floats	@0x7f6341bf4100	tfScalar[4]
+                                [0]	-0.058	tfScalar
+                                [1]	-0.28400000000000003	tfScalar
+                                [2]	0.7843	tfScalar
+                                [3]	0.0	tfScalar
+        res	0	int
+        this	@0x1c30b90	MotomanSia20dGoKin
+Inspector
+Expressions
+Return Value
+Tooltip
+
+Wed 15 Aug 2018 07:54:52 PM EDT
+Couldn't get bumper contact to report information. May not have setup xml correctly.
+Added max contacts for good luck.
+<link name="motoman_finger_2">
+    <pose frame="">0 0 1.6511 1.5708 -0 -3.14159</pose>
+    <max_contacts>10</max_contacts>
+    <collision name="motoman_finger_2_collision">
+        <pose frame="">0 0 0 0 -0 0</pose>
+        <geometry>
+            <mesh>
+                <scale>1 1 1</scale>
+                <uri>model://motoman_aprs/meshes/motoman_finger_2.STL</uri>
+            </mesh>
+        </geometry>
+    </collision>
+<sensor name="left_finger_contact" type="contact">
+    <always_on>true</always_on>
+    <update_rate>10</update_rate>
+    <visualize>true</visualize>
+    <contact>
+        <!-- this must reference the link collision name attribute!!!!  -->
+        <collision>motoman_finger_2_collision</collision>
+    </contact>
+</sensor>
+
+
+Wed 15 Aug 2018 04:54:52 PM EDT
+The entire finger and gazebo must be redesigned
+These are unused, but should be?
+ncs[i]->gzLeftFingerContactTopic()=RCS::robotconfig.GetSymbolValue<std::string>(robots[i] + ".gzLeftFingerContactTopic", "ERROR");
+ncs[i]->gzRightFingerContactTopic()=RCS::robotconfig.GetSymbolValue<std::string>(robots[i] + ".gzRightFingerContactTopic", "ERROR");
+isntead use:
+// Get gazebo contact topic name for each finger link
+ncs[i]->fingerContactTopics()= RCS::robotconfig.GetTokens<std::string>( robots[i]   + ".finger_contact_topic", ",");
+
+finger_contact_topic=/gazebo/default/sia20d/motoman_sia20d/motoman_finger_2/left_finger_contact,
+finger_contact_topic+=/gazebo/default/sia20d/motoman_sia20d/motoman_finger_1/right_finger_contact
+
+
+Gazebo finger contact/gazebo/default/sia20d/motoman_sia20d/motoman_robotiq_85_left_finger_tip_link/left_finger_contact subscriber started
+Gazebo finger contact/gazebo/default/sia20d/motoman_sia20d/motoman_robotiq_85_right_finger_tip_link/right_finger_contact subscriber started
+
+
+
+Wed 15 Aug 2018 11:42:43 AM EDT
+michalos@onyx:~/src/robot-agility/gz/Python/PyAnalyzeMeshes$ ./refitMeshes.bash Traceback (most recent call last):
+  File "AnalyzeMeshes.py", line 5, in <module>
+    import configparser
+
+# ImportError: No module named configparser
+Answer:
+    > pip install configparser
+
+#ImportError: No module named stl
+Answer:
+    > pip install numpy-stl
+
+Tue 14 Aug 2018 11:42:43 AM EDT
+[FATAL] [1534280180.990418117]: A ROS node for Gazebo has not been initialized, unable to load plugin.
+Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)
+Try:         <plugin filename="libgazebo_ros_api_plugin.so" name="ros_api" />
+
+REally can't run ros_gazebo without roslaunch and empty world. Some voodoo mysticism bordering on sphagetti code.
+
+Mon 13 Aug 2018 04:07:23 PM EDT
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 8.33333e-06,0,1,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 6.66667e-05,0,1,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 0.000225,0,1,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 0.000533333,0,1,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 0.00104167,0,0.999999,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 0.0018,0,0.999998,0
+Failed to get ik solution:  -0.00,  -0.00,   1.50|Q= 0.00285833,0,0.999996,0
+
+
+AND: motoman__nc_crcl.log
+CANON_MOVE_JOINT is the majority of moves - WHY?
+
+Wed 08 Aug 2018 10:30:13 AM EDT
+WHY ALWAYS PUTTING GRASPED GEAR INTO SAME KIT SLOT = EMPTY OR FULL
+All instances have an SKU in name? Thus always returns true - empty. return
+
+
+
+> instances
+sku_large_gear_vessel1 at    0.14,  -0.54,  -0.25|Q= 0,0,0.0205431,0.999789
+sku_kit_s2l2_vessel3 at    0.15,  -0.70,  -0.25|Q= 0,0,0.0205001,0.99979
+sku_kit_s2l2_vessel4 at   -0.10,  -0.71,  -0.25|Q= 0,0,0.0205001,0.99979
+sku_part_large_gear5 at    0.20,  -0.54,  -0.25|Q= 0.000105596,-0.000115213,0.00347639,0.999994
+sku_part_large_gear6 at    0.09,  -0.54,  -0.25|Q= 0.0003293,-0.000262871,0.00174696,0.999998
+sku_part_large_gear7 at   -0.29,  -0.71,  -0.25|Q= 0.000430031,9.14603e-05,0.00174922,0.999998
+sku_part_large_gear8 at   -0.40,  -0.71,  -0.25|Q= -0.000140769,0.00017663,0.0015191,0.999999
+sku_large_gear_vessel2 at   -0.35,  -0.71,  -0.25|Q= 0,0,0.0205431,0.999789
+sku_part_small_gear10 at   -0.02,  -0.58,  -0.25|Q= -0.000487323,-0.00218925,0.00136221,0.999997
+sku_small_gear_vessel9 at   -0.05,  -0.55,  -0.25|Q= 0,0,0.023078,0.999734
+sku_part_small_gear12 at   -0.08,  -0.52,  -0.25|Q= 0.00206596,-0.00746971,0.00737752,0.999943
+sku_part_small_gear13 at   -0.08,  -0.58,  -0.25|Q= -0.00309912,0.00283177,0.0071484,0.999966
+sku_kit_m2l1_vessel14 at    0.40,  -1.05,  -0.25|Q= 0,0,0.720037,0.693936
+sku_kit_m2l1_vessel15 at    0.18,  -1.05,  -0.25|Q= 0,0,0.720037,0.693936
+sku_medium_gear_vessel16 at    0.19,  -1.24,  -0.24|Q= 0,0,0.0169422,0.999856
+sku_part_medium_gear17 at    0.23,  -1.19,  -0.25|Q= 0.00501255,-0.0060912,0.0216501,0.999734
+sku_part_small_gear11 at   -0.02,  -0.52,  -0.25|Q= -0.000202143,-0.00484948,0.00820971,0.999955
+sku_part_medium_gear19 at    0.15,  -1.28,  -0.25|Q= 0.00168445,-0.00203485,0.0173166,0.999847
+sku_part_medium_gear18 at    0.15,  -1.20,  -0.25|Q= 0.0017931,-0.00167047,0.0171425,0.99985
+sku_large_gear_vessel21 at    0.39,  -1.26,  -0.25|Q= 0,0,0.721354,0.692567
+sku_part_medium_gear20 at    0.24,  -1.27,  -0.25|Q= 0.00563027,-0.00695762,0.0135295,0.999868
+sku_part_large_gear23 at    0.40,  -1.32,  -0.24|Q= -0.00488688,-0.00297381,0.18789,0.982173
+sku_part_large_gear22 at    0.39,  -1.21,  -0.25|Q= 0.00134346,-0.000853017,0.0158713,0.999873
+
+
+
+
+<joint name='leftAnklePitch' type='revolute'>
+  <child>leftAnklePitchLink</child>
+  <parent>leftKneePitchLink</parent>
+  <axis>
+    <xyz>0 1 0</xyz>
+    <limit>
+      <lower>-0.8644</lower>
+      <upper>0.875</upper>
+      <effort>205</effort>
+      <velocity>11</velocity>
+    </limit>
+    <dynamics>
+      <damping>0.1</damping>
+      <friction>0</friction>
+      <spring_reference>0</spring_reference>
+      <spring_stiffness>0</spring_stiffness>
+    </dynamics>
+    <use_parent_model_frame>1</use_parent_model_frame>
+  </axis>
+  <physics>
+    <provide_feedback>1</provide_feedback>
+    <ode>
+      <provide_feedback>1</provide_feedback>
+      <implicit_spring_damper>1</implicit_spring_damper>
+      <cfm_damping>1</cfm_damping>
+      <limit>
+        <cfm>0</cfm>
+        <erp>0.2</erp>
+      </limit>
+    </ode>
+  </physics>
+</joint>
+
+
+
+
+
+Ask the apt install package management what files the package contains:
+to find out where something is installed
+    > dpkg -L ros-kinetic-openrave
+
+
+Tue 07 Aug 2018 01:08:47 PM EDT
+ikfast from urdf
+
+https://github.com/gavanderhoorn/moveit_ikfast_simpler
+https://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/ikfast/ikfast_tutorial.html
+
+    > sudo apt-get install cmake g++ git ipython minizip python-dev python-h5py python-numpy python-scipy
+    (skipped qt4)
+    > sudo apt-get install libassimp-dev libavcodec-dev libavformat-dev libavformat-dev libboost-all-dev libboost-date-time-dev libbullet-dev libfaac-dev libglew-dev libgsm1-dev liblapack-dev liblog4cxx-dev libmpfr-dev libode-dev libogg-dev libpcrecpp0v5 libpcre3-dev libqhull-dev  libsoqt-dev-common libsoqt4-dev libswscale-dev libswscale-dev libvorbis-dev libx264-dev libxml2-dev libxvidcore-dev
+    > sudo apt-get install libcairo2-dev libjasper-dev libpoppler-glib-dev libsdl2-dev libtiff5-dev libxrandr-dev
+    > cr /usr/local
+    sudo apt-get install libcairo2-dev libjasper-dev libpoppler-glib-dev libsdl2-dev libtiff5-dev libxrandr-dev
+    git clone https://github.com/openscenegraph/OpenSceneGraph.git --branch OpenSceneGraph-3.4
+    cd OpenSceneGraph
+    mkdir build; cd build
+    cmake .. -DDESIRED_QT_VERSION=4
+    make -j$(nproc)
+    sudo make install  <<<<<<<<<< not enough priviledges
+
+For IkFast to work correctly, you must have the correct version of sympy installed:
+    pip install --upgrade --user sympy==0.7.1
+You should not have mpmath installed:
+    sudo apt remove python-mpmath
+MoveIt! IKFast Installation
+    sudo apt-get install ros-kinetic-moveit-kinematics
+
+Installing OpenRAVE on Ubuntu 16.04
+    sudo apt-get install ros-kinetic-openrave
+WORKED despite what documentation said. WHERE IS IT?
+/opt/ros/kinetic/bin/openrave0.9
+
+
+
+mkdir /usr/local/ros
+sudo chmod u=rwx,g=rxx,o=rwx ros
+
+PLUS NO CATKIN
+http://catkin-tools.readthedocs.io/en/latest/installing.html
+
+ALWAYS:
+source /opt/ros/kinetic/setup.bash
+export PYTHONPATH=$PYTHONPATH:`openrave-config --python-dir`
+export MYROBOT_NAME="motomansia20d"
+
+
+( build basic ROS workspace for motoman sia20d urdf,xacro,meshes)
+michalos@onyx:/usr/local/ros/ikfast$ source devel/setup.bash
+
+# Now build openrave dae model
+michalos@onyx:/usr/local/ros/ikfast/src/motoman_aprs/urdf$ rosrun collada_urdf urdf_to_collada motoman_aprs_xacro.urdf motoman_aprs_xacro.dae
+
+Document successfully written to motoman_aprs_xacro.dae
+michalos@onyx:/usr/local/ros/ikfast/src/motoman_aprs/urdf$
+
+
+export MYROBOT_NAME="motoman_aprs_xacro"
+export IKFAST_PRECISION="5"
+cp "$MYROBOT_NAME".dae "$MYROBOT_NAME".backup.dae  # create a backup of your full precision dae.
+rosrun moveit_kinematics round_collada_numbers.py "$MYROBOT_NAME".dae "$MYROBOT_NAME".dae "$IKFAST_PRECISION"
+
+>>>>>>>>>>> ROUNDED PRECISION
+
+
+michalos@onyx:/usr/local/ros/ikfast/src/motoman_aprs/urdf$ openrave-robot.py "$MYROBOT_NAME".dae --info links
+name              index parents
+-----------------------------------------
+motoman_base_link 0
+motoman_link_s    1     motoman_base_link
+motoman_link_l    2     motoman_link_s
+motoman_link_e    3     motoman_link_l
+motoman_link_u    4     motoman_link_e
+motoman_link_r    5     motoman_link_u
+motoman_link_b    6     motoman_link_r
+motoman_link_t    7     motoman_link_b
+motoman_finger_1  8     motoman_link_t
+motoman_finger_2  9     motoman_link_t
+-----------------------------------------
+name              index parents
+
+export PLANNING_GROUP="motoman_aprs"
+export BASE_LINK="0"
+export EEF_LINK="7"
+export FREE_INDEX="1"
+export IKFAST_OUTPUT_PATH=`pwd`/ikfast_sia20d.cpp
+
+NOW GENERATE IKFAST FOR ROBOT:
+For a 6DOF arm:
+python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot="$MYROBOT_NAME".dae --iktype=transform6d --baselink="$BASE_LINK" --eelink="$EEF_LINK" --savefile="$IKFAST_OUTPUT_PATH"
+
+For a 7 dof arm, you will need to specify a free link:
+python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot="$MYROBOT_NAME".dae --iktype=transform6d --baselink="$BASE_LINK" --eelink="$EEF_LINK" --freeindex="$FREE_INDEX" --savefile="$IKFAST_OUTPUT_PATH"
+
+
+WHAT I USED FOR MOTOMAN SIA 20d THAT WORKED:
+    > export BASE_LINK="0
+    > export IKFAST_OUTPUT_PATH=`pwd`/ikfast_sia20d.cpp
+    > export FREE_INDEX="1"
+    >  export EEF_LINK="7"
+    >  python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot="$MYROBOT_NAME".dae --iktype=transform6d --baselink="$BASE_LINK" --eelink="$EEF_LINK" --freeindex="$FREE_INDEX" --savefile="$IKFAST_OUTPUT_PATH"
+
+SEEMED TO WORK.
+
+NOW GENERATE THE MOVEIT PLUGIN
+    > export PLANNING_GROUP="motoman_aprs"
+
+    > export MOVEIT_IK_PLUGIN_PKG="$MYROBOT_NAME"_ikfast_"$PLANNING_GROUP"_plugin
+
+    > cd ../..  # to src level of ROS workspace
+
+    >catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG"
+    Created file motoman_aprs_xacro_ikfast_motoman_aprs_plugin/CMakeLists.txt
+    Created file motoman_aprs_xacro_ikfast_motoman_aprs_plugin/package.xml
+    Successfully created files in /usr/local/ros/ikfast/src/motoman_aprs_xacro_ikfast_motoman_aprs_plugin. Please adjust the values in package.xml.
+
+
+
+
+
+Tue 07 Aug 2018 10:08:47 AM EDT
+Gazebo sdf from xacro
+http://answers.gazebosim.org/question/4372/the-inertia-matrix-explained/
+http://gazebosim.org/tutorials?tut=inertia&cat=build_robot
+https://wiki.ros.org/urdf/Tutorials/Using%20a%20URDF%20in%20Gazebo
+https://wiki.ros.org/urdf/Tutorials/Using%20a%20URDF%20in%20Gazebo
+
+<gazebo reference="${prefix}_${suffix}_wheel">
+    <mu1 value="200.0"/>
+    <mu2 value="100.0"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+Mon 06 Aug 2018 01:08:47 PM EDT
+Gazebo friction web sites
+https://bitbucket.org/osrf/gazebo/issues/2068/directional-friction-still-broken
+https://bitbucket.org/osrf/gazebo/raw/e7a0b8953af9bcc369c05436e3aae1b280777f5a/gazebo/physics/ode/ODEPhysics.cc
+https://bitbucket.org/osrf/gazebo/raw/de6b97b7d61c87a71f075e988958a0863e50376d/sdf/worlds/test_friction.world
+
+
+Remove:
+else if (msg.compare( 0, strlen("slow "),"slow ") == 0)
+{
+    msg=Globals.Trim(msg.erase(0,std::string("slow ").size()));
+    if(msg == "gripper")
+    {
+        double speed = ncs[ncindex]->currentGripperJointSpeed();
+        ncs[ncindex]->set_gripper_joint_speeds(speed);
+    }
+    else
+    {
+        crclApi->Slow();
+    }
+}
+
+Fri 03 Aug 2018 11:12:55 AM EDT
+> GoTraj::InitJoints ExceptionInitJoints: not enough joint params
+Exception in  CController::Action() thread: InitJoints: not enough joint params
+GoTraj::InitJoints ExceptionInitJoints: not enough joint params
+Exception in  CController::Action() thread: InitJoints: not enough joint params
+
+
+Thu 02 Aug 2018 11:12:55 AM EDT
+Need to set the rates in the CrclAPI so that the pick and place is slower
+::nistcrcl::CrclMaxProfileMsg trans_profile;
+trans_profile.maxvel=cc.Rates().CurrentTransSpeed();
+trans_profile.maxacc=10.*cc.Rates().CurrentTransSpeed();
+trans_profile.maxjerk= 100.*cc.Rates().CurrentTransSpeed();
+rosmsg.profile.push_back(trans_profile);
+
+
+
+> jog x 0.0025
+--
+
+
+
+Thu 02 Aug 2018 10:40:56 AM EDT
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_r
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_b
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_s
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_l
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_e
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_u
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_r
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_joint_b
+
+
+Wed 01 Aug 2018 10:40:56 AM EDT
+CHanged gears - but no display?
+Installed ctmviewer:
+sudo apt-get install openctm-tools
+Then ran to see small gear:
+michalos@onyx:~/src/robot-agility/gz/models/gear_support/meshes$ ctmviewer new_small_gear.STL
+although the orientation seems wrong.
+
+Jog to corrected position:
+Status Joints   =-1.075, 0.686, 3.000, 1.781, 3.000,-0.684, 1.294
+FK Robot Pose   =   0.22,  -0.53,   0.28|Q= 1,-3.60822e-16,-2.04255e-16,-3.64973e-16
+FK World Pose   =   0.22,  -0.53,   0.94|Q= 1,-3.60822e-16,-2.04255e-16,-3.64973e-16
+FK World Base   =   0.22,  -0.53,   1.19|Q= 1,-3.60822e-16,-2.04255e-16,-3.64973e-16
+IK Robot Joints =-1.075, 0.686, 3.000, 1.781, 3.000,-0.684, 1.294
+
+Supposed to go:
+sku_part_large_gear5 at    0.20,  -0.54,  -0.25|Q= -2.33055e-05,-0.000198153,0.00365569,0.999993
+
+
+
+[FATAL] [1533135371.028923622]: Couldn't parse the master URI ["http://localhost:11311"] into a host:port pair.
+Couldn't find an AF_INET address for []
+
+
+
+Wed 01 Aug 2018 10:13:27 AM EDT
+Try to get qtcreator 5.9.1 - 5.5.1 was loaded even though I didn't want it.
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$ sudo chmod a+ qtcreator.sh
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$ sudo chmod a=rwx qtcreator.sh
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$ ls -l
+total 796
+-rwxrwxr-x 1 root root 259008 Jul 26 18:36 qbs
+-rwxrwxr-x 1 root root  40040 Jul 26 18:36 qbs-config
+-rwxrwxr-x 1 root root  48880 Jul 26 18:36 qbs-config-ui
+-rwxrwxr-x 1 root root  52488 Jul 26 18:36 qbs-create-project
+-rwxrwxr-x 1 root root  23296 Jul 26 18:36 qbs-qmltypes
+-rwxrwxr-x 1 root root  52424 Jul 26 18:36 qbs-setup-android
+-rwxrwxr-x 1 root root  97880 Jul 26 18:36 qbs-setup-qt
+-rwxrwxr-x 1 root root 126672 Jul 26 18:36 qbs-setup-toolchains
+-rw-rw-r-- 1 root root    100 Jul 26 18:37 qt.conf
+-rwxrwxr-x 1 root root  94440 Jul 26 18:36 qtcreator
+-rwxrwxrwx 1 root root   1154 Jul 26 18:37 qtcreator.sh
+
+Still can't make link - suppose folder permissions an issue
+
+
+INSTEAD ALLOW PERMISSION TO WRTIE IN bin FOLDER and MAKE LINK
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$ cd ..
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator$ sudo chmod a=rwx ./bin
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator$ ls -l
+total 16
+drwxrwxrwx 2 root root 4096 Aug  1 10:17 bin
+drwxrwxr-x 4 root root 4096 Jul 26 18:36 lib
+drwxrwxr-x 3 root root 4096 Jul 26 18:36 libexec
+drwxrwxr-x 6 root root 4096 Jul 26 18:37 share
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator$ cd bin
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$ ls
+qbs         qbs-config-ui       qbs-qmltypes       qbs-setup-qt          qt.conf    qtcreator.sh
+qbs-config  qbs-create-project  qbs-setup-android  qbs-setup-toolchains  qtcreator  startqt
+michalos@onyx:/usr/local/Qt5.9.1/Tools/QtCreator/bin$
+
+THEN COPY TO DESKTOP
+
+Open was WAAAYY open
+
+Tue 31 Jul 2018 10:15:03 AM EDT
+Didn't Process msg!!!lrmate::fanuc_lrmate200id::fanuc_fanuc_prism2
+
+This error is like this so either the motoman or the fanuc can use the gripper and then just append their
+name prefix to it.
+
+Tue 31 Jul 2018 09:45:03 AM EDT
+Didn't Process msg!!!lrmate::fanuc_lrmate200id::fanuc_Joint2
+
+
+Fri 27 Jul 2018 04:57:51 PM EDT
+Didn't Process msg!!!lrmate::fanuc_lrmate200id::fanuc_robotiq_85_right_inner_knuckle_joint
+
+
+
+Fri 27 Jul 2018 01:57:51 PM EDT
+sku_part_medium_gear20 at    0.43,  -0.13,  -0.18|Q= 0.00650054,-0.0260954,0.0129142,0.999555
+
+Jogging to center the gripper over the gear:
+Status Joints   =-0.384, 0.816,-0.515,-0.349,-0.121,-0.665
+FK Robot Pose   =   0.38,  -0.15,   0.16|Q= 0.997334,-0.0314264,0.0658178,0.00207395
+FK World Pose   =   0.22,  -1.29,   0.93|Q= 0.997334,-0.0314264,0.0658178,0.00207395
+FK World Base   =   0.22,  -1.29,   1.09|Q= 0.997334,-0.0314264,0.0658178,0.00207395
+IK Robot Joints =-0.384, 0.816,-0.515,-0.349,-0.121,-0.665
+
+
+Finger was hitting vessle when closing:
+
+> where
+Status Joints   =-0.384, 0.800,-0.519,-0.320,-0.132,-0.636
+FK Robot Pose   =   0.39,  -0.15,   0.16|Q= 0.997308,-0.031447,0.0662025,0.00231352
+FK World Pose   =   0.22,  -1.29,   0.94|Q= 0.997308,-0.031447,0.0662025,0.00231352
+FK World Base   =   0.22,  -1.29,   1.10|Q= 0.997308,-0.031447,0.0662025,0.00231352
+IK Robot Joints =-0.384, 0.800,-0.519,-0.320,-0.132,-0.636
+
+
+Wed 25 Jul 2018 11:20:54 AM EDT
+Removed:
+else if (msg.compare( 0, strlen("record "), "record ") == 0 )
+{
+    msg=msg.erase(0,std::string("record ").size());
+    msg=Globals.Trim(msg);
+    std::string prefix  = ncs[ncindex]->robot_prefix();
+    //std::string where = RCS::VectorDump(ncs[ncindex]->status.robotjoints.position, ",");
+    RCS::robotconfig.StoreKey<double>(prefix+msg, ncs[ncindex]->status.robotjoints.position);
+
+}
+
+Tue 24 Jul 2018 11:37:40 AM EDT
+
+In RCSInterpreter.cpp
+_nc->linear_params,
+_nc->rotational_params))
+
+vs
+
+In commandlineinterface.cpp:
+    else if (msg.compare("faster") == 0)
+
+        ncs[ncindex]->set_joint_speeds(ncs[ncindex]->current_joint_speed()*2.);
+        ncs[ncindex]->set_linear_speeds(ncs[ncindex]->currentLinearSpeed()*2.0);
+        ncs[ncindex]->set_rotational_speeds(ncs[ncindex]->currentAngularSpeed()*2.0);
+
+
+_currentAngularSpeed	0.0	double
+_current_joint_speed	4.0	double
+_currentLinearSpeed	0.0	double
+
+
+double CController::set_linear_speeds(double speed)
+{
+    double now_speed = currentLinearSpeed();
+    currentLinearSpeed()=speed;
+
+    // set speeds as multiple of baseline
+    linear_params=gomotion::GoTrajParams(speed, 10.0*speed, 100.0*speed);
+    return now_speed;
+}
+
+In setup:
+
+////////////////////////////////////////////////////////////////////////////////
+/// motion rates - vel, acc, jerk
+////////////////////////////////////////////////////////////////////////////////
+set_joint_speeds(1.0);
+linear_params=gomotion::GoTrajParams(linearmax()[0],  linearmax()[1],  linearmax()[2]);
+rotational_params=gomotion::GoTrajParams(rotationmax()[0],  rotationmax()[1],  rotationmax()[2]);
+}
+
+
+Analysis: Gotraj accepts vel,acc,jerk parameters e.g., nc->linear_params, the NC only uses a vel speed to
+compute the gotraj parameters, e.g., currentLinearSpeed()
+
+
+======================================================
+
+> go safe
+> go gear
+> force .1,20.
+> depart sku_part_large_gear22
+
+pickup sku_part_large_gear22
+
+requires feedback to know when force has reached "limit" i.e., not changed
+
+Mon 23 Jul 2018 08:53:18 AM EDT
+
+Gear pick up and place using vel/fmax:
+
+friction and mindepth of part and of gripper fingers
+    vel     force   friction mindepth   weight      results
+    .1      10      inf/inf  .1          0.0039kg   dropped gear
+    .1      20      inf/inf
+    .1      30      inf/inf                         dropped gear fingers disappeared
+
+
+
+was actually NOT infinite friction
+Now:
+<mass>0.0039</mass>
+
+
+<model name="sku_part_large_gear">
+    <link name="link1">
+        <collision name="collision1">
+            <pose frame="">0 0 0 0 0 0</pose>
+            <geometry>
+                <mesh>
+                    <scale>0.0254 0.0254 0.0254</scale>
+                    <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+                </mesh>
+            </geometry>
+            <max_contacts>10</max_contacts>
+            <surface>
+                <contact>
+                    <ode>
+                        <kp>1e+07</kp>
+                        <kd>1e+05</kd>
+                        <max_vel>0.1</max_vel>
+                        <min_depth>0.1</min_depth>
+                    </ode>
+                </contact>
+                <bounce />
+                <friction>
+                    <ode>
+                        <mu>Inf</mu>
+                        <mu2>Inf</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </collision>
+Fri 20 Jul 2018 10:35:52 AM EDT
+not clear need to set vel and effort if not used by algorithm.
+
+////////////////////////////////////////////////////////////////////////////////
+bool CController::UpdateRobot()
+{
+    // Save last joints to calculate joint velocities
+    sensor_msgs::JointState & lastjoints(laststatus.currentjoints);
+    lastjoints = status.currentjoints;
+    if (lastjoints.velocity.size() == 0)
+        lastjoints.velocity.resize(lastjoints.position.size(), 0.0);
+    if (lastjoints.effort.size() == 0)
+        lastjoints.effort.resize(lastjoints.position.size(), 0.0);
+
+    // Update robot position based on output from RCSInterpreter
+    // Note ccl command may have not update of position (e.g., dwell).
+    if (_nextcc.joints.position.size() > 0)
+        status.currentjoints = _nextcc.joints;   // <<< THIS IS WHERE POSITION UPDATE HAPPENS
+
+    // Update gripper position based on output from RCSInterpreter
+    // Note ccl command may have not update of gripper.
+    if(_nextcc.next_gripper_goal_joints.position.size() > 0 )
+    {
+        gripperjoints=_nextcc.next_gripper_goal_joints;
+        status.eepercent = _nextcc.eepercent;
+    }
+
+    status.currentjoints.name = robotKinematics()->JointNames();
+    // Update status based on current joint positions and last joint positions
+    // NOT SURE WANT TO BLANK OUT VEL EFFORT IF NOT REQUIRED
+#if 0
+    for (size_t k = 0; k < lastjoints.position.size(); k++) {
+        if (status.currentjoints.velocity.size() <= k)
+            status.currentjoints.velocity.push_back(0.0);
+        status.currentjoints.velocity[k] = (fabs(status.currentjoints.position[k]) + fabs(lastjoints.position[k])) / 2.0;
+        if (status.currentjoints.effort.size() <= k)
+            status.currentjoints.effort.push_back(0.0);
+        status.currentjoints.effort[k] = (fabs(status.currentjoints.velocity[k]) + fabs(lastjoints.velocity[k])) / 2.0;
+    }
+#endif
+
+    // Give pose of robot no gripper or base offsets included
+    tf::Pose & lastpose(laststatus.currentpose);
+    lastpose = status.currentpose;
+    status.currentpose = robotKinematics()->FK(status.currentjoints.position); /**<  current robot pose */
+
+#if 0
+    // Fixme: this does not work
+    std::vector<int> outofbounds;
+    std::string msg;
+    if (robotKinematics()->CheckJointPositionLimits(status.currentjoints.position, outofbounds, msg)) {
+        throw RobotControlException(last_crcl_command_num1000, msg.c_str());
+    }
+#endif
+
+    {
+        static tf::Pose lastpose=tf::Identity();
+        if(!(lastpose == status.currentpose))
+        {
+            ofsMotionTrace << Name().c_str() << " UPDATED ROBOT\n";
+            ofsMotionTrace << "  Robot Pose    =" << RCS::DumpPoseSimple(status.currentpose).c_str() << "\n";
+            ofsMotionTrace << "  Goal Joints   =" << VectorDump<double>(_nextcc.joints.position).c_str() << "\n" << std::flush;
+        }
+        lastpose = status.currentpose;
+    }
+
+    return true;
+}
+
+
+http://www.robopgmr.com/?p=5614
+
+
+Wed 18 Jul 2018 09:33:09 AM EDT
+
+http://gazebosim.org/tutorials?tut=set_velocit
+inline void set_name(const ::std::string& value);
+set_velocity(double value)
+
+ERP and CFM
+http://gazebosim.org/tutorials?tut=modifying_world#PhysicsProperties
+
+
+::gazebo::msgs::Axis* axis1_;
+
+// required double limit_effort = 4;
+inline bool has_limit_effort() const;
+inline void clear_limit_effort();
+static const int kLimitEffortFieldNumber = 4;
+inline double limit_effort() const;
+inline void set_limit_effort(double value);
+
+
+
+Using CRCL you will have to send an EE params set vel/fmax.
+Then Gazebo will have a plug-in to accept vel and effort limit.
+
+Could use position control for "open" gripper. Or use position max to clamp final vel position.
+A hybrid pos/vel/fmax approach seems difficult to detangle.
+
+
+CLOSED LOOP JOINT FEEDBACK (for position) THIS IS REQUEST REPONSE :(
+static const char GETJOINTPROPERTIES[] = "gazebo_msgs/GetJointProperties";
+  class GetJointPropertiesRequest : public ros::Msg
+
+Gazebo Msgs:
+https://github.com/arpg/Gazebo/tree/master/gazebo/msgs
+
+package gazebo.msgs;
+
+/// \ingroup gazebo_msgs
+/// \interface JointCmd
+/// \brief Message for joint command, used by physics::JointControlWidget
+
+
+import "vector3d.proto";
+import "axis.proto";
+import "pose.proto";
+import "pid.proto";
+
+message JointCmd
+{
+  required string name     = 1;
+  optional int32 axis      = 2 [default=0];
+  optional double force    = 3;
+
+  optional PID position    = 4;
+  optional PID velocity    = 5;
+  optional bool reset      = 6;
+}
+
+Tue 17 Jul 2018 01:06:28 PM EDT
+how to send/monitor joint velocities
+must produce vel/acc/jerk
+
+in Crcl client:
+std::string CrclClientCmdInterface::ActuateJoints (CRobot & robot, sensor_msgs::JointState joints)
+{
+    JointDetailsType details;
+    ActuatorJointSequence jout;
+
+    std::map<int, int> order;
+    for (unsigned int i = 0; i < joints.position.size(); i++)
+    {
+        int index = robot.FindJointIndex(joints.name[i]);
+        if(index < 0)
+            continue;
+        order[index]=i; // joints.position[i];
+    }
+    for (std::map<int,int>::iterator it=order.begin(); it!=order.end(); it++)
+    {
+        double dSpeed=0.0;
+
+        if(joints.velocity.size() > (*it).second)
+                dSpeed = joints.velocity[(*it).second];
+
+        if(dSpeed==0.0)
+            dSpeed=1.0;
+
+        JointSpeedAccelType jntSpeedAccel;
+        jntSpeedAccel.JointSpeed()=dSpeed;
+        jntSpeedAccel.JointAccel()=dSpeed * 10.0;
+
+        ActuateJointType jointstatus((*it).first + 1, joints.position[(*it).second], jntSpeedAccel );
+
+        jout.push_back(jointstatus);
+    }
+
+    ActuateJointsType cmd(++_commandnum);
+    cmd.ActuateJoint(jout);
+
+In crcl to ros translator:
+
+See:             cc.joints.velocity.push_back(speed); //  need conversion of velocity?
+
+
+CrclReturn CrclServerDelegateInterface::ActuateJoints(Crcl::ActuatorJointSequence joints)
+{
+    std::string strcmd="";
+    RCS::CanonCmd cc;
+    cc.crclcommand = CanonCmdType::CANON_MOVE_JOINT;
+    cc.CrclCommandID() = crclwm.CommandID();
+    cc.bCoordinated=crclwm._bCoordinatedMotion;
+    cc.endPoseTol=Crcl::Convert(crclwm._endPoseTolerance); // not sure useful?
+
+    for (int i = 0; i < joints.size(); i++) {
+        int jn = joints[i].JointNumber() - 1;
+        double speed, accel;
+        speed = crclwm.Rates().JointVelLimit().at(jn);
+        accel = crclwm.Rates().JointAccLimit().at(jn);
+        double setting, changerate;
+        std::string type;
+        if (JointSpeedAccelType * speedacc = dynamic_cast<JointSpeedAccelType *> (&(joints[i].JointDetails())))
+        {
+            type = "JointSpeedAccelType";
+            if(speedacc->JointSpeed().present ())
+                speed = *speedacc->JointSpeed() * crclwm._lengthConversion;
+            if(speedacc->JointAccel().present ())
+                accel = *speedacc->JointAccel() * crclwm._lengthConversion;
+
+        }
+        else if (JointForceTorqueType * forcetorque = dynamic_cast<JointForceTorqueType *> (&(joints[i].JointDetails())))
+        {
+            type = "JointForceTorqueType";
+            if(forcetorque->Setting().present ())
+                setting = *forcetorque->Setting();
+            if(forcetorque->ChangeRate().present ())
+                changerate = *forcetorque->ChangeRate();
+        }
+
+
+        //if ( ( j.type == RCS::RdfJoint::REVOLUTE ) || ( j.type == RCS::RdfJoint::CONTINUOUS ) )
+        {
+            cc.jointnum.push_back(joints[i].JointNumber() - 1); // adjust back to zero based math
+            double pos = joints[i].JointPosition() * crclwm._angleConversion;
+            logDebug("Joint names %s\n", RCS::VectorDump<std::string> (crclwm.jointnames).c_str());
+            cc.joints.name.push_back(crclwm.jointnames[cc.jointnum.back()]);
+            cc.joints.position.push_back(pos);
+            cc.joints.velocity.push_back(speed); //  need conversion of velocity?
+            cc.joints.effort.push_back(accel); //   need conversion of acc?Format()
+            strcmd+=StrFormat(",%6.4f",pos);
+        }
+    }
+    logDebug("ActuateJoints In=%s\n", strcmd.c_str());
+    logDebug("ActuateJoints Rcs=%s\n", RCS::VectorDump<double>(cc.joints.position).c_str());
+
+    RCS::cmds.AddMsgQueue(cc);
+
+    return CANON_MOTION;
+}
+
+
+Tue 17 Jul 2018 08:32:19 AM EDT
+Removed cvs logging for now
+VAR(bCvsPoseLogging, bool)
+VAR(CvsPoseLoggingFile, std::string)
+VAR(PoseLogging, CsvLogging)
+
+
+Mon 16 Jul 2018 12:32:19 AM EDT
+
+Have to accept crcl msg and then modify the cnc go_traj linear and rot dynamic profile
+
+Controller.h:
+std::vector<gomotion::GoTrajParams> joint_rate_params;
+gomotion::GoTrajParams linear_params;
+gomotion::GoTrajParams rotational_params;
+
+gotraj.h:
+GoTrajParams(double _vel, double _acc, double _jerk) :
+vel(_vel), acc(_acc),jerk(_jerk)
+
+
+Crcl2Rcs.cpp
+// Fixme: rates are ignored by RCS crcl interpreter
+if(cc.Rates().CurrentTransSpeed() >0.0)
+{
+    // clear rate vector
+    rosmsg.profile.clear();
+
+    // save current translation rate definition in move
+    // ignores specified acceleration for now
+    ::nistcrcl::CrclMaxProfileMsg trans_profile;
+    trans_profile.maxvel=cc.Rates().CurrentTransSpeed();
+    trans_profile.maxacc=10.*cc.Rates().CurrentTransSpeed();
+    trans_profile.maxjerk= 100.*cc.Rates().CurrentTransSpeed();
+    rosmsg.profile.push_back(trans_profile);
+
+    // save current rotational rate definition in move
+    // ignores specified acceleration for now
+    ::nistcrcl::CrclMaxProfileMsg rot_profile;
+    rot_profile.maxvel=cc.Rates().CurrentRotSpeed();
+    rot_profile.maxacc=10.*cc.Rates().CurrentRotSpeed();
+    rot_profile.maxjerk= 100.*cc.Rates().CurrentRotSpeed();
+    rosmsg.profile.push_back(rot_profile);
+}
+
+Here is how its
+r.Medium() =>
+void CController::medium_speeds()
+{
+    set_joint_speeds(1.0);
+    set_linear_speeds(1.0);
+    set_rotational_speeds(1.0);
+}
+
+
+Mon 16 Jul 2018 01:00:03 PM EDT
+needed to add in gripper offset after FK to get actual robot-centric position (which ignores gripper)
+
+
+Fri 06 Jul 2018 03:57:45 PM EDT
+[Err] [Mesh.cc:562] EXCEPTION: Index too large
+
+Qt has caught an exception thrown from an event handler. Throwing
+exceptions from an event handler is not supported in Qt. You must
+reimplement QApplication::notify() and catch all exceptions there.
+
+terminate called after throwing an instance of 'gazebo::common::Exception'
+
+
+
+Fri 06 Jul 2018 03:039:44 PM EDT
+changed mass to 1/2 pound
+<mass>0.226796185</mass>
+was
+<mass>0.004984</mass>
+ENDED UP NOT WORKING
+
+Fri 06 Jul 2018 02:49:44 PM EDT
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_Finger1=-0.01
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_Finger2=0.01
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_Finger1=-0.01
+Didn't Process msg!!!sia20d::motoman_sia20d::motoman_Finger2=0.01
+
+Fri 06 Jul 2018 02:02:53 PM EDT
+attempt to incorporate new ability lab gripper created by Peter Mnev
+
+<link name="Finger1">
+    <pose frame="">-0.035 -0.000671 1.6442 1.5708 -7e-06 3.14159</pose>
+
+<link name="Finger2">
+      <pose frame="">0.00572 0.000364 1.6914 3.14159 4e-06 1.5708</pose>
+
+I think these are at center line
+<link name="Finger1">
+     <pose frame="">-0.028 -0.000671 1.6442 1.5708 -7e-06 3.14159</pose>
+<link name="Finger2">
+           <pose frame="">0.001072 0.000364 1.6914 3.14159 4e-06 1.5708</pose>
+
+
+
+Fri 22 Jun 2018 11:55:50 AM EDT
+2018-06-22T15:53:02  ======================================================
+Timestamp =     1970-Jan-01 00:00:00
+Command =       CANON_SET_GRIPPER
+CommandNum =    47
+Final Pose =       0.00,   0.00,   0.00| -nan, -nan, -nan
+Joints =
+JointNum =
+bStraight =     0
+dwell_seconds = 0
+bCoordinated =  0
+eepercent =     0.01  <<<<<<<<<<<<<
+
+Thu 21 Jun 2018 03:59:43 PM EDT
+#Two-integer timestamp that is expressed as:
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+# time-handling sugar is provided by the client library
+time stamp
+
+
+
+Thu 21 Jun 2018 03:39:43 PM EDT
+Removed crcl_server threading - now cleanly quits ???
+
+Thu 21 Jun 2018 03:36:04 PM EDT
+HARD CODED CRCL PORT
+ncs[i]->crclPublishStatusRate()=RCS::robotconfig.GetSymbolValue<double>(robots[i] + ".crclPublishStatusPeriod", "0.05");
+ncs[i]->crclIp()=RCS::robotconfig.GetSymbolValue<double>(robots[i] + ".crclIp", "127.0.0.1");
+ncs[i]->crclPort()=RCS::robotconfig.GetSymbolValue<double>(robots[i] + ".crclPort", "64444");
+
+pCrclServer=std::shared_ptr<crcl::crcl_server>( new crcl::crcl_server(
+                                      >>>>          "127.0.0.1",
+                                      >>>>          64444,
+                                                    0.1,
+                                                    robotKinematics()->urdfXml(),
+                                                    robotKinematics()->BaseLink(),
+                                                    robotKinematics()->EndLink() ));
+
+
+Thu 21 Jun 2018 03:13:13 PM EDT
+> bash: line 1: 31308 Segmentation fault      (core dumped) ./nist_robotsnc -r fanuc_
+michalos@woodsy:nist_robotsnc>
+
+
+Thu 21 Jun 2018 02:08:59 PM EDT
+void CAsioCrclServer::server(boost::asio::io_service & io_service, short port) {
+    try {
+        // only need one accept for this end point - can have multiple clients
+        m_pAcceptor = new tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+        m_pAcceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+        StartAsyncAccept();
+
+        // Thread will stop here... OR WILL IT - will it fall thru if nothing to process?
+        while (CAsioCrclServer::bRunning) {
+            _io_service.run(); // Run the io_service object's event processing loop.
+ >>>>>           usleep(10000);  // ADDED wait 10 milliseconds - hogging CPU
+        }
+    }    catch (...) {
+        // Logger << "Fatal Error in CAsioCrclServer::server\n";
+    }
+}
+
+
+Wed 20 Jun 2018 04:08:59 PM EDT
+Why is this not the id in the CRCL XML?
+rosmsg.crclcommandnum = cc.CommandID();
+
+
+
+Wed 20 Jun 2018 02:08:59 PM EDT
+How often is the world state updated?
+<real_time_update_rate>
+ Description: Rate at which to update the physics engine (UpdatePhysics calls per real-time second).  (was physics.sdf's update_rate).
+ Required: 1    Type: double    Default: 1000
+
+
+<physics type="ode">
+          <max_step_size>0.001</max_step_size>
+          <real_time_factor>1</real_time_factor>
+          <real_time_update_rate>1000</real_time_update_rate>
+          <gravity>0 0 -9.8</gravity>
+</physics>
+ Made 500
+
+Tue 19 Jun 2018 04:32:25 PM EDT
+REMOVED OLD STOP HANDLING SINCE NOW PRIORITY QUEUE
+#if 0
+        // STOP in non priority queue - each cycle check if stop in queue
+        // Check for STOP MOTION - interrupts any commands and stops motion and clears message queue
+        RCS::CMessageQueue<nistcrcl::CrclCommandMsg>::xml_message_queue_iterator it;
+        it = std::find_if(crclcmds.begin(), crclcmds.end(),
+                          boost::bind(&nistcrcl::CrclCommandMsg::crclcommand, _1) == RCS::CanonCmdType::CANON_STOP_MOTION);
+        if (it != crclcmds.end()) {
+            crclcmds.ClearMsgQueue();
+        }
+#endif
+
+
+Tue 19 Jun 2018 03:32:25 PM EDT
+Moveto error - FIX MUST ASSIGN METER AS UNITS
+127.0.0.1:57608: [<?xml version="1.0" encoding="UTF-8"?>
+<CRCLCommandInstance>
+<CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="MoveToType">
+<CommandID>9</CommandID>
+<MoveStraight>false</MoveStraight>
+<EndPosition><
+Point><X>0.464362733660877</X>  METER
+<Y>0.0243362196529689</Y>       METER?
+<Z>-2.305</Z></Point>           MM
+<XAxis><I>1.11022302462516E-16</I><J>3.46944695195361E-18</J>
+<K>1.0</K></XAxis><ZAxis><I>0.998629534754574</I>
+<J>0.0523359562429438</J><K>-2.22044604925031E-16</K>
+</ZAxis></EndPosition>
+</CRCLCommand></CRCLCommandInstance>]
+
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = ActuateJointsType with ID = 15, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ActuateJointsType"><CommandID>15</CommandID><ActuateJoint><JointNumber>1</JointNumber><JointPosition>3.0</JointPosition><JointDetails xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="JointSpeedAccelType"><JointSpeed>20.0</JointSpeed></JointDetails></ActuateJoint></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = StopMotionType with ID = 14, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14</CommandID><StopCondition>Fast</StopCondition></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = InitCanonType with ID = 16, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="InitCanonType"><CommandID>16</CommandID></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetTransSpeedType with ID = 17, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetTransSpeedType"><CommandID>17</CommandID><TransSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TransSpeedAbsoluteType"><Setting>100.0</Setting></TransSpeed></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetRotSpeedType with ID = 18, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetRotSpeedType"><CommandID>18</CommandID><RotSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RotSpeedAbsoluteType"><Setting>90.0</Setting></RotSpeed></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = StopMotionType with ID = 17, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>17</CommandID><StopCondition>Fast</StopCondition></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+
+Using trac_ik
+sudo apt-get install ros-kinetic-trac-ik
+sudo apt-get install libnlopt-dev
+
+#if 0
+   KDL::Tree tree;
+   if (!kdl_parser::treeFromString(urdf_xml, tree)) {
+        ROS_ERROR("Could not initialize tree object");
+        throw std::runtime_error("Exception: robot_model.treeFromString(xml,tree)");
+    }
+    if (!tree.getChain(_rootlinkname, "motoman_robotiq_85_adapter_link", chain)) {
+        ROS_ERROR("Could not initialize chain object");
+        throw std::runtime_error("Exception: tree.getChain)");
+    }
+#endif
+#if 0
+1: 0.000 0.000 0.330 / 0.000 -0.000 0.000 / 0.000 0.000 1.000
+2: 0.050 0.000 0.000 / 0.000 -0.000 0.000 / 0.000 1.000 0.000
+3: 0.000 0.000 0.330 / 0.000 -0.000 0.000 / 0.000 -1.000 0.000
+
+4: 0.000 0.000 0.035 / 0.000 -0.000 0.000 / -1.000 0.000 0.000
+5: 0.335 0.000 0.000 / 0.000 -0.000 0.000 / 0.000 -1.000 0.000
+6: 0.080 0.000 0.000 / 0.000 -0.000 0.000 / 1.000 0.000 0.000
+
+
+KDL::Chain chain;
+_pTRAC_IK->getKDLChain(chain);
+     chain.addSegment(Segment(Joint(Vector(0.0,0.0,.33 ), Vector(0,0,1) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.0,0.0,.33 ))));
+
+     chain.addSegment(Segment(Joint(Vector(0.05,0.0,0.0 ), Vector(0,1,0) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.05,0.0,0.0 ))));
+
+     chain.addSegment(Segment(Joint(Vector(0.0,0.0,.33 ), Vector(0,-1,0) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.0,0.0,.33 ))));
+
+
+     chain.addSegment(Segment(Joint(Vector(0.0,0.0,0.035 ), Vector(-1,0,0) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.0,0.0,.035 ))));
+
+     chain.addSegment(Segment(Joint(Vector(0.335,0.0,0.0 ), Vector(0,-1,0) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.335,0.0,0.0 ))));
+
+     chain.addSegment(Segment(Joint(Vector(0.080,0.0,0.0 ), Vector(1,0,0) , Joint::RotAxis ),
+     KDL::Frame(KDL::Rotation(), KDL::Vector(0.080,0.0,0.0 ))));
+
+
+#endif
+
+https://github.com/baxter-flowers/trac_ik_baxter/blob/master/src/ik_server.cpp
+
+
+inline tf::Pose CreateRPYPose(std::vector<double> ds) {
+    assert(ds.size() > 5);
+    return tf::Pose(tf::Quaternion(ds[5], ds[4], ds[3]), tf::Vector3(ds[0], ds[1], ds[2]));
+}
+
+pose = CreateRPYPose Convert<std::vector<double>, tf::Pose> (dbls);
+
+
+inv> f
+fwd> 0 0 0 0 1 0
+464.987816 0.000000 696.396193 0.000000 -1.000000 0.000000 in 0.000030 seconds
+0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 in 0.000027 seconds
+fwd> inv
+inv> 0.41  -0.06   0.16 0.00 0.00 0.00
+0.043191 -99.714932 -160.162017 -0.049653 60.447093 -0.024494 in 0.000160 seconds
+0.410000 -0.060000 0.160000 -0.000004 0.000000 -0.000002 in 0.000003 seconds
+
+Test pose          =   0.41,  -0.06,   0.16| 0.00, 0.00, 0.00
+KinTest IK Joints  =-0.18, 1.04,-0.63, 0.18, 1.67,-0.02
+KinTest FK pose    =   0.41,  -0.06,   0.16| 0.00, 0.00, 0.00
+
+Test pose          =   0.41,  -0.06,   0.16| 0.00,-0.00, 0.00
+KinTest IK Joints  =-0.18, 1.04,-0.63,-2.96,-1.67,-3.12
+KinTest FK pose    =   0.41,  -0.06,   0.16|-0.00, 0.00, 0.00
+
+Test pose          =   0.41,  -0.06,   0.16| 0.00,-0.00, 0.00
+KinTest IK Joints  =-0.18, 1.04,-0.63, 0.18, 1.67,-0.02
+KinTest FK pose    =   0.41,  -0.06,   0.16|-0.00,-0.00, 0.00
+
+
+IN joints={-0.063, -0.153, -0.592, 0.0, -1.0, 0.0};
+FK pose            =   0.33,  -0.02,   0.47| 0.00, 0.00, 0.00
+KinTest IK Joints  =-0.06,-0.15,-0.59, 0.00,-1.00, 0.00
+
+Test pose          =   0.41,  -0.06,  -0.16| 0.00, 0.00, 0.00
+KinTest IK Joints  = 2.96,-2.11, 2.19, 0.20,-1.17,-3.06
+
+gokintest:
+
+inv> 0.41   -0.06   -0.16  0.00  0.00  0.00
+-0.179854 2.053734 0.358501 -2.960368 -1.693215 3.119221 in 0.000128 seconds
+0.410000 -0.060000 -0.160000 -0.000000 0.000000 0.000000 in 0.000003 seconds
+
+WRONG so conversion between go & tf must be wrong
+NOOOOOOOOoo maybe gotraj has routines linking against nc that are old
+
+Wed 13 Jun 2018 07:36:09 PM EDT
+NM
+https://www.thegeekstuff.com/2012/03/linux-nm-command/
+
+INSTANCES IN THE ROBOT COORDINATE FRAME
+> instances robot
+sku_large_gear_vessel1 at    0.33,   0.60,  -0.18, 0.00, 0.00, 0.00
+sku_large_gear_vessel2 at   -0.16,   0.43,  -0.18, 0.00, 0.00, 0.00
+sku_kit_s2l2_vessel4 at    0.09,   0.43,  -0.18, 0.00, 0.00, 0.00
+sku_part_large_gear5 at    0.38,   0.60,  -0.18, 0.00, 0.00, 0.00
+sku_part_large_gear6 at    0.27,   0.60,  -0.18, 0.00, 0.00, 0.00
+sku_part_large_gear7 at   -0.10,   0.43,  -0.18, 0.00, 0.00, 0.00
+sku_kit_s2l2_vessel3 at    0.33,   0.44,  -0.18, 0.00, 0.00, 0.00
+sku_part_large_gear8 at   -0.21,   0.43,  -0.18, 0.00, 0.00, 0.00
+sku_part_small_gear10 at    0.16,   0.57,  -0.18, 0.00, 0.00, 0.00
+sku_part_small_gear12 at    0.11,   0.62,  -0.18, 0.00, 0.00, 0.00
+sku_small_gear_vessel9 at    0.14,   0.59,  -0.18, 0.00, 0.00, 0.00
+sku_part_small_gear11 at    0.16,   0.62,  -0.18, 0.00, 0.00, 0.00
+sku_part_small_gear13 at    0.11,   0.57,  -0.18, 0.00, 0.00, 0.00
+sku_kit_m2l1_vessel14 at    0.57,   0.11,  -0.18, 0.00, 0.00, 0.00
+sku_kit_m2l1_vessel15 at    0.35,   0.10,  -0.18, 0.00, 0.00, 0.00
+sku_medium_gear_vessel16 at    0.38,  -0.10,  -0.17, 0.00, 0.00, 0.00
+sku_part_medium_gear17 at    0.41,  -0.06,  -0.16, 0.00, 0.00, 0.00
+sku_part_medium_gear18 at    0.68,   0.23,   0.15, 0.00, 0.00, 0.00
+sku_part_medium_gear19 at    0.34,  -0.14,  -0.16, 0.00, 0.00, 0.00
+sku_part_medium_gear20 at    0.42,  -0.14,  -0.16, 0.00, 0.00, 0.00
+sku_large_gear_vessel21 at    0.56,  -0.11,  -0.18, 0.00, 0.00, 0.00
+sku_part_large_gear22 at    0.58,  -0.07,  -0.17, 0.00, 0.00, 0.00
+sku_part_large_gear23 at    0.58,  -0.17,  -0.17, 0.00, 0.00, 0.00
+
+> where  (SAFE)
+Status Joints   -0.063,-0.153,-0.592,-0.000,-1.000, 0.000
+FK Robot Pose T   = 0.0308709,-0.00194745,0.426709
+FK World Pose T   = 0.017939,-1.15179,1.39878
+
+rokin:
+0.327679 -0.020671 0.466133 0.000000 1.439000 -0.063000
+-0.063000 -0.153000 -0.592000 0.000000 -1.000000 0.000000
+
+How can we get the robot to world X?
+base=-0.169, -1.140, 0.934191,  0.0,0.0,0.0
+
+
+Wed 13 Jun 2018 11:10:42 AM EDT
+added moveto
+moveto 0.39,  -1.32,   1.3, 0,0,-90
+
+Status Joints     = -0.384, 2.530, 3.639, 0.054, 0.409, 5.850
+FK Robot Pose T   = 0.635565,-0.133822,0.437896
+RPY               = 0,0,0
+Q                 = 2.3825e-09,-0.686466,-3.28945e-09,0.727162
+FK World Pose T   = 0.305852,-1.27382,1.36432
+RPY               = 0,0,0
+Q                 = 2.3825e-09,-0.686466,-3.28945e-09,0.727162
+IK Robot Joints   = -0.384, 2.530, 3.639, 0.054, 0.409, 5.850
+
+
+Tue 12 Jun 2018 04:51:24 PM EDT
+IK bombed on inverse singularity
+
+enum {
+  GO_RESULT_OK = 0,
+  GO_RESULT_IGNORED,		/* action can't be done, ignored */
+  GO_RESULT_BAD_ARGS,		/* arguments bad, e.g., null pointer */
+  GO_RESULT_RANGE_ERROR,	/* supplied range value out of bounds */
+  GO_RESULT_DOMAIN_ERROR,	/* resulting domain out of bounds */
+  GO_RESULT_ERROR,		/* action can't be done, a problem */
+  GO_RESULT_IMPL_ERROR,		/* function not implemented */
+  GO_RESULT_NORM_ERROR,		/* a value is expected to be normalized */
+  GO_RESULT_DIV_ERROR,		/* divide by zero */
+  GO_RESULT_SINGULAR=9!,		/* a matrix is singular */
+  GO_RESULT_NO_SPACE,		/* no space for append operation */
+  GO_RESULT_EMPTY,		/* data structure is empty */
+  GO_RESULT_BUG			/* a bug in Go, e.g., unknown case */
+};
+
+GoFanucKin::IK
+Before base subtract in z:	xyz=0.418578,-0.0577058,0.308334
+        q=0.999448,-0.031493,-0.0105964,-0.000333896
+        rpy=3.14159,0.0212037,-0.063
+After base subtract in z:	xyz=0.418578,-0.0577058,-0.0216662
+        q=0.999448,-0.031493,-0.0105964,-0.000333896
+        rpy=3.14159,0.0212037,-0.063
+IK Joints:
+Joints=-0.136702,0.434563,-0.901503,0.00245139,-0.690441,0.071796
+Reaching to itself
+
+GoFanucKin::FK
+Joints=-0.00840612,-0.0178323,-0.06512,0,-0.11,0
+Go pose:	xyz=0.459443,-0.00386223,0.329135
+        q=0.766226,-0.00322051,0.642557,0.00270072
+        rpy=3.14159,-1.39568,-0.00840612
+Before base add in z:	xyz=0.459443,-0.00386223,0.329135
+        q=0.766226,-0.00322051,0.642557,0.00270072
+        rpy=3.14159,-1.39568,-0.00840612
+After base add in z:	xyz=0.459443,-0.00386223,0.659135
+        q=0.766226,-0.00322051,0.642557,0.00270072
+        rpy=3.14159,-1.39568,-0.00840612
+fanuc_controller UPDATED ROBOT JOINTS
+  World Pose    =   0.45,  -1.15,   1.55| 0.00, 0.00, 0.00
+  Robot Pose    =   0.46,  -0.00,   0.66| 0.00, 0.00, 0.00
+  Goal Joints   =-0.00840612,-0.0178323,-0.06512,0,-0.11,0
+
+
+GoFanucKin::FK
+Joints=0,0,0,0,0,0
+Go pose:	xyz=0.465,0,0.365
+        q=0.707107,0,0.707107,0
+        rpy=-3.14159,-1.5708,0
+Before base add in z:	xyz=0.465,0,0.365
+        q=0.707107,0,0.707107,0
+        rpy=-3.14159,-1.5708,0
+After base add in z:	xyz=0.465,0,0.695
+        q=0.707107,0,0.707107,0
+        rpy=-3.14159,-1.5708,0
+        GoFanucKin::FK
+Joints=-0.063,-0.153,-0.592,0,-1,0
+Go pose:	xyz=0.294947,-0.0186063,0.0882696
+        q=-0.999448,0.031493,0.0105964,0.000333896
+        rpy=3.14159,0.0212037,-0.063
+Before base add in z:	xyz=0.294947,-0.0186063,0.0882696
+        q=0.999448,-0.031493,-0.0105964,-0.000333896
+        rpy=3.14159,0.0212037,-0.063
+After base add in z:	xyz=0.294947,-0.0186063,0.41827
+        q=0.999448,-0.031493,-0.0105964,-0.000333896
+        rpy=3.14159,0.0212037,-0.063
+
+IKFAST
+IK     Joints   -0.063:-0.153:-0.592:-0.000:-1.000:-0.000
+FK     Pose     T   = 0.327679,-0.0206711,0.466133
+RPY = 0,0,0
+Q   = 0.997334,-0.0314264,0.0658178,0.00207395
+
+
+
+<PoseStatus>
+  <Pose>
+    <Point>
+      <X>2.56914135837448e-322</X>
+      <Y>6.93944015747728e-310</Y>
+      <Z>6.93944015748677e-310</Z>
+    </Point>
+    <XAxis>
+      <I>0.327679160854671</I>
+      <J>-0.0314264315545488</J>
+      <K>0</K>
+    </XAxis>
+    <ZAxis>
+      <I>0.466133492126414</I>
+      <J>0.00207394707641782</J>
+      <K>0</K>
+    </ZAxis>
+  </Pose>
+</PoseStatus>
+
+
+> where
+Status Pose     T   = 0.512,0.103,0.289
+RPY = 0,0,0
+Q   = 3.02997e-17,-1.92654e-16,-3.46945e-17,1
+Status Joints   -2.943:-2.286: 0.465: 0.000:-1.180:-0.199: 0.300: 0.000: 0.000: 0.300: 0.000: 0.000
+FK     Pose     T   = 0.512,0.103,0.289
+RPY = 0,0,0
+Q   = 3.02997e-17,-1.92654e-16,-3.46945e-17,1
+IK     Joints   -2.943:-2.286: 0.465: 0.000:-1.180:-0.199
+> safe
+> where
+Status Pose     T   = 0.327679,-0.0206711,0.466133
+RPY = 0,0,0
+Q   = 0.997334,-0.0314264,0.0658178,0.00207395
+Status Joints   -0.063:-0.153:-0.592:-0.000:-1.000: 0.000: 0.300: 0.000: 0.000: 0.300: 0.000: 0.000
+FK     Pose     T   = 0.327679,-0.0206711,0.466133
+RPY = 0,0,0
+Q   = 0.997334,-0.0314264,0.0658178,0.00207395
+IK     Joints   -0.063:-0.153:-0.592:-0.000:-1.000:-0.000
+
+
+
+
+Wed 06 Jun 2018 04:11:14 PM EDT
+Z cannot be zero or it will try to move into table?
+BUT z should be a robotcentric pose NOT world centric
+
+
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd =
+SetTransSpeedType with ID = 21, 	xml:
+<CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:type="SetTransSpeedType"><CommandID>21</CommandID><
+TransSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:type="TransSpeedAbsoluteType">
+<Setting>100.0</Setting>
+</TransSpeed></CRCLCommand>
+
+Wed 06 Jun 2018 02:40:36 PM EDT
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetRotSpeedType with ID = 22, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetRotSpeedType"><CommandID>22</CommandID><RotSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RotSpeedAbsoluteType"><Setting>90.0</Setting></RotSpeed></CRCLCommand>
+
+
+////////////////////////////////////////////////////////////////////////////////
+CrclReturn CrclServerDelegateInterface::SetRotSpeed(double speed)
+{
+    logFatal("CrclServerDelegateInterface::SetRotSpeed NOT IMPLEMENTED\n");
+     return CANON_SUCCESS;
+}
+
+
+
+std::string CrclClientCmdInterface::MoveThroughTo(Crcl::PoseType *poses,
+        int numPoses,
+        double * accelerations,
+        double * speeds,
+        Crcl::PoseToleranceType * tolerances) {
+    std::ostringstream strfs;
+
+    // FIXME:
+    assert(0);
+
+ Wed 06 Jun 2018 01:54:24 PM EDT
+
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetLengthUnitsType with ID = 20, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetLengthUnitsType"><CommandID>20</CommandID><UnitName>meter</UnitName></CRCLCommand>
+
+Thread:PendantClient.pollStatus.socket=CRCLSocket(localhost/127.0.0.1:64444) java.io.EOFException: is(java.io.BufferedInputStream@2b43d0ae).read(tagBytesPrep([10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), tagBytesPrepped(0), (11))) returned -1: sb=
+
+Thread:PendantClient.pollStatus.socket=CRCLSocket(localhost/127.0.0.1:64444) java.io.EOFException: is(java.io.BufferedInputStream@2b43d0ae).read(tagBytesPrep([10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), tagBytesPrepped(0), (11))) returned -1: sb=
+
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = StopMotionType with ID = 11, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>11</CommandID><StopCondition>Fast</StopCondition></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = InitCanonType with ID = 13, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="InitCanonType"><CommandID>13</CommandID></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetTransSpeedType with ID = 14, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetTransSpeedType"><CommandID>14</CommandID><TransSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TransSpeedAbsoluteType"><Setting>100.0</Setting></TransSpeed></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetRotSpeedType with ID = 15, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetRotSpeedType"><CommandID>15</CommandID><RotSpeed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RotSpeedAbsoluteType"><Setting>90.0</Setting></RotSpeed></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = StopMotionType with ID = 14, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="StopMotionType"><CommandID>14</CommandID><StopCondition>Fast</StopCondition></CRCLCommand>
+Thread:AWT-EventQueue-0 PendantClientInner.sendCommand() : ret = true
+
+ finalpose from CRCL way off
+Locals
+        bNewCmd	false	bool
+        cmd	@0x7fc988fb3a50	RCS::CanonCmd
+                [nistcrcl::CrclCommandMsg_<std::allocator<void> >]	@0x7fc988fb3a50	nistcrcl::CrclCommandMsg_<std::allocator<void> >
+                        bCoorThread:AWT-EventQueue-0 PendantClientInner.sendCommand() : cmd = SetLengthUnitsType with ID = 20, 	xml: <CRCLCommand xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="SetLengthUnitsType"><CommandID>20</CommandID><UnitName>meter</UnitName></CRCLCommand>dinated	0	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_bCoordinated_type
+                        bStraight	0	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_bStraight_type
+                        crclcommand	4	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_crclcommand_type
+                        crclcommandnum	279	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_crclcommandnum_type
+                        dwell_seconds	0.0	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_dwell_seconds_type
+                        eepercent	0.0	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_eepercent_type
+                        finalpose	@0x7fc988fb3a90	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_finalpose_type
+                                orientation	@0x7fc988fb3aa8	geometry_msgs::Pose_<std::allocator<void> >::_orientation_type
+                                position	@0x7fc988fb3a90	geometry_msgs::Pose_<std::allocator<void> >::_position_type
+                                        x	6.19184591346381e+223	geometry_msgs::Point_<std::allocator<void> >::_x_type
+                                        y	6.9417577750485e-310	geometry_msgs::Point_<std::allocator<void> >::_y_type
+                                        z	6.941757775058e-310	geometry_msgs::Point_<std::allocator<void> >::_z_type
+                        header	@0x7fc988fb3a50	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_header_type
+                        hint	<0 items>	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_hint_type
+                        jointnum	<0 items>	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_jointnum_type
+                        joints	@0x7fc988fb3ae0	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_joints_type
+                        opmessage	""	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_opmessage_type
+                        partcolor	@0x7fc988fb3c10	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_partcolor_type
+                        partfeature	""	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_partfeature_type
+                        partname	""	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_partname_type
+                        profile	<0 items>	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_profile_type
+                        waypoints	<0 items>	nistcrcl::CrclCommandMsg_<std::allocator<void> >::_waypoints_type
+                _CommandID	281	unsigned long long
+                _ConfigMax	<0 items>	std::vector<double, std::allocator<double> >
+                _ConfigMin	<0 items>	std::vector<double, std::allocator<double> >
+                _ParentCommandID	0	unsigned long long
+                _Rates	@0x7fc988fb3c60	RCS::IRate
+                _StatusID	140504523767316	unsigned long long
+                absJointAcc	0.0	double
+                absJointSpeed	6.9418459357587e-310	double
+                absRotAcc	6.9417983763309e-310	double
+                absRotSpeed	6.94184590930644e-310	double
+                absTransAcc	6.94179837631606e-310	double
+                absTransSpeed	6.941845935801e-310	double
+                accprofile	0	int
+                endPoseTol	@0x7fc988fb3d98	RCS::PoseTolerance
+                gripperTol	@0x7fc988fb3dc8	RCS::PoseTolerance
+                gripper_moves	<0 items>	std::vector<sensor_msgs::JointState_<std::allocator<void> >, std::allocator<sensor_msgs::JointState_<std::allocator<void> > > >
+                intermediatePtTol	@0x7fc988fb3db0	RCS::PoseTolerance
+                next_gripper_goal_joints	@0x7fc988fb3df8	sensor_msgs::JointState
+                speed	<0 items>	std::vector<double, std::allocator<double> >
+                status	-1095339320	int
+                stoptype	0	int
+                type	0	int
+
+
+
+Wed 06 Jun 2018 12:42:38 PM EDT
+* transition to robot-centric coordinates where robot is at 0,0,0 in CRCL commands
+* is a flag.
+
+Tue 05 Jun 2018 04:08:21 PM EDT
+GoTraj::InitJoints Exceptionpgm->_gms.set_jpar(i, jparams[i].vel, jparams[i].acc, jparams[i].jerk)@gotraj.cpp:256
+CANNOT HAVE ZERO VELOCITY IN GOTRAJ!!!
+
+go_result go_motion_spec::set_jpar(go_integer i, go_real vel, go_real acc, go_real jerk) {
+    if (i < 0 || i >= GO_MOTION_JOINT_NUM) return GO_RESULT_ERROR;
+    if (vel <= GO_REAL_EPSILON ||
+            acc <= GO_REAL_EPSILON ||
+            jerk <= GO_REAL_EPSILON) return GO_RESULT_BAD_ARGS;
+
+    this->par[i].vel = vel, this->par[i].acc = acc, this->par[i].jerk = jerk;
+
+    return GO_RESULT_OK;
+}
+
+>>>>>>> VEL,ACC,JERK all zero!
+Locals
+        jparams	<6 items>	std::vector<gomotion::GoTrajParams, std::allocator<gomotion::GoTrajParams> >
+                [0]	@0x7f6ac8000df0	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+                [1]	@0x7f6ac8000e08	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+                [2]	@0x7f6ac8000e20	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+                [3]	@0x7f6ac8000e38	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+                [4]	@0x7f6ac8000e50	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+                [5]	@0x7f6ac8000e68	gomotion::GoTrajParams
+                        acc	0.0	double
+                        jerk	0.0	double
+                        vel	0.0	double
+
+
+
+Fri 01 Jun 2018 11:06:55 AM EDT
+Now we have to use the different speeds assigned by CRCL.
+
+cc.joints.velocity.push_back(speed); //  need conversion of velocity?
+int GoInterpreter::ParseJointCommand(RCS::CanonCmd cmd, RCS::CanonCmd &outcmd,
+                                     RCS::CanonWorldModel instatus, RCS::CanonWorldModel &outstatus)
+{
+    try {
+        cmd.joints = _kinematics->UpdateJointState(cmd.jointnum, instatus.currentjoints, cmd.joints);
+
+        // FIXME: this should be parameter in controller for faster and slower joint motinos.
+        std::vector<gomotion::GoTrajParams> jparams  (_kinematics->NumJoints(),
+                                                      gomotion::GoTrajParams(1.0 * _nc->current_joint_speed(),
+                                                                             10.0 * _nc->current_joint_speed(),
+                                                                             100.0 * _nc->current_joint_speed()
+                                                                             )
+                                                      );
+
+
+Locals
+        cmd	@0x7f08109f0610	RCS::CanonCmd
+        instatus	@0x7f08109f1b50	RCS::CanonWorldModel
+        jparams	<6 items>	std::vector<gomotion::GoTrajParams, std::allocator<gomotion::GoTrajParams> >
+                [0]	@0x7f07d80018e0	gomotion::GoTrajParams
+                        acc	0.2	double
+                        jerk	200.0	double
+                        vel	2.0	double
+                [1]	@0x7f07d80018f8	gomotion::GoTrajParams
+                        acc	0.2	double
+                        jerk	200.0	double
+                        vel	2.0	double
+                [2]	@0x7f07d8001910	gomotion::GoTrajParams
+                        acc	0.2	double
+                        jerk	200.0	double
+                        vel	2.0	double
+                [3]	@0x7f07d8001928	gomotion::GoTrajParams
+                        acc	0.2	double
+                        jerk	200.0	double
+                        vel	2.0	double
+                [4]	@0x7f07d8001940	gomotion::GoTrajParams
+                        acc	0.2	double
+                        jerk	200.0	double
+                        vel	2.0	double
+                [5]	@0x7f07d8001958	gomotion::GoTrajParams
+        outcmd	@0x7f08109f4ec0	RCS::CanonCmd &
+        outstatus	@0x1f59700	RCS::CanonWorldModel &
+        this	@0x1f9bdc0	RCS::GoInterpreter
+
+speed:
+        joint vel=16
+        linear vel=0
+        rotational vel=0
+
+
+inline sensor_msgs::JointState ZeroJointState(size_t numjoints) {
+    sensor_msgs::JointState joints;
+    for (size_t i = 0; i < numjoints; i++) {
+        joints.position.push_back(0.0);
+        joints.velocity.push_back(DEFAULT_JOINT_MAX_VEL);
+        joints.effort.push_back(DEFAULT_JOINT_MAX_ACCEL);
+    }
+    return joints;
+}
+
+
+Status Pose     T   = 0.327679,-0.0206711,0.466133
+RPY = 180,-7.55137,-3.60963
+Q   = 0.997334,-0.0314264,0.0658178,0.00207395
+THIS IS SAFE JOINT POSITION - no movement from CRCL
+Status Joints   -0.063:-0.153:-0.592: 0.000:-1.000: 0.000: 0.300: 0.000: 0.000: 0.300: 0.000: 0.000
+FK     Pose     T   = 0.327679,-0.0206711,0.466133
+RPY = 180,-7.55137,-3.60963
+Q   = 0.997334,-0.0314264,0.0658178,0.00207395
+IK     Joints   -0.063:-0.153:-0.592:-0.000:-1.000:-0.000
+
+
+
+Fri 18 May 2018 12:30:07 PM EDT
+Thread:PendantClient.pollStatus.socket=CRCLSocket(localhost/127.0.0.1:64444) javax.xml.bind.UnmarshalException
+ - with linked exception:
+[Exception [EclipseLink-25004] (Eclipse Persistence Services - 2.7.1.v20171221-bd47e8f): org.eclipse.persistence.exceptions.XMLMarshalException
+Exception Description: An error occurred unmarshalling the document
+Internal Exception: org.xml.sax.SAXParseException; cvc-datatype-valid.1.2.1: 'nan' is not a valid value for 'double'.]
+<CRCLStatus>
+  <CommandStatus>
+    <CommandID>3</CommandID>
+    <StatusID>3</StatusID>
+    <CommandState>CRCL_Done</CommandState>
+  </CommandStatus>
+  <JointStatuses>
+    <JointStatus>
+      <JointNumber>1</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+    <JointStatus>
+      <JointNumber>2</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+    <JointStatus>
+      <JointNumber>3</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+    <JointStatus>
+      <JointNumber>4</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+    <JointStatus>
+      <JointNumber>5</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+    <JointStatus>
+      <JointNumber>6</JointNumber>
+      <JointPosition>0</JointPosition>
+    </JointStatus>
+  </JointStatuses>
+  <PoseStatus>
+    <Pose>
+      <Point>
+        <X>0</X>
+        <Y>0</Y>
+        <Z>0</Z>
+      </Point>
+      <XAxis>
+        <I>0.465</I>
+        <J>0</J>
+        <K>nan</K>  <<<<<<<<<<<<<<<<<<<<<
+      </XAxis>
+      <ZAxis>
+        <I>0.695</I>
+        <J>0</J>
+        <K>0</K>
+      </ZAxis>
+    </Pose>
+  </PoseStatus>
+</CRCLStatus>
+
+Fri 18 May 2018 11:20:13 AM EDT
+Exception in  CController::Action() thread: unexpected enumerator encountered
+
+
+
+IN STATUS UPDATE
+
+std::string CrclClientCmdInterface::GetStatusReply(CrclStatus *wm) {
+    // CommandStateEnumType state((int) wm->_state);
+    //const char * sEnums[] = {"CRCL_Done", "CRCL_Error", "CRCL_Working", "CRCL_Ready"};
+    std::cout << "GetStatusReply=" << wm->CommandID() << ":" << wm->CommandStatus() << std::endl;
+    CommandStatusType status(wm->CommandID(), wm->CommandID(),
+            //sEnums[wm->CommandStatus()]);
+ >>>>           CommandStateEnumType::_xsd_CommandStateEnumType_literals_[wm->CommandStatus()]);
+    CRCLStatusType cmd(status);
+
+    cmd.CommandStatus(status);
+
+    // CRCLStatusType::JointStatuses & jointStatuses(cmd.JointStatuses());
+    CRCLStatusType::JointStatuses_type jointStatuses;
+    jointStatuses.JointStatus(wm->_CurrentJoints);
+    cmd.JointStatuses(jointStatuses);
+
+    cmd.PoseStatus(wm->_CurrentPose);
+
+    xml_schema::namespace_infomap map;
+    std::ostringstream strfs;
+    CRCLStatus(strfs, // std::cout,
+            (CRCLStatusType &) cmd,
+            map,
+            "UTF-8",
+            xml_schema::flags::dont_initialize);
+    return strfs.str();
+}
+
+Fri 11 May 2018 01:38:56 PM EDT
+Medium gears and large gears different height
+
+sku_part_medium_gear19 at    0.15,  -1.28,   0.94| 0.08,-0.01, 2.91
+sku_part_medium_gear20 at    0.23,  -1.28,   0.94|-0.09, 0.11, 1.26
+sku_part_large_gear23 at    0.39,  -1.33,   0.91|-0.42,-0.15,21.64
+
+
+Fri 11 May 2018 09:38:56 AM EDT
+Fixed crclapi.h,cpp to use CNC QBend that was changed/fixed
+
+sku_part_large_gear23 at    0.39:  -1.32:   0.92|-0.41:-0.15:21.63
+> move 0.55,-0.18,0.2
+close to correct gear, assuming QBend uses Safe q orientation.
+
+> safe
+> jog x 0.01
++++++++++++++++++++++++++++
+> jog z 0.01
+--------------------------
+> where
+Pose     T   = 0.597679:-0.0206711:0.206133
+RPY = 180:-7.55137:-3.60963
+Q   = 0.997334:-0.0314264:0.0658178:0.00207395
+Joints   -0.034: 1.017: 0.209: 0.006:-0.631: 0.034: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+Retract     =    0.00:   0.00:   0.20| 0.00:-0.00: 0.00
+Retract Inv =   -0.00:  -0.00:  -0.20| 0.00:-0.00: 0.00
+
+sku_part_large_gear22 at    0.39:  -1.21:   0.92|-0.31:-0.16: 1.51
+sku_part_large_gear23 at    0.39:  -1.32:   0.92|-0.41:-0.15:21.63
+
+
+> approach sku_part_large_gear23
+> [ERROR] [1525890991.484471878]: poll failed with error Interrupted system call
+fanuc_controller: BANG BANG CANON_MOVE_TO Started
+WORLD COORDINATES
+    Final Pose    =    0.39:  -1.32:   1.02|-0.00:82.57:-3.61
+    Cur  Pose     =    0.31:  -1.17:   1.44| 0.00:82.45:-3.61
+    Go Next Pose  =    0.39:  -1.32:   1.02|-0.00:82.57:-3.61
+ROBOT COORDINATES
+    GoalRobot Pose=    0.41:  -0.17:   0.05|-0.00:82.57:-3.61
+    Current   Pose=    0.33:  -0.02:   0.47| 0.00:82.45:-3.61
+    NextRobot Pose=    0.41:  -0.17:   0.05| 0.00:82.57:-3.61
+ROBOT JOINTS
+    Goal joints     -0.400126::1.18039::-0.270316::1.51497::0.042864::-1.18042:
+    Next joints     -0.400126::1.18039::-0.270323::1.51489::0.0428648::-1.18034:
+    Current joints  -0.063::-0.153::-0.592::0::-1::0:
+where
+Pose     T   = 0.406407:-0.16817:0.0478644
+RPY = 0.000142595:82.5682:-3.60944
+Q   = 0.0207798:0.659466:-0.0236662:0.751074
+Joints   -0.400: 1.180:-0.270: 1.515: 0.043:-1.180: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+CController::SetupCController::PublishGzJointStates
+Msg Joints -0.063::-0.153::-0.592::0::-1::0:CC Joints -0.063::-0.153::-0.592::0::-1::0:Msg Joints 0::0::0::0::0::0:CC Joints 0::0::0::0::0::0:Msg Joints -0.063::-0.153::-0.592::0::-1::0:CC Joints -0.063::-0.153::-0.592::0::-1::0:Msg Joints CC Joints
+
+BangBangInterpreter::ParseCommand() IK FAILED    0.40:  -0.06:  -0.38|-0.00:82.57:-3.61
+
+Wed 09 May 2018 01:10:50 PM EDT
+move 0.32782,-0.0206799,1.189687 // xy robot coordinates, z in world
+
+move 0.39, -1.21, 1.18
+the fanuc robot actually moved, (gripper orientation all wrong but fixed).
+WORLD COORDINATES
+    Final Pose    =    0.39:  -1.21:   1.18|-0.00:82.57:-3.61
+    Cur  Pose     =    0.31:  -1.17:   1.44| 0.00:82.45:-3.61
+    Go Next Pose  =    0.39:  -1.21:   1.18|-0.00:82.57:-3.61
+ROBOT COORDINATES
+    GoalRobot Pose=    0.40:  -0.06:   0.21|-0.00:82.57:-3.61
+    Current   Pose=    0.33:  -0.02:   0.47| 0.00:82.45:-3.61
+    NextRobot Pose=    0.40:  -0.06:   0.21|-0.00:82.57:-3.61
+ROBOT JOINTS
+    Goal joints     -0.150433::0.656773::-0.571362::-0.0532722::-0.213729::0.138765:
+    Next joints     -0.150433::0.656773::-0.571362::-0.0532722::-0.213729::0.138765:
+    Current joints  -0.063::-0.153::-0.592::0::-1::0:
+
+approach sku_part_large_gear22 at    0.39:  -1.21:   0.92
+CRAZY  went into table
+fanuc_controller: BANG BANG CANON_MOVE_TO Started
+WORLD COORDINATES
+    Final Pose    =    0.39:  -1.21:   1.02|-0.00:82.57:-3.61
+    Cur  Pose     =    0.39:  -1.21:   1.18|-0.00:82.57:-3.61
+    Go Next Pose  =    0.39:  -1.21:   1.02|-0.00:82.57:-3.61
+ROBOT COORDINATES
+    GoalRobot Pose=    0.40:  -0.06:   0.05|-0.00:82.57:-3.61
+    Current   Pose=    0.40:  -0.06:   0.21|-0.00:82.57:-3.61
+    NextRobot Pose=    0.40:  -0.06:   0.05|-0.00:82.57:-3.61
+ROBOT JOINTS
+    Goal joints     -0.14591::1.16225::-0.385559::0.100585::0.106814::-0.0177982:
+    Next joints     -0.14591::1.16225::-0.385559::0.100585::0.106814::-0.0177982:
+    Current joints  -0.150433::0.656773::-0.571362::-0.0532722::-0.213729::0.138765:
+
+
+
+Wed 09 May 2018 10:15:19 AM EDT
+note q is pointing straight down: 0.0207798:0.659466:-0.0236665:0.751074
+
+Jogging to medium gears with robot in -z direction
+> where
+Pose     T   = 0.32782:-0.0206799:0.164687
+RPY = -4.15093e-05:82.5682:-3.60964
+Q   = 0.0207798:0.659466:-0.0236665:0.751074
+Joints   -0.063: 0.724:-0.803:-0.000: 0.086: 0.000: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+> where sku_part_medium_gear18
+sku_part_medium_gear18=T   = 0.148335:-1.19892:0.937678
+RPY = -0.00081298:0.000437632:2.00268
+Q   = -7.16024e-06:3.69449e-06:0.0174758:0.999847
+> where (pointing into fanuc chest)
+Pose     T   = 0.300335:-0.0589214:0.263487
+RPY = -180:-4.90594e-07:180
+Q   = 1.74802e-08:1:-1.21551e-08:-4.28124e-09
+Joints   -0.154: 0.716:-0.600: 0.159:-1.822: 0.040: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+#fanuc below - it too is subtracting off base from pose
+# although y sign appears off - almost 1/2 meter in +y direction
+r_goalpose	@0x7f117dbf21f0	tf::Pose
+        m_basis	@0x7f117dbf21f0	tf::Matrix3x3
+        m_origin	@0x7f117dbf2250	tf::Vector3
+                m_floats	@0x7f117dbf2250	tfScalar[4]
+                        [0]	-0.19321699999999997	tfScalar
+                        [1]	0.4296389999999999	tfScalar
+                        [2]	0.23580900000000002	tfScalar
+                        [3]	0.0	tfScalar
+
+#Motoman below
+r_goalpose	@0x7f33eaff51f0	tf::Pose
+        m_basis	@0x7f33eaff51f0	tf::Matrix3x3
+        m_origin	@0x7f33eaff5250	tf::Vector3
+                m_floats	@0x7f33eaff5250	tfScalar[4]
+                        [0]	-0.4170527128751937	tfScalar
+                        [1]	-0.7115279046500447	tfScalar
+                        [2]	0.2641642413970229	tfScalar
+                        [3]	0.0	tfScalar
+NOTE Z is zero based. 0.2641642413970229 offset based on gripper & gear grasp offset?
+
+Robot  pose subtracts off base robot pose (0,0, 0.93)
+Why didn't this work for fanuc too?
+
+
+
+Wed 09 May 2018 08:22:05 AM EDT
+Command line compile of qt project
+If project has changed you need to update pro file and run qmake to generate new Makefile
+
+cd to the Build folder, and run make (there should be makefile)
+then make install
+E.g.,
+159  cd nist_robotsnc/
+160  make
+161  make install
+
+Will do debug build based on project settings (unclear why)
+
+
+Tue 08 May 2018 05:16:22 PM EDT
+trac_ik issue: solving returns -3 no answers
+if (solutions.empty()) {
+     q_out=q_init;
+     return -3;
+   }
+
+> jog z 0.01
+-------------------------------------------------
+> where
+Pose     T   = 0.3279:-0.0206851:0.184412
+RPY = -1.52873e-13:82.4534:-3.60963
+Q   = 0.0207563:0.658713:-0.0236875:0.751735
+Joints   -0.063: 0.647:-0.821:-0.000: 0.029: 0.000: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+sku_part_medium_gear18 at    0.15:  -1.20:   0.94|-0.00: 0.00: 2.00
+
+SO the gears are not in the same coordinate space as the robot
+THE GEARS MUST BE IN THE SAME COORDINATE SPACE
+
+Tue 08 May 2018 10:13:19 AM EDT
+
+
+Fanuc FK: (with tracik)
+> safe
+> where
+Pose     T   = 0.327679:-0.0206711:0.466133
+RPY = 0:82.4486:-3.60963
+Q   = 0.0207553:0.658682:-0.0236883:0.751762
+Joints   -0.063:-0.153:-0.592: 0.000:-1.000: 0.000: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+Fanuc FK: (with 3kin)
+> safe
+> where
+Pose     T   = 0.29664:-0.0187131:0.168252
+RPY = 180:1.21488:-3.60963
+Q   = 0.999448:-0.031493:-0.0105964:-0.000333896
+Joints   -0.063:-0.153:-0.592: 0.000:-1.000: 0.000: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+sku_part_large_gear23 at    0.39:  -1.32:   0.92|-0.38:-0.06:21.64
+> ik sku_part_large_gear23
+IK Position             T   = 0.578943:-0.172489:-0.504573
+RPY = -0.343354:-0.104532:21.6302
+Q   = -0.00277193:-0.00145823:0.187637:0.982234
+IK Joints               -0.289563::-nan::nan::nan::nan::nan:
+
+
+Fanuc FK: (with IK fast)
+> safe
+> where
+Pose     T   = 0.327679:-0.0206711:0.466133
+RPY = 180:-7.55137:-3.60963
+Q   = 0.997334:-0.0314264:0.0658178:0.00207395
+Joints   -0.063:-0.153:-0.592: 0.000:-1.000: 0.000: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+Motoman FK:
+> safe
+> where
+Pose     T   = -0.0497052:-0.281719:0.518967
+RPY = -174.426:-1.55688:-175.022
+Q   = -0.0440354:0.997754:-0.0491659:-0.0114453
+Joints    1.300: 0.220: 0.080: 2.260: 3.120:-1.000:-1.280: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+
+
+
+Mon 07 May 2018 05:13:34 PM EDT
+gripper was touching the part not the peg so there was contact and no servoing to grasp
+
+Mon 07 May 2018 03:20:49 PM EDT
+> approach sku_part_small_gear13
+> where
+Pose     T   = 0.0743284:0.562597:0.240678
+RPY = 180:8.14609e-15:-180
+Q   = -1.04083e-16:1:7.89325e-17:7.02385e-17
+Joints    1.439: 0.898: 0.102: 0.000:-0.775:-1.702: 0.200: 0.000: 0.000: 0.200: 0.000: 0.000
+> where sku_part_small_gear13
+sku_part_small_gear13=T   = -0.0776716:-0.577403:0.914869
+RPY = 1.04668:-0.420495:1.22005
+Q   = 0.00917233:-0.0035719:0.0106797:0.999895
+
+
+Mon 07 May 2018 01:20:49 PM EDT
+<gripper name="grasping">
+    <grasp_check>
+        <attach_steps>5</attach_steps>
+        <detach_steps>5</detach_steps>
+        <min_contact_count>1</min_contact_count>
+    </grasp_check>
+    <gripper_link>fanuc_robotiq_85_right_finger_tip_link</gripper_link>
+    <gripper_link>fanuc_robotiq_85_left_finger_tip_link</gripper_link>
+    <palm_link>fanuc_link_6</palm_link>
+</gripper>
+<gripper name="grasping">
+    <grasp_check>
+        <attach_steps>5</attach_steps>
+        <detach_steps>5</detach_steps>
+        <min_contact_count>1</min_contact_count>
+    </grasp_check>
+    <gripper_link>motoman_robotiq_85_right_finger_tip_link</gripper_link>
+    <gripper_link>motoman_robotiq_85_left_finger_tip_link</gripper_link>
+    <palm_link>motoman_link_t</palm_link>
+</gripper>
+Deal with each robot having unique finger contact topic name
+//    CGzContactReader contact;
+//    contact.Start("/gazebo/default/sia20d/motoman_sia20d/motoman_robotiq_85_left_finger_tip_link/left_finger_contact");
+
+
+
+
+took a deversion from robots to see if "ERROR" string on ini file could be identified:
+boost fusion looks like way to go
+https://stackoverflow.com/questions/17835689/accessing-boost-fusion-map-field-name
+
+Mon 07 May 2018 11:52:08 AM EDT
+gzserver man page
+gzserver — Run the Gazebo server.
+
+Synopsis
+gzserver options world_file
+
+-e, --physics arg
+   Specify a physics engine (ode|bullet|dart|simbody).
+--minimal_comms
+   Reduce the TCP/IP traffic output by gzserver
+
+Mon 07 May 2018 09:06:32 AM EDT
+In bool Instances::InsideContainerSlot(Shape * container,   Shape * part)
+z of part location 0.9379200657775383
+z of slot location 0.923173
+
+Mon 07 May 2018 08:06:32 AM EDT
+https://docs.ros.org/kinetic/api/gazebo_plugins/html/gazebo__ros__bumper_8cpp_source.html
+
+sku_large_gear_vessel2 at   -0.35:  -0.71:   0.91| 0.00:-0.00: 2.35
+sku_kit_s2l2_vessel3 at    0.15:  -0.70:   0.91| 0.00:-0.00: 2.35
+sku_kit_s2l2_vessel4 at   -0.10:  -0.71:   0.91| 0.00:-0.00: 2.35
+sku_large_gear_vessel1 at    0.14:  -0.54:   0.91| 0.00:-0.00: 2.35
+sku_part_large_gear6 at    0.09:  -0.54:   0.91| 0.00:-0.00: 0.71
+sku_part_large_gear7 at   -0.29:  -0.71:   0.91| 0.00: 0.00: 0.57
+sku_part_large_gear8 at   -0.40:  -0.71:   0.91|-0.00: 0.00: 0.57
+sku_part_large_gear5 at    0.20:  -0.54:   0.91|-0.00:-0.02: 0.42
+sku_small_gear_vessel9 at   -0.05:  -0.55:   0.91| 0.00:-0.00: 2.64
+sku_part_small_gear10 at   -0.02:  -0.58:   0.91| 0.08: 0.00: 0.30
+sku_part_small_gear11 at   -0.02:  -0.52:   0.91| 0.07: 0.20: 1.09
+sku_part_small_gear12 at   -0.08:  -0.52:   0.91| 0.32:-0.32: 0.70
+sku_kit_m2l1_vessel14 at    0.40:  -1.05:   0.92| 0.00:-0.00:92.11
+sku_kit_m2l1_vessel15 at    0.18:  -1.05:   0.92| 0.00:-0.00:92.11
+sku_part_small_gear13 at   -0.08:  -0.58:   0.91| 1.05:-0.42: 1.22
+sku_medium_gear_vessel16 at    0.19:  -1.24:   0.92| 0.00:-0.00: 1.94
+sku_part_medium_gear18 at    0.15:  -1.20:   0.94|-0.00: 0.00: 2.00
+sku_part_medium_gear17 at    0.23:  -1.20:   0.94|-0.11:-0.37: 1.56
+sku_part_medium_gear19 at    0.15:  -1.28:   0.94| 0.00:-0.00: 1.97
+sku_part_medium_gear20 at    0.23:  -1.28:   0.94|-0.09: 0.11: 1.26
+sku_large_gear_vessel21 at    0.39:  -1.26:   0.92| 0.00:-0.00:92.33
+sku_part_large_gear22 at    0.39:  -1.21:   0.92|-0.31:-0.16: 1.51
+sku_part_large_gear23 at    0.39:  -1.32:   0.92|-0.41:-0.15:21.63
+
+
+
+All ros/gazebo plugins
+https://github.com/ros-simulation/gazebo_ros_pkgs/blob/kinetic-devel/gazebo_plugins/src/gazebo_ros_vacuum_gripper.cpp
+
+Depth of contact very slight - maybe make reasonable not just touching
+Depth is 0.000104164
+Depth is 0.000456471
+
+Collision between sku_part_large_gear5::link1::collision1andsia20d::motoman_sia20d::motoman_robotiq_85_right_finger_tip_link::motoman_robotiq_85_right_finger_tip_link_collision
+Depth is 7.98629e-05
+0  Position:0.197783 -0.535328 0.940139
+   Normal:-0.000399603 -0.893797 0.448472
+   Depth:7.98629e-05
+1  Position:0.197793 -0.535335 0.939947
+   Normal:-0.000399603 -0.893797 0.448472
+   Depth:0.000159208
+2  Position:0.197314 -0.534973 0.939961
+   Normal:-0.000399603 -0.893797 0.448472
+   Depth:0.000476901
+3  Position:0.197314 -0.534973 0.939765
+   Normal:-0.000399603 -0.893797 0.448472
+   Depth:0.000593795
+4  Position:0.196784 -0.534878 0.941213
+   Normal:-0.375917 -0.926653 -0.000107903
+   Depth:0.000110945
+5  Position:0.195779 -0.534878 0.941212
+   Normal:-0.123274 -0.992373 -4.83597e-06
+   Depth:0.000365305
+6  Position:0.196225 -0.534878 0.941212
+   Normal:-0.375917 -0.926653 -0.000107903
+   Depth:0.00032128
+7  Position:0.195256 -0.534878 0.941212
+   Normal:-0.123274 -0.992373 -4.83597e-06
+   Depth:0.000429715
+8  Position:0.197797 -0.535338 0.939884
+   Normal:-0.000399603 -0.893797 0.448472
+   Depth:0.000185504
+9  Position:0.195456 -0.535504 0.939965
+   Normal:0.137771 -0.990464 9.85611e-05
+   Depth:0.00106213
+   for (unsigned int j = 0; j < _contact1.position_size(); ++j)
+   {
+       std::cout << j << "  Position:"
+                 << _contact1.position(j).x() << " "
+                 << _contact1.position(j).y() << " "
+                 << _contact1.position(j).z() << "\n";
+       std::cout << "   Normal:"
+                 << _contact1.normal(j).x() << " "
+                 << _contact1.normal(j).y() << " "
+                 << _contact1.normal(j).z() << "\n";
+       std::cout << "   Depth:" << _contact1.depth(j) << "\n";
+   }
+}
+
+Thu 03 May 2018 09:51:24 AM EDT
+<gripper name="grasping">
+    <grasp_check>
+        <attach_steps>5</attach_steps>
+        <detach_steps>5</detach_steps>
+        <min_contact_count>1</min_contact_count>
+    </grasp_check>
+    <gripper_link>motoman_robotiq_85_right_finger_tip_link</gripper_link>
+    <gripper_link>motoman_robotiq_85_left_finger_tip_link</gripper_link>
+    <palm_link>motoman_link_t</palm_link>
+</gripper>
+
+Tue 01 May 2018 04:02:24 PM EDT
+Locals
+        _contact1	@0x7f1bfbf5abe0	gazebo::msgs::Contact
+                [google::protobuf::Message]	@0x7f1bfbf5abe0	google::protobuf::Message
+                _cached_size_	0	int
+                _has_bits_	@0x7f1bfbf5abf0	google::protobuf::uint32[1]
+                _unknown_fields_	@0x7f1bfbf5abe8	google::protobuf::UnknownFieldSet
+                collision1_	"sku_part_large_gear7::link1::collision1"	std::__cxx11::string
+                collision2_	"sia20d::motoman_sia20d::motoman_robotiq_85_right_finger_tip_link::motoman_robotiq_85_right_finger_ti"... (116)	std::__cxx11::string
+                default_instance_	@0x27dacf0	gazebo::msgs::Contact
+                depth_	@0x7f1bfbf5ac38	google::protobuf::RepeatedField<double>
+                kCollision1FieldNumber	1	int
+                kCollision2FieldNumber	2	int
+                kDepthFieldNumber	5	int
+                kNormalFieldNumber	4	int
+                kPositionFieldNumber	3	int
+                kTimeFieldNumber	7	int
+                kWorldFieldNumber	8	int
+                kWrenchFieldNumber	6	int
+                normal_	@0x7f1bfbf5ac20	google::protobuf::RepeatedPtrField<gazebo::msgs::Vector3d>
+                position_	@0x7f1bfbf5ac08	google::protobuf::RepeatedPtrField<gazebo::msgs::Vector3d>
+                time_	@0x7f1be000d280	gazebo::msgs::Time
+                world_	"default"	std::__cxx11::string
+                wrench_	@0x7f1bfbf5ac48	google::protobuf::RepeatedPtrField<gazebo::msgs::JointWrench>
+        _contact2	@0x7f1bfbf5ac70	gazebo::msgs::Contact
+                [google::protobuf::Message]	@0x7f1bfbf5ac70	google::protobuf::Message
+                _cached_size_	0	int
+                _has_bits_	@0x7f1bfbf5ac80	google::protobuf::uint32[1]
+                _unknown_fields_	@0x7f1bfbf5ac78	google::protobuf::UnknownFieldSet
+                collision1_	"sku_part_large_gear7::link1::collision1"	std::__cxx11::string
+                collision2_	"sia20d::motoman_sia20d::motoman_robotiq_85_right_finger_tip_link::motoman_robotiq_85_right_finger_ti"... (116)	std::__cxx11::string
+                default_instance_	@0x27dacf0	gazebo::msgs::Contact
+                depth_	@0x7f1bfbf5acc8	google::protobuf::RepeatedField<double>
+                kCollision1FieldNumber	1	int
+                kCollision2FieldNumber	2	int
+                kDepthFieldNumber	5	int
+                kNormalFieldNumber	4	int
+                kPositionFieldNumber	3	int
+                kTimeFieldNumber	7	int
+                kWorldFieldNumber	8	int
+                kWrenchFieldNumber	6	int
+                normal_	@0x7f1bfbf5acb0	google::protobuf::RepeatedPtrField<gazebo::msgs::Vector3d>
+                position_	@0x7f1bfbf5ac98	google::protobuf::RepeatedPtrField<gazebo::msgs::Vector3d>
+                time_	@0x7f1be000f730	gazebo::msgs::Time
+                world_	"default"	std::__cxx11::string
+                wrench_	@0x7f1bfbf5acd8	google::protobuf::RepeatedPtrField<gazebo::msgs::JointWrench>
+        _msg	@0x7f1be0002940	ConstContactsPtr &
+        n	2	int
+        this	@0x2853d30	CGzContactReader
+
+
+
+Tue 01 May 2018 11:57:13 AM EDT
+/usr/include/gazebo-7/gazebo/msgs/contact.pb.h
+
+Contact sensor reading plugin
+http://answers.gazebosim.org/question/14897/how-to-detect-multiple-collisions-for-an-object-using-gazebos-contact-sensor/
+https://answers.ros.org/question/246448/getting-contact-sensorbumper-gazebo-plugin-to-work/
+
+<link name="motoman_robotiq_85_right_finger_tip_link">
+          <self_collide>0</self_collide>
+          <pose frame="">0.004183 -0.051496 1.59889 1.57089 -0.000893 -3.14159</pose>
+          <inertial>
+              <pose frame="">0 0 0 0 -0 0</pose>
+              <mass>0.019555</mass>
+              <inertia>
+                  <ixx>2e-06</ixx>
+                  <ixy>0</ixy>
+                  <ixz>0</ixz>
+                  <iyy>5e-06</iyy>
+                  <iyz>0</iyz>
+                  <izz>6e-06</izz>
+              </inertia>
+          </inertial>
+          <collision name="motoman_robotiq_85_right_finger_tip_link_collision">
+              <pose frame="">0 -0.090381 0.051505 3.14159 -1.57079 1.57079</pose>
+              <geometry>
+                  <mesh>
+                      <scale>1 1 1</scale>
+                      <uri>model://robotiq_c2_model_visualization/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_3_R.dae</uri>
+                  </mesh>
+              </geometry>
+              <surface>
+                  <contact>
+                      <ode>
+                          <kp>100000</kp>
+                          <kd>1</kd>
+                          <max_vel>0.1</max_vel>
+                          <min_depth>0.15</min_depth>
+                      </ode>
+                  </contact>
+                  <friction>
+                      <ode>
+                          <mu>Inf</mu>
+                          <mu2>Inf</mu2>
+                      </ode>
+                  </friction>
+              </surface>
+          </collision>
+          <sensor name="right_finger_contact" type="contact">
+              <contact>
+                  <collision>motoman_robotiq_85_right_finger_tip_link_collision</collision>
+                  <update_rate> 50 </update_rate>
+              </contact>
+          </sensor>
+          <visual name="motoman_robotiq_85_right_finger_tip_link_visual">
+              <pose frame="">0 -0.090381 0.051505 3.14159 -1.57079 3.14159</pose>
+              <geometry>
+                  <mesh>
+                      <scale>1 1 1</scale>
+                      <uri>model://robotiq_c2_model_visualization/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_3_R.dae</uri>
+                  </mesh>
+              </geometry>
+          </visual>
+      </link>k
+Mon 30 Apr 2018 04:03:47 PM EDT
+void ModelReader::OnUpdate(ConstModelPtr &_msg)
+doesn't seem to be firing. Callback may be hung. Unclear.
+
+
+remove
+//#include <boost/property_tree/ini_parser.hpp>
+//#include <boost/property_tree/json_parser.hpp>
+//#include <boost/property_tree/ptree.hpp>
+
+//namespace pt = boost::property_tree;
+
+//template <typename T>
+//inline std::vector<T> GetTypes(pt::ptree &root, std::string childname) {
+//    std::vector<T> ts;
+
+//    BOOST_FOREACH(pt::ptree::value_type &v2,
+//            root.get_child(childname)) {
+//        ts.push_back(v2.second.get_value<T>());
+//    }
+//    return ts;
+//}
+
+
+https://answers.ros.org/question/273947/moving-joints-in-gazebo-simple-example/
+
+Contact sensor plugin: http://gazebosim.org/tutorials?tut=contact_sensor
+
+Again shaky gripper fingers:
+http://answers.gazebosim.org/question/13700/object-slips-out-of-the-gripper-after-jitters/
+
+https://answers.ros.org/question/218744/gazebo-disable-physics-or-enable-kinematics-through-codecommand-line/
+
+
+//template <typename T>
+//inline std::vector<T> GetIniTypes(pt::ptree &root, std::string childname) {
+//    std::vector<T> ts;
+//    std::string str = root.get<std::string>(childname);
+//#if 0
+//    boost::split(ts, str, boost::is_any_of(","), boost::token_compress_on);
+//#endif
+//    tokenizeV(str,ts,",");
+//    return ts;
+//}
+
+Sun 29 Apr 2018 07:59:29 AM EDT
+[Wrn] [Publisher.cc:140] Queue limit reached for topic /gazebo/default/ariac/model, deleting message. This warning is printed only once.
+
+
+Sat 28 Apr 2018 02:59:29 PM EDT
+NOPE Fix for shaky gripper fingers? The z rotation in pose of the rotated right finger was not reflected in inertia
+
+Thu 26 Apr 2018 12:08:39 PM EDT
+Looks like I need PID control for fingers.
+
+Thu 26 Apr 2018 11:08:39 PM EDT
+Fingers are shaking like crazy
+https://groups.google.com/forum/?fromgroups=#!topic/ode-users/toKqA9Z7L9k
+
+<friction>
+    <ode>
+        <mu>Inf</mu>
+        <mu2>Inf</mu2>
+    </ode>
+</friction>
+<friction>
+    <ode>
+        <mu>Inf</mu>
+        <mu2>Inf</mu2>
+    </ode>
+</friction>
+
+in finger joint:
+<physics>
+    <provide_feedback>1</provide_feedback>
+    <ode>
+        <provide_feedback>1</provide_feedback>
+        <implicit_spring_damper>1</implicit_spring_damper>
+        <cfm_damping>1</cfm_damping>
+        <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+        </limit>
+    </ode>
+</physics>
+
+Mon 23 Apr 2018 01:11:05 PM EDT
+turned off gravity in all links of motoman.
+Upating links every 50 milliseconds resulted in shaking when no gravity.
+So only update when changed.
+
+
+
+
+#if defined(DEBUG)  &&  defined(DebugJointCommand)
+        ofsRobotMoveJoint << _nc->Name().c_str() << "CANON_MOVE_JOINT: " << "\n";
+        ofsRobotMoveJoint << "  Current Joints " << RCS::VectorDump<double>(instatus.currentjoints.position).c_str() << "\n";
+        ofsRobotMoveJoint << "  Goal Joints " << RCS::VectorDump<double>(cmd.joints.position).c_str() << "\n";
+        ofsRobotMoveJoint << "  Command Num " << cmd.CommandNum() << "\n" << std::flush;
+#endif
+
+Bug: move individual joints on motoman only went up to 5 NOT 6.
+cmd.jointnum =  ToVector<long unsigned int>(6, 0L, 1L, 2L, 3L, 4L, 5L);
+
+Tue 17 Apr 2018 04:15:38 PM EDT
+
+not copying contains from definition into instance of vessel
+
+
+
+Fri 13 Apr 2018 08:34:57 PM EDT
+HOME all zero joints are an IK singularity. Unclear what to do.
+Goto safe, then IK works.
+//TODO(Fix Singularity issue in MotomanSia20dFastKinematics::AllPoseToJoints)
+if (!bSuccess) {
+    LOG_DEBUG <<"Failed to get ik solution:"<<RCS::DumpPoseSimple(pose);
+    throw RobotControlException(10, _nc->Name().c_str());
+    return -1;
+}
+
+Must improve error handling.
+Thu 12 Apr 2018 12:17:41 PM EDT
+try to wait for gazebo and ros to start.
+Gazebo often aborts when it doesn't find sun. Which is bad. Unclear what to do.
+
+Thu 12 Apr 2018 9:17:21 PM EDT
+./nist_robotsnc: error while loading shared libraries: libgotraj.so.1: cannot open shared object file: No such file or directory
+
+ERROR: Cannot load message class for [nistcrcl/CrclCommandMsg]. Are your messages built?
+
+
+
+Wed 11 Apr 2018 06:34:57 PM EDT
+Problem: appears as if jointnum is not filled by CRCL and its sending angles - do hack
+std::cout << RCS::VectorDump<std::string>  (_cnc->robotKinematics()->JointNames()) << "\n" << std::flush;
+AND
+nistcrcl ROS node provides degrees in command not radians for angles.
+Thus 1.87 is very small degree angle, as opposed to large radian angle.
+
+Wed 11 Apr 2018 12:01:44 PM EDT
+> cd /home/michalos/src/robot-agility/gz/World/launch
+> roscore.bash
+
+Then run QT app
+michalos@onyx:~$ source /opt/ros/kinetic/setup.bash
+michalos@onyx:~$ rostopic list
+/motoman_crcl_command
+/motoman_crcl_status
+/rosout
+/rosout_agg
+
+
+
+Wed 11 Apr 2018 12:01:44 PM EDT
+revise controller to allow gazebo or ros compilations
+ros necessary to communicate with CRCL
+
+Fri 06 Apr 2018 11:25:29 AM EDT
+sku_part_small_gear9  should be underscore 9? Sigh.
+
+Problems
+Not exactly centered on plug
+If gripper to far open bumps into other gears on descent
+Close is not quite picking up gear
+
+CLI Tests
+FIXME: have to read joint values assume zero.
+safe
+close
+open
+approach sku_part_large_gear5
+moveto sku_part_large_gear5
+close
+
+grasp sku_part_smalapproach sku_part_large_gear5l_gear13
+moveto sku_part_small_gear13
+retract sku_part_small_gear13
+equal to:
+pick  sku_part_small_gear13
+
+Tue 10 Apr 2018 09:08:40 AM EDT
+Debugging jog xyz axis:
+
+std::cout << "After=" << RCS::DumpPose(r_curpose) << "\n";
+std::cout << "Before=" << RCS::DumpPose(r_curpose) << "\n";
+
+
+
+
+Fri 06 Apr 2018 10:04:42 AM EDT
+Unsubscribe from a ROS topic:
+https://stackoverflow.com/questions/17066839/unsubscribe-from-a-topic-and-subscribe-from-a-new-one-runtime-c-ros
+
+Fri 06 Apr 2018 09:04:42 AM EDT
+Wait for a message...
+ ros::topic::waitForMessage(..).
+docs.ros.org/indigo/api/roscpp/html/namespaceros_1_1topic.html
+
+/home/michalos/src/robot-agility/gz/Client/nistcrcl/include/nistcrcl/CrclCommandMsg.h
+
+
+Removed global gripper offset based on gear. MOved to controller.
+//    gripperoffset = tf::Pose(tf::Quaternion(0,0,0,1),tf::Vector3(0,0,-0.008));
+//    slotoffset = tf::Pose(tf::Quaternion(0,0,0,1),tf::Vector3(0,0,-0.005));
+
+
+Mon 02 Apr 2018 03:54:18 PM EDT
+added ini file setting for BangBang or Go trajectory generator.
+
+Go gives error in dll:
+GoTraj::Init Exceptionpgm->_gmq.set_joint_number(num_joints)@gotraj.cpp:121
+
+
+Mon 02 Apr 2018 02:38:24 PM EDT
+Picking instance requires a gripper offset
+tf::Pose gripperoffset = obj.gripperoffset; // Convert<Eigen::Affine3d, tf::Pose>(obj.gripperoffset);
+pickpose = tf::Pose(r.QBend, instance.getOrigin()) * gripperoffset; // /*Convert<Eigen::Vector3d,tf::Vector3>(affpose.translation()))*gripperoffset;
+
+
+Mon 02 Apr 2018 01:23:16 PM EDT
+Light [sun] not found. Use topic ~/factory/light to spawn a new light
+https://bitbucket.org/osrf/gazebo/issues/2429/client-hangs-if-loading-complex-world
+GAVE UP- ERROR ONLY COMES UPA FEW TIMES. NO HELP REALLY.
+
+Per suggestion on web, deleted sun model and downloaded from models
+From I assume you set the GAZEBO_MODEL_PATH environment variable?
+GAZEBO_MODEL_PATH=/home/isd/michalos/src/robot-agility/Models:/home/isd/michalos/.gazebo/models
+
+
+
+Mon 02 Apr 2018 12:49:32 PM EDT
+Motoman robot - changed orientation to zero..
+<pose>0  0 0.9200 0 0 -1.570796</pose>
+COULD CHANGE ini FILE ALSO TO MATCH! OFF BY -90o!
+
+Got msg!!!sia20d::motoman_sia20d::motoman_robotiq_85_left_inner_knuckle_joint=1
+Got msg!!!sia20d::motoman_sia20d::motoman_robotiq_85_right_inner_knuckle_joint=-1
+Got msg!!!sia20d::motoman_sia20d::motoman_robotiq_85_left_finger_tip_joint=-1
+Got msg!!!sia20d::motoman_sia20d::motoman_robotiq_85_right_finger_tip_joint=2.61855e-322
+
+
+ABORTED (SO FAR) ATTEMPT TO CATEGORIES OBJECTS FOR REASONING
+
+[parts]
+list=sku_small_gear, sku_medium_gear,sku_large_gear,sku_small_gear_vessel,sku_medium_gear_vessel,sku_large_gear_vessel
+
+[parts.sku_kit_s1l1_vessel]
+centroid=[.08,.085,0]
+color=RED
+contains=slot1,slot2,slot3
+contains.slot1.metatype=sku_large_gear
+contains.slot1.position=[.004,.004, 0.0]
+contains.slot1.rotation=0
+contains.slot1.state=TBD
+contains.slot1.type=holder
+contains.slot2.metatype=sku_large_gear
+contains.slot2.position=[.012,0.004, 0.0]
+contains.slot2.rotation=0
+contains.slot2.state=TBD
+contains.slot2.type=holder
+contains.slot3.metatype=sku_large_gear
+contains.slot3.position=[.08,0.145, 0.0]
+contains.slot3.rotation=0
+contains.slot3.state=TBD
+contains.slot3.type=holder
+dimension=[.016,0.019,0]
+metatype=kit
+shape=trapezoid
+subtype=solid
+type=primitive
+
+[parts.sku_kit_s2l2_vessel]
+centroid=[0.011,0.00825,0]
+color=RED
+contains=slot1,slot2,slot3,slot4
+contains.slot1.metatype=sku_large_gear
+contains.slot1.position=[.055,.055, 0.0]
+contains.slot1.rotation=0
+contains.slot1.state=TBD
+contains.slot1.type=holder
+contains.slot2.metatype=sku_large_gear
+contains.slot2.position=[.165,0.055, 0.0]
+contains.slot2.rotation=0
+contains.slot2.state=TBD
+contains.slot2.type=holder
+contains.slot3.metatype=sku_small_gear
+contains.slot3.position=[.01365,0.075, 0.0]
+contains.slot3.rotation=0
+contains.slot3.state=TBD
+contains.slot3.type=holder
+contains.slot4.metatype=sku_small_gear
+contains.slot4.position=[.01365,0.015, 0.0]
+contains.slot4.rotation=0
+contains.slot4.state=TBD
+contains.slot4.type=holder
+dimension=[.022,0.0165,0]
+metatype=kit
+shape=trapezoid
+subtype=solid
+type=primitive
+
+[parts.sku_large_gear]
+centroid=[0.0508,0.0508,0.0]
+color=GREEN
+diameter=0.1016
+gripper.offset=[0.0, 0.0, -0.02, 0.0, 0.0, 0.0]
+gripper.width=0.4
+metatype=gear
+radius=0.0508
+shape=gear
+subtype=solid
+type=primitive
+
+[parts.sku_large_gear_vessel]
+centroid=[0.1095,0.05476]
+color=RED
+contains=slot1,slot2
+contains.slot1.metatype=sku_large_gear
+contains.slot1.position=[.0055,.0055, 0.0]
+contains.slot1.rotation=0
+contains.slot1.state=TBD
+contains.slot1.type=holder
+contains.slot2.metatype=sku_large_gear
+contains.slot2.position=[.0055,0.0165, 0.0]
+contains.slot2.rotation=0
+contains.slot2.state=TBD
+contains.slot2.type=holder
+dimension=[.2190,0.1095]
+metatype=holder
+shape=rectangle
+subtype=solid
+type=primitive
+
+[parts.sku_medium_gear]
+centroid=[0.0381,0.0381,0.0]
+color=CYAN
+diameter=0.0762
+gripper.offset=[0.0, 0.0, -0.02, 0.0, 0.0, 0.0]
+gripper.width=0.4
+metatype=gear
+radius=0.0381
+shape=gear
+subtype=solid
+type=primitive
+
+[parts.sku_medium_gear_vessel]
+centroid=[0.0555,0.0555,0.0]
+color=RED
+contains=slot1,slot2,slot3,slot4
+contains.slot1.metatype=sku_medium_gear
+contains.slot1.offset=[0.0396,0.0396, 0.0]
+contains.slot1.rotation=0
+contains.slot1.state=TBD
+contains.slot1.type=holder
+contains.slot2.metatype=sku_medium_gear
+contains.slot2.offset=[-0.0396,0.03965, 0.0]
+contains.slot2.rotation=0
+contains.slot2.state=TBD
+contains.slot2.type=holder
+contains.slot3.metatype=sku_medium_gear
+contains.slot3.offset=[0.0396,-0.0396, 0.0]
+contains.slot3.rotation=0
+contains.slot3.state=TBD
+contains.slot3.type=holder
+contains.slot4.metatype=sku_medium_gear
+contains.slot4.offset=[-0.0396,-0.0396, 0.0]
+contains.slot4.rotation=0
+contains.slot4.state=TBD
+contains.slot4.type=holder
+dimension=[0.111125,0.111125,0.0]
+metatype=holder
+shape=square
+subtype=solid
+type=primitive
+
+[parts.sku_small_gear]
+sku_small_gear.color=RED
+sku_small_gear.diameter=0.0381
+sku_small_gear.gripper.offset=[0.0, 0.0, -0.02, 0.0, 0.0, 0.0]
+sku_small_gear.gripper.width=0.4
+sku_small_gear.metatype=gear
+sku_small_gear.radius=0.01905
+sku_small_gear.subtype=solid
+sku_small_gear.type=primitive
+sku_small_gear_vessel.centroid=[0.0254,0.0254,0.0]
+sku_small_gear_vessel.shape=gear
+
+[parts.sku_small_gear_vessel]
+centroid=[0.0555,0.0555,0.0]
+color=RED
+contains=slot1,slot2,slot3,slot4
+contains.slot1.metatype=sku_small_gear
+contains.slot1.offset=[0.028575,0.028575, 0.0]
+contains.slot1.rotation=0
+contains.slot1.state=TBD
+contains.slot1.type=holder
+contains.slot2.metatype=sku_small_gear
+contains.slot2.offset=[-0.028575,0.028575, 0.0]
+contains.slot2.rotation=0
+contains.slot2.state=TBD
+contains.slot2.type=holder
+contains.slot3.metatype=sku_small_gear
+contains.slot3.offset=[0.028575,-0.028575, 0.0]
+contains.slot3.rotation=0
+contains.slot3.state=TBD
+contains.slot3.type=holder
+contains.slot4.metatype=sku_small_gear
+contains.slot4.offset=[0.028575,-0.028575, 0.0]
+contains.slot4.rotation=0
+contains.slot4.state=TBD
+contains.slot4.type=holder
+dimension=[0.111125,0.111125,0.0]
+metatype=holder
+shape=square
+subtype=solid
+type=primitive
+
+Tue 27 Mar 2018 09:54:08 AM EDT
+- add urdf file of robot and gripper to config folder, read only robot for kinematics.
+- successfully read and parse robot urdf
+
+Mon 26 Mar 2018 03:31:46 PM EDT
+work on gear, holder, kit measurements - some imperial, some metric...
+
+Sun 25 Mar 2018 03:31:46 PM EDT
+**STRING COMPARE STARTS WITH
+std::string prefix = "-param=";
+std::string argument = argv[1];
+if(argument.substr(0, prefix.size()) == prefix) {
+    std::string argumentValue = argument.substr(prefix.size());
+}
+
+
+https://github.com/ros/geometry/blob/indigo-devel/tf/src/tf.cpp
+
+
+Tue 03/20/18 07:21:37 PM
+** new logging - remove boost looging, good but so complicated
+https://www.7-zip.org/download.html
+and installed latest 7zip and then downloaded latest eigen3
+
+Logging Explanation:
+
+IN Globals.h file stream are declared to log various information.
+
+
+extern std::ofstream ofsRobotURDF;
+extern std::ofstream ofsRobotMoveJoint;
+extern std::ofstream ofsRobotMoveTo;
+extern std::ofstream ofsScene;
+extern std::ofstream ofsMotionTrace;
+extern std::ofstream ofsRobotExercise;
+extern std::ofstream ofsIkFast;
+
+In Global.cpp in the function DebugSetup() the file streams are opened
+void CGlobals::DebugSetup()
+{
+    ofsRobotURDF.open(this->ExeDirectory+"RobotUrdf.log", std::ofstream::out);
+
+    ofsRobotMoveJoint.open(this->ExeDirectory+"MoveJoint.log", std::ofstream::out);
+
+
+Then there is selective logging of information using preprocessor definitions:
+int GoInterpreter::ParseJointCommand(RCS::CanonCmd cmd, RCS::CanonCmd &outcmd,
+...
+#if defined(DEBUG)  &&  defined(DebugJointCommand)
+        ofsRobotMoveJoint << _nc->Name().c_str() << "CANON_MOVE_JOINT: " << "\n";
+        ofsRobotMoveJoint << "  Current Joints " << RCS::VectorDump<double>(instatus.currentjoints.position).c_str() << "\n";
+        ofsRobotMoveJoint << "  Goal Joints " << RCS::VectorDump<double>(cmd.joints.position).c_str() << "\n";
+        ofsRobotMoveJoint << "  Command Num " << cmd.CommandNum() << "\n" << std::flush;
+#endif
+
+In Debug.h various preprocessor debugging flags are set/not set:
+
+// Debug Flags for more debugging information:
+// Log gomotion move joint command
+// #define DebugJointCommand
+// Log controller action loop for robot servo/joint moves
+// #define RobotCNCJointMove
+// Log controller action loop for robot servo of world cartesian move
+// #define DebugWorldCommand
+// Log scene information
+#define LogScene
+
+How does boost logging work?
+In nist_robotsnc.cpp the boost log file and log level are set. Logging level is set to  0 = debug, so
+most information is logged.
+
+boostlogfile = nh.param<std::string>("logfile", "/home/isd/michalos/Documents/example.log");
+boostloglevel = (boost::log::v2_mt_posix::trivial::severity_level) nh.param<int>("loglevel", 0); // 0 = debug
+
+
+Boost logging is done using the redefined boost macro LOG_DEBUG which is set in BLogging.cpp
+
+#ifdef DEBUG
+        LOG_DEBUG << "Move From " << Globals.StrFormat("[%d,%d]=%f,%f", i, j, frompose.getOrigin().x(), frompose.getOrigin().y());
+        LOG_DEBUG << "Move To   " << Globals.StrFormat("[%d,%d]=%f,%f", m.row, m.col, topose.getOrigin().x(), topose.getOrigin().y());
+        LOG_DEBUG << "tf    Checkerboard1 pose" << RCS::DumpPoseSimple(obj.pose);
+#endif
+
+
+
+#if 0
+        // FIXME: this totally assume ROS catkin folder layout
+        std::string pkgname = path.substr(path.find_last_of('/') + 1);
+        Globals._appproperties["Package"] = pkgname;
+        std::string wspath = path;
+        for (size_t i = 0; i < 4; i++)
+            wspath = wspath.substr(0, wspath.find_last_of('/'));
+        Globals._appproperties["Workspace"] = wspath + "/";
+
+        std::string pkgpath = wspath + "/src/" + pkgname + "/config/" + pkgname + ".ini";
+        std::string envstr = ExecuteShellCommand("export ROS_PACKAGE_PATH; cd " + wspath + "; /bin/bash -c \"source devel/setup.bash & env \"");
+ //       std::cout << envstr << "\n";
+        // This sets up tother application _appproperties name/value pairs: user, hostname
+        SetupAppEnpathvironment();
+pathpath
+        // This hard coding of env variables is required for debugging with netbeans ide
+        // If ROS environment variables are not set it cannot find "stuff"
+  //      SetupRosEnvironment(); // needs to go before ROS!
+
+  #endif
+  // Confetti
+#if 0
+  for (size_t i = 0; i < 20; i++) {
+      double x = ((double) i)*.01;
+      Piece * p = new Piece(pScene);
+      p->launch(x, 0.0, 1.0);
+
+  }
+#endif
+
+
+#if 0
+        std::vector<double> testjts = ToVector<double>(7, 1.30, -0.84, 0.08, 2.26, 2.96, -0.38, -1.28);
+        tf::Pose testpose = ncs[1]->robotKinematics()->FK(testjts);
+        std::cout << "Joint vals " << VectorDump<double>(testjts).c_str() << "\n" << std::flush;
+        std::cout << "kinpose " << RCS::DumpPoseSimple(testpose).c_str() << "\n";
+
+        ncs[1]->robotKinematics()->axis.push_back(Eigen::Vector3d(0, 0, -1));
+        ncs[1]->robotKinematics()->xyzorigin.push_back(Eigen::Vector3d(0, 0, 0));
+        ncs[1]->robotKinematics()->rpyorigin.push_back(Eigen::Vector3d(0, 0, -M_PI_2));
+        testjts.push_back(0.0);
+        std::vector<tf::Pose> poses = ncs[1]->robotKinematics()->ComputeAllFk(testjts);
+        std::cout << "genericpose " << RCS::DumpPoseSimple(poses.back()).c_str() << "\n";
+#endif
+
+
+#if 0
+        // This might be cleaner, but the \r problem from windows is disconcerting
+        std::ifstream checkersIss(filename);
+        LOG_DEBUG << iss.str().c_str();
+        if (!checkersIss.fail()) {
+            game.Deserialize(iss, outboard);
+            LOG_DEBUG << checkers.RvizGame()->Game().printDisplayFancy(outboard).c_str();
+            game.Board() = outboard;
+        }
+#else
+#endif
+
+        // THIS DOESN'T WORK
+#if 0
+        int rosloglevel = nh.param<int>("~rosloglevel", 0); // 0 = debug
+
+        if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, (ros::console::levels::Level) rosloglevel)) {
+            ros::console::notifyLoggerLevelsChanged();
+        }
+#endif
+#if 0
+        // DOESN"T WORK NOW
+        // ROS config - parameter list - save for comparison later
+        std::string params = ReadRosParams(nh);
+        Globals.WriteFile(Globals.ExeDirectory + "rosconfig.txt", params);
+        path = ros::package::getPath(ROSPACKAGENAME);
+        Globals._appproperties[ROSPACKAGENAME] = path;
+#endif
+
+
+Remove boost logging - TOO COMPLICATED only initiable at COMPILE TIME
+https://theboostcpplibraries.com/boost.log explains the BS. I guess if you're really smart boost log makes sense. But it isn't used much.
+
+Mon 26 Mar 2018 03:51:25 PM EDT
+Agility lab vision system file output
+
+It continually broadcasts from agility.el.nist.gov (129.6.32.71) on port #5002 (Motoman) and port #5001 for (Fanuc area).
+
+Highlighted is the item name and current x,y position in Motoman coordinate space.
+
+-Brian
+
+
+sku_part_large_gear,-0.15,716.51, 296.00,0.99,P,
+sku_part_large_gear,0.05,536.38,49.94,0.98,P,
+sku_part_large_gear,0.06,536.15,155.56,0.97,P,
+sku_part_large_gear,0.15,721.95,-404.70,0.77,P,
+sku_part_large_gear,,,,,P,
+sku_part_large_gear,,,,,P,
+sku_part_small_gear,0.00,578.01,-110.06,0.99,P,
+sku_part_small_gear,0.00,578.10,-55.11,0.98,P,
+sku_part_small_gear,0.00,763.67,-160.50,0.97,P,
+sku_part_small_gear,0.00,523.86,-110.15,0.96,P,
+sku_small_gear_vessel,0.00,551.67,-81.90,0.91,PT,
+sku_large_gear_vessel,0.04,718.43,-347.09,0.96,PT,
+sku_large_gear_vessel,-0.01,537.18,103.16,0.88,PT,
+sku_kit_s2l2_vessel,-0.01,707.55,-123.03,0.71,KT,
+sku_kit_s2l2_vessel,0.00,702.22,94.84,0.68,KT,
+
+
+
+       <link name="link_leftfinger">
+            <pose>0.025 0   1.505 0 -0 0</pose>
+            <gravity>false</gravity>
+            <inertial>
+                <pose frame="">0 0 0 0 -0 0</pose>
+                <mass>2</mass>
+                <inertia>
+                    <ixx>0.02</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.02</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.001</izz>
+                </inertia>
+            </inertial>
+            <collision name="link5_leftfinger_collision">
+                <pose frame="">0 0 0 0 0 0</pose>
+                <geometry>
+                   <mesh>
+                        <scale>0.001 0.001 0.001</scale>
+                        <uri>model://gripper/Finger_Sides_Closer_Rotatex_Centered_ZeroZmin.stl</uri>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <contact>
+                        <ode>
+                            <kp>100000</kp>
+                            <kd>1</kd>
+                            <max_vel>0.1</max_vel>
+                            <min_depth>0.15</min_depth>
+                        </ode>
+                    </contact>
+                    <friction>
+                        <ode>
+                            <mu>1.1</mu>
+                            <mu2>1.1</mu2>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+            <visual name="link5_leftfinger_visual">
+                <pose frame="">0 0 0 0 0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>0.001 0.001 0.001</scale>
+                        <uri>model://gripper/Finger_Sides_Closer_Rotatex_Centered_ZeroZmin.stl</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/Black</name>
+                        <uri>__default__</uri>
+                    </script>
+                </material>
+            </visual>
+            <gravity>false</gravity>
+            <velocity_decay />
+            <self_collide>0</self_collide>
+        </link>
+        <link name="link_rightfinger">
+            <pose>-0.025 0  1.505 0 0 0</pose>
+            <gravity>false</gravity>
+            <inertial>
+                <pose frame="">0 0 0 0 -0 0</pose>
+                <mass>2</mass>
+                <inertia>
+                    <ixx>0.02</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.02</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.001</izz>
+                </inertia>
+            </inertial>
+            <collision name="link5_rightfinger_collision">
+                <pose frame="">0 0 0 0 0 3.1415926536</pose>
+                <geometry>
+                    <mesh>
+                        <scale>0.001 0.001 0.001</scale>
+                        <uri>model://gripper/Finger_Sides_Closer_Rotatex_Centered_ZeroZmin.stl</uri>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <contact>
+                        <ode>
+                            <kp>100000</kp>
+                            <kd>1</kd>
+                            <max_vel>0.1</max_vel>
+                            <min_depth>0.15</min_depth>
+                        </ode>
+                    </contact>
+                    <friction>
+                        <ode>
+                            <mu>1.1</mu>
+                            <mu2>1.1</mu2>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+            <visual name="link5_rightfinger_visual">
+                <pose frame="">0 0 0 0 0 3.1415926536</pose>
+                <geometry>
+                    <mesh>
+                        <scale>0.001 0.001 0.001</scale>
+                        <uri>model://gripper/Finger_Sides_Closer_Rotatex_Centered_ZeroZmin.stl</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/Black</name>
+                        <uri>__default__</uri>
+                    </script>
+                </material>
+            </visual>
+            <gravity>false</gravity>
+            <velocity_decay />
+            <self_collide>0</self_collide>
+        </link>
+        <joint name="motoman_joint_leftfinger" type="prismatic">
+            <child>link_leftfinger</child>
+            <parent>motoman_link_t</parent>
+            <axis>
+                <xyz> 1 0 0</xyz>
+                <limit>
+                    <lower>-0.10</lower>
+                    <upper>0.10</upper>
+                    <effort>100</effort>
+                    <velocity>100</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+                <use_parent_model_frame>1</use_parent_model_frame>
+            </axis>
+        </joint>
+        <joint name="motoman_joint_rightfinger" type="prismatic">
+            <child>link_rightfinger</child>
+            <parent>motoman_link_t</parent>
+            <axis>
+                <xyz> 1 0 0</xyz>
+                <limit>
+                    <lower>-0.10</lower>
+                    <upper>0.10</upper>
+                    <effort>100</effort>
+                    <velocity>100</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+                <use_parent_model_frame>1</use_parent_model_frame>
+            </axis>
+        </joint>

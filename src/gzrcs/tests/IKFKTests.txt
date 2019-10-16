@@ -1,0 +1,17 @@
+
+
+        //RCS::Pose zero (Quaternion(0, 0, 0, 1), Vector3(0.60, 0, 0.4));
+        std::vector<double> oldjoints = ToVector<double> (6,0.0, 0.0,0.0,0.0,0.0,0.0);
+        RCS::Pose zero = kin->FK(oldjoints);
+        std::cout << "Zero Pose= "   <<DumpPose(zero).c_str();
+        std::vector<double> test = kin->IK(zero,oldjoints);
+        std::cout << "Zero Joints" << VectorDump (test).c_str(); 
+
+Should expect to see:
+
+Zero Pose= Translation = 465:0:695
+Rotation = 0:-0:0
+Quaternion = 0:0:0:1
+Zero Joints0:0:0:0:0:0:
+
+

@@ -1,0 +1,28 @@
+<launch>
+
+<!--
+Run as, e.g., 
+
+    roslaunch aprs_demos aprs_demo.launch debug:=0x01
+-->
+
+<arg name="debug" default="0" />
+
+<include file="$(find motoman_gazebo)/launch/aprs_lab.launch">
+</include>
+
+<include file="$(find aprs_objects)/launch/aprs_objects.launch">
+  <arg name="debug" value="$(arg debug)" />
+</include>
+
+<include file="$(find aprs_objects)/launch/aprs_safety.launch">
+  <arg name="debug" value="$(arg debug)" />
+</include>
+
+<include file="$(find aprs_objects)/launch/aprs_modbus_server.launch">
+  <arg name="debug" value="$(arg debug)" />
+</include>
+
+<node pkg="aprs_demos" name="aprs_demos" type="aprs_demo_node" args="-d $(arg debug)" output="screen" required="true" />
+
+</launch>

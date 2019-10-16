@@ -1,0 +1,1567 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>0</shadows>
+    </scene>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <state world_name='default'>
+      <sim_time>2970 635000000</sim_time>
+      <real_time>307 968276115</real_time>
+      <wall_time>1523289876 914499048</wall_time>
+      <iterations>307566</iterations>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>1.690263 -2.231645 2.530520 0.00 0.713799 2.242579</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <model name='Lab_Model'>
+      <static>1</static>
+      <link name='link'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://Lab_Model/meshes/Agility_Lab_Robot_Area.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://Lab_Model/materials/textures</uri>
+              <name>__default__</name>
+            </script>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://Lab_Model/meshes/Agility_Lab_Robot_Area.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>1.954 -1.89  0 0 0 1.607342</pose>
+    </model>
+    <model name='sku_large_gear_vessel1'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Purple</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>1.19794657e+02</ixx>
+               <ixy>-8.44035782e-03</ixy>
+               <ixz>-2.33453848e-04</ixz>
+               <iyy>3.57882366e+01</iyy>
+               <iyz>1.11958400e-03</iyz>
+               <izz>1.54252131e+02</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.140269 -0.541795 0.910000 0 0 0.041089</pose>
+    </model>
+
+    <model name='sku_large_gear_vessel2'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Purple</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>1.19794657e+02</ixx>
+               <ixy>-8.44035782e-03</ixy>
+               <ixz>-2.33453848e-04</ixz>
+               <iyy>3.57882366e+01</iyy>
+               <iyz>1.11958400e-03</iyz>
+               <izz>1.54252131e+02</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.345217 -0.710361 0.910000 0 0 0.041089</pose>
+    </model>
+
+    <model name='sku_kit_s2l2_vessel3'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>model://gear_support/meshes/newKitTray_2Large_2Small_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>model://gear_support/meshes/newKitTray_2Large_2Small_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Red</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>8.54977215e+01</ixx>
+               <ixy>5.18963385e-03</ixy>
+               <ixz>-6.49974690e-05</ixz>
+               <iyy>7.01009727e+01</iyy>
+               <iyz>-7.13569718e-02</iyz>
+               <izz>1.54056453e+02</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.147261 -0.701542 0.910000 0 0 -3.101616</pose>
+    </model>
+
+    <model name='sku_kit_s2l2_vessel4'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>model://gear_support/meshes/newKitTray_2Large_2Small_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>model://gear_support/meshes/newKitTray_2Large_2Small_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Red</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>8.54977215e+01</ixx>
+               <ixy>5.18963385e-03</ixy>
+               <ixz>-6.49974690e-05</ixz>
+               <iyy>7.01009727e+01</iyy>
+               <iyz>-7.13569718e-02</iyz>
+               <izz>1.54056453e+02</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.097720 -0.710901 0.910000 0 0 -3.101986</pose>
+    </model>
+
+
+    <model name='sku_part_large_gear5'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.195344 -0.538446 0.914176 -0.000058 -0.000084 0.006938</pose>
+    </model>
+
+
+    <model name='sku_part_large_gear6'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.085441 -0.542957 0.914191 0.000096 -0.000074 0.003484</pose>
+    </model>
+
+
+
+  <model name='sku_part_large_gear7'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.290145 -0.706995 0.914084 0.000096 -0.000074 0.003484</pose>
+    </model>
+
+    <model name='sku_part_large_gear8'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.400062 -0.711537 0.914472 0.001713 0.000046 0.003484</pose>
+    </model>
+
+
+    <model name='sku_small_gear_vessel9'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Orange</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>1.91071229e+01</ixx>
+               <ixy>2.84737024e-07</ixy>
+               <ixz>2.16999641e-07</ixz>
+               <iyy>1.91071221e+01</iyy>
+               <iyz>-1.18455844e-07</iyz>
+               <izz>3.74139992e+01</izz>
+            </inertia>
+         </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.050956 -0.548444 0.910000 0 0 0.046160</pose>
+    </model>
+
+
+   <model name='sku_part_small_gear10'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Yellow</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+            <ixx>-1.8069</ixx>
+            <ixy>-1.38183</ixy>
+            <ixz>9.8929e-10</ixz>
+            <iyy>-1.8069</iyy>
+            <iyz>2.90322e-12</iyz>
+            <izz>0.113621</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.021698 -0.575129 0.914502 -0.000402 0.000283 0.002914</pose>
+    </model>
+
+
+   <model name='sku_part_small_gear11'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Yellow</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+            <ixx>-1.8069</ixx>
+            <ixy>-1.38183</ixy>
+            <ixz>9.8929e-10</ixz>
+            <iyy>-1.8069</iyy>
+            <iyz>2.90322e-12</iyz>
+            <izz>0.113621</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.023930 -0.519273 0.914802 -0.008747 -0.014455 0.017272</pose>
+    </model>
+
+   <model name='sku_part_small_gear12'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Yellow</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+            <ixx>-1.8069</ixx>
+            <ixy>-1.38183</ixy>
+            <ixz>9.8929e-10</ixz>
+            <iyy>-1.8069</iyy>
+            <iyz>2.90322e-12</iyz>
+            <izz>0.113621</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.079890 -0.521528 0.914769 0.008884 -0.013243 0.012764</pose>
+    </model>
+
+
+   <model name='sku_part_small_gear13'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/small_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Yellow</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+            <ixx>-1.8069</ixx>
+            <ixy>-1.38183</ixy>
+            <ixz>9.8929e-10</ixz>
+            <iyy>-1.8069</iyy>
+            <iyz>2.90322e-12</iyz>
+            <izz>0.113621</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.077729 -0.577831 0.914607 -0.007612 0.004265 0.013346</pose>
+    </model>
+
+    <model name='sku_kit_m2l1_vessel14'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/newKitTray_1Large_2Medium_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/newKitTray_1Large_2Medium_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Wood</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>8.54977215e+01</ixx>
+               <ixy>5.18963385e-03</ixy>
+               <ixz>-6.49974690e-05</ixz>
+               <iyy>7.01009727e+01</iyy>
+               <iyz>-7.13569718e-02</iyz>
+               <izz>1.54056453e+02</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.399147 -1.045060 0.915990 0 0 1.607711</pose>
+    </model>
+
+    <model name='sku_kit_m2l1_vessel15'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/newKitTray_1Large_2Medium_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/newKitTray_1Large_2Medium_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Wood</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>8.54977215e+01</ixx>
+               <ixy>5.18963385e-03</ixy>
+               <ixz>-6.49974690e-05</ixz>
+               <iyy>7.01009727e+01</iyy>
+               <iyz>-7.13569718e-02</iyz>
+               <izz>1.54056453e+02</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.183254 -1.053015 0.915990 0 0 1.607711</pose>
+    </model>
+
+   <model name='sku_medium_gear_vessel16'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/medium_gear_holder_centered.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/medium_gear_holder_centered.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/SkyBlue</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>1.91071229e+01</ixx>
+               <ixy>2.84737024e-07</ixy>
+               <ixz>2.16999641e-07</ixz>
+               <iyy>1.91071221e+01</iyy>
+               <iyz>-1.18455844e-07</iyz>
+               <izz>3.74139992e+01</izz>
+            </inertia>
+         </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.190185 -1.238050 0.923173 0 0 0.033886</pose>
+    </model>
+
+   <model name='sku_part_medium_gear17'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Orange</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.229373 -1.196554 0.938279 -0.001788 0.016204 0.041080</pose>
+    </model>
+
+   <model name='sku_part_medium_gear18'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Orange</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.148352 -1.198983 0.937735 -0.001646 0.000102 0.034288</pose>
+    </model>
+
+   <model name='sku_part_medium_gear19'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Orange</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.151079 -1.279876 0.937667 -0.000063 0.000043 0.034650</pose>
+    </model>
+
+   <model name='sku_part_medium_gear20'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+               <uri>model://gear_support/meshes/medium_gear.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Orange</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.232109 -1.277260 0.938185 -0.003122 0.013361 0.025510</pose>
+    </model>
+
+   <model name='sku_large_gear_vessel21'>
+      <static>1</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+
+        <visual name='visual1'>
+          <pose frame=''>0 0 0.0 0 0 1.570796</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_holder_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Purple</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>1.19794657e+02</ixx>
+               <ixy>-8.44035782e-03</ixy>
+               <ixz>-2.33453848e-04</ixz>
+               <iyy>3.57882366e+01</iyy>
+               <iyz>1.11958400e-03</iyz>
+               <izz>1.54252131e+02</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.392182 -1.262896 0.915207 0 0 1.611510</pose>
+    </model>
+
+   <model name='sku_part_large_gear22'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.388982 -1.207739 0.919364 0.002634 -0.001664 0.031733</pose>
+    </model>
+
+    <model name='sku_part_large_gear23'>
+      <static>0</static>
+      <link name='link1'>
+        <collision name='collision1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual1'>
+          <pose frame=''>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.0254 0.0254 0.0254</scale>
+              <uri>model://gear_support/meshes/large_gear_Centered_ZeroZmin.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Green</name>
+              <uri>__default__</uri>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>0.39</mass>
+          <inertia>
+               <ixx>4.78233711e+00</ixx>
+               <ixy>2.06443170e-09</ixy>
+               <ixz>3.14256508e-00</ixz>
+               <iyy>4.78233728e+00</iyy>
+               <iyz>1.83990112e-08</iyz>
+               <izz>2.44284722e-01</izz>
+         </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>0.393681 -1.318176 0.919728 -0.009486 -0.004019 0.378023</pose>
+    </model>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </world>
+</sdf>

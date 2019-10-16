@@ -1,0 +1,5 @@
+
+
+Catkin_make will install to 
+
+catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/<distro> install
