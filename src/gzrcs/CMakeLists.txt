@@ -10,7 +10,6 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rosconsole_bridge
-  cmake_modules
   trajectory_msgs
   geometry_msgs
   sensor_msgs

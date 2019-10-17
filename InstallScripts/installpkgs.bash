@@ -1,4 +1,8 @@
 #!/bin/bash
+echo Hello world
+
+#sudo /usr/bin/apt-get remove --assume-yes ros-*
+#sudo /usr/bin/apt-get remove  --assume-yes gazebo-*
 
 sudo /usr/bin/apt-get install xclip
 

@@ -3,7 +3,6 @@ project(gotraj)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  cmake_modules
   trajectory_msgs
   geometry_msgs
   sensor_msgs
@@ -14,7 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 
 find_package(Boost REQUIRED system thread chrono regex log_setup log)
-find_package(Eigen REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS
@@ -32,7 +30,6 @@ catkin_package(
   eigen_conversions
   DEPENDS
   Boost
-  Eigen
 
   )
 include_directories(include
@@ -44,8 +41,6 @@ include_directories(include
   #   include/${PROJECT_NAME}/CrclXsd
   include/${PROJECT_NAME}/NIST
   /usr/include/eigen3
-  $ENV{HOME}/src/robot-agility/gz/installs/rcs_pkgs/include
-  /home/isd/michalos/src/robot-agility/gz/installs/rcs_pkgs/include
   )
 
 set(CMAKE_CXX_FLAGS "-w ${CMAKE_CXX_FLAGS}")

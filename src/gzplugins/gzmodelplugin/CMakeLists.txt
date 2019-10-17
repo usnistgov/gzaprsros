@@ -13,9 +13,7 @@ project(gzmodelplugin)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-    gazebo_ros
-    gazebo_plugins
-    roscpp)
+   roscpp)
 
 find_package(gazebo REQUIRED)
 

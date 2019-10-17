@@ -48,12 +48,12 @@ void GzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     }
 
 
-    if (_sdf->HasElement("update_rate"))
-    {
-        int _rate = _sdf->Get<int>("update_rate");
-        double _updateRate = _rate;
-        update_rate_ = 1.0/_updateRate;
-    }
+  //  if (_sdf->HasElement("update_rate"))
+   // {
+  //      int _rate = _sdf->Get<int>("update_rate");
+  //      double _updateRate = _rate;
+  //      update_rate_ = 1.0/_updateRate;
+  //  }
 
 
     while( _sdf->HasElement("finger") )
@@ -69,7 +69,6 @@ void GzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
     std::cout << "JointPlugin: Topic name Jnts Comm is "<< robotCmd_topicName<<std::endl;
     std::cout << "JointPlugin: Topic name Jnts status is "<< robotStatus_topicName<<std::endl;
-    std::cout << "JointPlugin: Using update rate "<< update_rate_<<std::endl;
 
     // Safety check
     if (_model->GetJointCount() == 0)

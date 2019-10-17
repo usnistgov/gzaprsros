@@ -19,6 +19,14 @@ Prerequisite Installs:
 Gazebo 9
 Ros Kinetic
 gnu c++
+gazebo-ros kinetic
+
+# NO guarantees that this willl install gazebo 9 and ros kinetic not a match
+# Gazebo < 9 was reallyn even more buggy
+> ./InstallScripts/install_gazebo.bash
+> sudo apt-get install ros-kinetic-gazebo9-*
+> sudo apt-get upgrade
+
 
 and if compiling with QT Qt5.9.1 as Qt 5.5 is VERY BUGGY on Ubuntu 16.04
 From: https://linuxhint.com/install-qt-5-9-1-qt-creator-4-3-1-ubuntu/
