@@ -4,10 +4,6 @@ SET(CMAKE_INSTALL_PREFIX "../plugins9")
 
 project(gzjointcmdplugin)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# Neither works
-#add_compile_options(-std=c++11) # Doesnt work
-#set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -29,6 +25,7 @@ catkin_package(
 include_directories(
   include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
+
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 add_library(gzjointcmdplugin
@@ -36,6 +33,8 @@ add_library(gzjointcmdplugin
     JointsComm.pb.cc
 )
 add_dependencies(gzjointcmdplugin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 target_link_libraries(gzjointcmdplugin
   ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES}
 )

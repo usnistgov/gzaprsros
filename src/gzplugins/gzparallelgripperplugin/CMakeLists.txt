@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
+
+# copy library to gazebo plugin area - assuming gazebo version 9
 SET(CMAKE_INSTALL_PREFIX "../plugins9") 
 
 project(gzparallelgripperplugin)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# Neither works
-#add_compile_options(-std=c++11) # Doesnt work
-#set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -27,6 +25,7 @@ include_directories(
   include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 add_library(gzparallelgripperplugin
     gzparallelgripperplugin.cpp
