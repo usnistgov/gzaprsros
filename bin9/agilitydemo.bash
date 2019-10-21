@@ -25,8 +25,9 @@ export plugins
 
 
 libs=`pwd`/../devel/lib
+qtlibs=`pwd`/../lib
 export libs
-
+export qtlibs
 
 gzrcs=`pwd`/../install/lib/gzrcs
 export gzrcs
@@ -56,10 +57,10 @@ cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;vision telnet 
 
 cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;aprs_objects\a\"; sleep 15s; source /opt/ros/kinetic/setup.bash; cd $aprs_objects; ./aprs_objects  ;exec bash"')
 
-cmd+=( --tab  --working-directory="$r" -e 'bash -c "printf \"\e]2;aprs gz motoman\a\";sleep 20s;export LD_LIBRARY_PATH=/opt/ros/kinetic/lib:$libs:$LD_LIBRARY_PATH; echo $LD_LIBRARY_PATH; source /opt/ros/kinetic/setup.bash; cd $gzrcs; ./gzrcs -r motoman_;exec bash"')
+cmd+=( --tab  --working-directory="$r" -e 'bash -c "printf \"\e]2;aprs gz motoman\a\";sleep 20s;export LD_LIBRARY_PATH=/opt/ros/kinetic/lib:$libs:$qtlibs:$LD_LIBRARY_PATH; echo $LD_LIBRARY_PATH; source /opt/ros/kinetic/setup.bash; cd $gzrcs; ./gzrcs -r motoman_;exec bash"')
 
 
-cmd+=( --tab  --working-directory="$r" -e 'bash -c "printf \"\e]2;aprs gz fanuc\a\";sleep 20s;export LD_LIBRARY_PATH=/opt/ros/kinetic/lib:$libs:$LD_LIBRARY_PATH; echo $LD_LIBRARY_PATH; source /opt/ros/kinetic/setup.bash; cd $gzrcs; ./gzrcs -r fanuc_;exec bash"')
+cmd+=( --tab  --working-directory="$r" -e 'bash -c "printf \"\e]2;aprs gz fanuc\a\";sleep 20s;export LD_LIBRARY_PATH=/opt/ros/kinetic/lib:$libs:$qtlibs:$LD_LIBRARY_PATH; echo $LD_LIBRARY_PATH; source /opt/ros/kinetic/setup.bash; cd $gzrcs; ./gzrcs -r fanuc_;exec bash"')
 
 "${cmd[@]}"
 

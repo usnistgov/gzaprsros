@@ -2,13 +2,13 @@
 QT += core
 QT -= gui
 
-machine = woodsy
 gzversion=9
 
 TARGET = crcllib
 CONFIG += console
 CONFIG -= app_bundle
 TEMPLATE = lib
+message("Compiling crcllib")
 
 
 CONFIG +=  c++11
@@ -36,25 +36,20 @@ QMAKE_CXXFLAGS +=-Wno-unused-function
 QMAKE_CXXFLAGS +=-Wno-unused-but-set-variable
 QMAKE_CXXFLAGS +=-Wno-write-strings
 QMAKE_CXXFLAGS +=-Wno-missing-field-initializers
-#QMAKE_CXXFLAGS +=-DXSD_CXX11
-
-
-contains(machine, woodsy){
-message("Compiling for woodsy")
-
 QMAKE_CXXFLAGS +=-std=c++11
-#INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/installs/rcs_pkgs/include"
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/installs/rcs_pkgs/include"
 
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Crcl/crcllib/include/crcllib/CrclXsd"
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Crcl/crcllib/include"
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Crcl/crcllib/src"
+INCLUDEPATH += "../../../include"
+
+INCLUDEPATH += "./include/crcllib/CrclXsd"
+INCLUDEPATH += "./include"
+INCLUDEPATH += "./src"
 
 #ROS
 INCLUDEPATH += "/opt/ros/kinetic/include"
-#INCLUDEPATH += "/usr/include"
-#INCLUDEPATH += "/usr/include/eigen3"
 
+# Local  libs
+LIBS += -L../../../lib
+#LIBS +=  -lgotraj
 
 
 # Boost - many could be replace by C11 std
@@ -69,9 +64,6 @@ LIBS += -lboost_log_setup
 LIBS += -lboost_log
 LIBS += -lboost_locale
 
-# Local ROS libs
-LIBS += -L$$(HOME)/src/robot-agility/gz/installs/rcs_pkgs/lib
-LIBS +=  -lgotraj
 
 # Ros libs
 LIBS += -L/opt/ros/kinetic/lib -lroscpp -lcpp_common -lroslib -lrosconsole -lrostime -lrospack
@@ -89,8 +81,6 @@ LIBS += -lactionlib -lpthread -ltf2_ros -ltf_conversions
 # xerces code synthesis dependency
 #LIBS += "/usr/lib/x86_64-linux-gnu/libxerces-c.a"
 LIBS +=  -lxerces-c
-
-}
 
 
 SOURCES += \
@@ -114,22 +104,12 @@ HEADERS += \
     include/crcllib/CrclXsd/CRCLProgramInstance.hxx \
     include/crcllib/CrclXsd/CRCLStatus.hxx \
     include/crcllib/CrclXsd/DataPrimitives.hxx \
-    ../../installs/rcs_pkgs/include/aprs_headers/Core.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Debug.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSMsgQueue.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Logger.h \
-    include/crcllib/nistcrcl.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Conversions.h \
+     include/crcllib/nistcrcl.h \
     include/crcllib/Crcl2Rcs.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSThreadTemplate.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/IRcs.h \
     include/crcllib/CrclServerInterface.h \
     include/crcllib/CrclClientInterface.h \
     include/crcllib/crclserver.h \
-    include/crcllib/crclserver.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSPriorityQueue.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSMsgQueueThread.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/LoggerMacros.h
+    include/crcllib/crclserver.h
 
 DISTFILES += \
     include/nistcrcl/CrclXsd/CRCLCommandInstance.xsd \
@@ -141,13 +121,11 @@ DISTFILES += \
     include/nistcrcl/NIST/RCSTimer.txt \
     Notes
 
-headers_features.path     = "~/src/robot-agility/gz/installs/rcs_pkgs/include/crcllib"
+headers_features.path     = "../../../include/crcllib"
 headers_features.files     = include/crcllib/nistcrcl.h
 INSTALLS                  += headers_features
 
-unix {
-    target.path = ~/src/robot-agility/gz/installs/rcs_pkgs/lib
-    INSTALLS += target
-}
+target.path = ../../../lib
+INSTALLS += target
 
 

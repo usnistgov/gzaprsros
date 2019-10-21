@@ -7,7 +7,7 @@
 
 QT       -= core  gui
 
-
+messaget("Compiling gzjointcmdplugin ")
 TARGET = gzjointcmdplugin
 TEMPLATE = lib
 

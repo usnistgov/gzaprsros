@@ -5,16 +5,14 @@ TARGET = gzrcs
 CONFIG += console
 CONFIG -= app_bundle
 TEMPLATE = app
+message("Compiling gzrcs")
 
-machine = woodsy
 
 # You have to add gzversion to Projects "Build Environment"
 # for this to work in qmake
 gzversion=9
 
 message(GZ Version  $$gzversion)
-
-
 
 # Version handling
 versionpath="$$_PRO_FILE_PWD_/version.bash"
@@ -28,7 +26,7 @@ message(major number $$major)
 message(minor number $$minor)
 message(build number $$build)
 
-#CONFIG +=  c++11 gokin trac_ik
+#CONFIG +=  c++11 gokin
 CONFIG +=  c++11
 release: DESTDIR = release
 debug:   DESTDIR = debug
@@ -38,7 +36,6 @@ MOC_DIR = $$DESTDIR/.moc
 RCC_DIR = $$DESTDIR/.qrc
 #UI_DIR = $$DESTDIR/.ui
 
-# Modularized with defines
 DEFINES+=QT_NO_VERSION_TAGGING
 DEFINES+=CNC
 DEFINES+=GZCONTACT
@@ -47,7 +44,6 @@ DEFINES+=ROS
 DEFINES+=GAZEBO
 DEFINES+=DEBUG
 DEFINES+=KDL_CONVERSION
-#DEFINES+=ANGLED_BEND
 #DEFINES+=CRCL_ROS_TOPIC
 DEFINES+=CRCL_DLL
 DEFINES+=MOTOGOKIN
@@ -108,49 +104,34 @@ INCLUDEPATH += "/usr/local/include/ignition"
 LIBS += -lgazebo_math
 }
 
-contains(machine, woodsy){
-message("Compiling for woodsy")
-
 QMAKE_CXXFLAGS +=-std=c++11
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/installs/rcs_pkgs/include"
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Client/gzrcs/include"
-INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Client/gzrcs/src"
-#INCLUDEPATH += "$$(HOME)/src/robot-agility/gz/Client/nist_robotsnc/src/motoman"
+# Local includes
+INCLUDEPATH += "../../include"
+INCLUDEPATH += "./include"
+INCLUDEPATH += "./src"
+
+# Eigen - header only
 INCLUDEPATH += "/usr/include/eigen3"
-
-
-
-# These are include paths if project part of ROS workspace
-#INCLUDEPATH += "/usr/local/michalos/nistfanuc_ws/src/gokin/include"
-#INCLUDEPATH += "/usr/include/freetype2"
 
 
 #ROS
 INCLUDEPATH += "/opt/ros/kinetic/include"
 
-
 # Be careful the order of the libraries is important
 # Boost - much could be and is replaced by C11 std
-#LIBS += -L/usr/lib/x86_64-linux-gnu
 LIBS += -lboost_system
 LIBS += -lboost_chrono
 LIBS += -lboost_thread
 LIBS += -lboost_filesystem
 LIBS += -lboost_date_time
 
-#LIBS += -lboost_regex
-#LIBS += -lboost_log_setup
-#LIBS += -lboost_log
-#LIBS += -lboost_locale
-
 
 LIBS += -lassimp
 
 
 # Local ROS libs
-LIBS += -L$$(HOME)/src/robot-agility/gz/installs/rcs_pkgs/lib
+LIBS += -L$$PWD/../../lib
 LIBS +=  -lgotraj
-#LIBS +=   -ltrac_ik
 LIBS +=  -lcrcllib
 
 # Installed Ros libs
@@ -161,11 +142,8 @@ LIBS +=  -ltf -ltf2 -lclass_loader
 LIBS +=   -lxmlrpcpp -lroscpp_serialization
 LIBS +=  -lrosconsole_bridge  -lrosconsole_log4cxx  -lrosconsole_backend_interface
 LIBS += -lactionlib  -ltf2_ros
-#LIBS +=  -ltf_conversions
-#LIBS += -lpthread
 
-
-
+# Not used.
 gokin {
 DEFINES+=GOKIN
 
@@ -178,17 +156,6 @@ LIBS += $$(HOME)/src/gomotion/lib/libgo.a
 # OR
 #LIBS += -lgofanuckin
 }
-
-trac_ik {
-DEFINES+=Trac_IK
-LIBS += -lkdl_conversions  -lkdl_parser -lorocos-kdl
-LIBS += -ltrac_ik
-LIBS += -lnlopt
-
-}
-
-}
-
 
 SOURCES += \
     src/Controller.cpp \
@@ -246,28 +213,28 @@ HEADERS += \
     include/gzrcs/RCSInterpreter.h \
     include/gzrcs/RobotControlException.h \
     include/gzrcs/Shape.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Config.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Conversions.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Core.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Debug.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/IRcs.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Logger.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/LoggerMacros.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSMsgQueue.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSTimer.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Config.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Conversions.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Core.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Debug.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/File.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/IRcs.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/Logger.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/LoggerMacros.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSMsgQueue.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSPriorityQueue.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/RCSTimer.h \
+    ../../include/aprs_headers/Config.h \
+    ../../include/aprs_headers/Conversions.h \
+    ../../include/aprs_headers/Core.h \
+    ../../include/aprs_headers/Debug.h \
+    ../../include/aprs_headers/IRcs.h \
+    ../../include/aprs_headers/Logger.h \
+    ../../include/aprs_headers/LoggerMacros.h \
+    ../../include/aprs_headers/RCSMsgQueue.h \
+    ../../include/aprs_headers/RCSTimer.h \
+    ../../include/aprs_headers/Config.h \
+    ../../include/aprs_headers/Conversions.h \
+    ../../include/aprs_headers/Core.h \
+    ../../include/aprs_headers/Debug.h \
+    ../../include/aprs_headers/File.h \
+    ../../include/aprs_headers/IRcs.h \
+    ../../include/aprs_headers/Logger.h \
+    ../../include/aprs_headers/LoggerMacros.h \
+    ../../include/aprs_headers/RCSMsgQueue.h \
+    ../../include/aprs_headers/RCSPriorityQueue.h \
+    ../../include/aprs_headers/RCSTimer.h \
     include/gzrcs/assimp.h \
-    ../../installs/rcs_pkgs/include/aprs_headers/env.h \
+    ../../include/aprs_headers/env.h \
     include/gzrcs/GripCommand.pb.h \
     include/gzrcs/JointsComm.pb.h
 DISTFILES += \
@@ -277,13 +244,18 @@ DISTFILES += \
     Readme.txt \
     Tests.txt
 
+# Below goes to the build directory
+#config_features.path     = "$$OUT_PWD/$$DESTDIR/config"
 
-config_features.path     = "$$OUT_PWD/$$DESTDIR/config"
-config_features.files     = $$PWD/config/Config.ini \
+config_features.path     = ../../install/lib/$$TARGET/config
+config_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/MotomanSia20d.urdf\
    $$PWD/config/FanucLRMate200iD.urdf\
    $$PWD/config/motoman_sia20d.ini
 
-message("mkspecs $$config_features.path")
-message("mkspecs files $$config_features.files")
-INSTALLS                  += config_features
+message("gzrcs install $$config_features.path")
+message("gzrcs instal files $$config_features.files")
+INSTALLS  += config_features
+
+target.path = ../../install/lib/$$TARGET/
+INSTALLS += target

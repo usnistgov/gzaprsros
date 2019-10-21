@@ -8,6 +8,7 @@ QT       -= gui
 
 TARGET = gzmodelplugin
 TEMPLATE = lib
+messaget("Compiling gzmodelplugin ")
 
 DEFINES += GZMODELPLUGIN_LIBRARY
 
