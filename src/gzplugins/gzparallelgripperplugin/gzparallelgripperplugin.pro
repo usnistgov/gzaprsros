@@ -10,7 +10,7 @@ QT       -= core  gui
 
 TARGET = gzparallelgripperplugin
 TEMPLATE = lib
-messaget("Compiling gzparallelgripperplugin")
+message("Compiling gzparallelgripperplugin")
 
 DEFINES += GZPARALLELGRIPPERPLUGIN_LIBRARY
 CONFIG += c++11
