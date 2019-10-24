@@ -22,8 +22,9 @@ fi
 
 
 # Check if all the installation prerequisites are met.
-`bash isvalid.bash`
+bash ./isvalid.bash
 valid=$?
+
 
 # fail if installation prerequisites are not met.
 if [ "$valid" != "0" ]

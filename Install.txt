@@ -69,3 +69,40 @@ DEBUGGING gzrcs demo:
 
 
 
+
+|-- Install.txt
+|-- InstallScripts
+|-- Readme.md
+|-- Worlds
+|-- bin9
+|-- doc
+|-- gzaprsros.docx
+|-- gzdatabase
+|-- images
+|-- isvalid.bash
+|-- qtbuild.bash
+|-- rosbuild.bash
+`-- src
+
+> ./rosbuild.bash
+
+|-- Install.txt
+|-- InstallScripts
+|-- Readme.md
+|-- Worlds
+|-- bin9
+|-- build
+|-- devel
+|-- doc
+|-- gzaprsros.docx
+|-- gzdatabase
+|-- images
+|-- install
+|-- isvalid.bash
+|-- plugins9
+|-- qtbuild.bash
+|-- rosbuild.bash
+`-- src
+
+
+

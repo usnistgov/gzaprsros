@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=175 -DQT_CORE_LIB
+DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=177 -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -Wno-unused-variable -Wno-sign-compare -Wno-unused-parameter -Wno-reorder -Wno-format-extra-args -Wno-unused-local-typedefs -Wno-ignored-qualifiers -Wno-deprecated-declarations -Wno-unused-function -Wno-unused-but-set-variable -Wno-missing-field-initializers -Wno-unused-parameter -std=c++11 -g -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../../include -Iinclude -Isrc -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64

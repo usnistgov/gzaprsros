@@ -1,11 +1,8 @@
 #!/bin/bash
 
 
-p=`pwd`
-
-
 # fail if no ros kinetic
-if [! test -d /opt/ros/kinetic]
+if ! test -d /opt/ros/kinetic
 then
     echo "error: ROS kinetic must be installed for this build to work."
     echo "Remedy: sudo apt-get install ros-kinetic-desktop-full"
@@ -24,7 +21,8 @@ then
 	then
 	    echo "error: Gazebo 9 must be installed for this build to work."
 	    echo "Use: sudo apt-get install *gazebo*"
-	    echo "It is not recommeded to have two versions of gazebo installed"
+	    echo "It is not recommended to have two versions of gazebo installed"
+	    echo "Most likely: check where build directory is, and run 'make uninstall'"
 	    exit 1
 	fi
 else
@@ -47,7 +45,6 @@ if [ "$dup" != "" ]
 then
 	echo "warning: APPEARS AS IF MULTIPLE Gazebo ARE INSTALLED."
 	echo $dup
-
 fi
 
 # Test for eigen3
