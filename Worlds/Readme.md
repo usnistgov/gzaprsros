@@ -1,39 +1,49 @@
 
-# Gazebo World Setup
+# Gazebo World Setup
+
 ----
 
+  
 
-
-This document gives a brief overview of how to configure the World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, kitting models, robots, flags and the like.
-
-
-
-# <a name="Configuration"></a>Configuration
+This document gives a brief overview of how to configure the World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, kitting models, robots, flags and the like.
 
 
 
-
 
 
-To configure the Gazebo world, navigate to the ./World folder. You should see the following APRS lab world SDF definitions, as well as the configuration bash script world_setup.bash.
+# <a name="Configuration"></a>Configuration
+
+
+
+
+
+
+
+
+To configure the Gazebo world, navigate to the ./World folder. You should see the following APRS lab world SDF definitions, as well as the configuration bash script world_setup.bash.
+
 
 ![Figure1](./images/gzworldsetup_image1.gif)
 
 
 
-Double lick on the world_setup.bash file or invoke the world_setup.bash  scriptfrom the command line.  Once invoked you will get an simple yad GUI as shownin the figure  below to configure the aprs-lab.world  file used by the gzaprsros application.
+Double lick on the world_setup.bash file or invoke the world_setup.bash  scriptfrom the command line.  Once invoked you will get an simple yad GUI as shownin the figure  below to configure the aprs-lab.world  file used by the gzaprsros application.
 
 
-
+
+
+
 
 ![Figure2](./images/gzworldsetup_image2.gif)
 
 
 
-The breakdown of the various configuration variable in shown in the table below.
+The breakdown of the various configuration variable in shown in the table below.
 
 
-
+
+
+
 <TABLE>
 <TR>
 <TD>Variable<BR></TD>
@@ -86,7 +96,8 @@ The breakdown of the various configuration variable in shown in the table below.
 </TABLE>
 
 
-
 
 
-
+
+
+
