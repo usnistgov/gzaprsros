@@ -1,4 +1,5 @@
 #!/bin/bash
+p=`pwd`
 
 
 # fail if no ros kinetic
@@ -101,6 +102,20 @@ if [ "" == "$PKG_OK" ]; then
   echo "No yad. Installing yad."
   sudo apt-get --force-yes --yes install yad
 fi
+
+
+# Copy gzrcs headers to appropriate include subdirectory
+mkdir -p $p/include/aprs_headers/
+cp -r $p/src/aprs_headers/include/aprs_headers $p/include
+
+# FIXME: compile gazebo and ros messages to header files
+# I found a convoluted way to dynamically generate header from msg but not worth it.
+# So copy for now.
+mkdir -p $p/include/crcl_rosmsgs/
+cp $p/src/crcl/crcllib/include/crcllib/CrclCommandMsg.h $p/include/crcl_rosmsgs/
+cp $p/src/crcl/crcllib/include/crcllib/CrclStatusMsg.h $p/include/crcl_rosmsgs/
+cp $p/src/crcl/crcllib/include/crcllib/CrclMaxProfileMsg.h $p/include/crcl_rosmsgs/
+
 
 exit 0
 

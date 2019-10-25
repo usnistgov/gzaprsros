@@ -4,6 +4,8 @@
 # run dos2unix ./runmultiterm.bash
 
 pkill gzserver
+pkill gzserver
+pkill gzclient
 pkill gzclient
 pkill rosmaster
 

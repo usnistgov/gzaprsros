@@ -54,7 +54,7 @@ gzvisionsim=$(echo $GZVISIONSIM | grep "Yes" | wc -l)
 #basic=$(echo $BASIC| grep "Yes" | wc -l)
 
 # Determine preprocessor defines
-D="-D$PHYSICS -DCONTACT "
+D="-D$PHYSICS "
 
 if [ "$gzvisionsim" = 1 ] ; then
 D="$D -DGZVISIONSIM"
@@ -96,13 +96,9 @@ if [ "$furniture" = 1 ] ; then
 D="$D -DFURNITURE"
 fi
 
-#if [ "$pavel" = 1 ] ; then
-D="$D  -DPARALLEL_GRIPPER_PLUGIN "
-#fi
+#D="$D  -DPARALLEL_GRIPPER_PLUGIN "
+#D="$D -DPAVEL -DSIMPLE"
 
-#if [ "$basic" = 1 ] ; then
-D="$D -DPAVEL -DSIMPLE"
-#fi
 
 # Assume all gears for now
 # -E option, nothing is done except preprocessing.
@@ -131,18 +127,14 @@ echo "GZ Safety"
 gcc -E $D -P -C  - < $world/Templates/safety_system_template.world |  $p/removecomments.perl | sed '/^$/d'   >  $world/safety_system.world
 echo "Robots setup"
 gcc -E $D -P -C  - < $world/Templates/robots_template.world |  $p/removecomments.perl | sed '/^$/d'   >  $world/robots.world
+
+echo "Office Furniture setup"
+gcc -E $D -P -C  - < $world/Templates/office_furniture.world |  $p/removecomments.perl | sed '/^$/d'   >  $world/office_furniture.world
+
+# Now generate the agility lab world....
 echo "Version setup"
 gcc -E $D -P -C  - < $world/aprs-lab-V${version}.world |  $p/removecomments.perl | sed '/^$/d'   >  $world/aprs-lab.world
 
-
-######################################################
-# Handle the gear templates based on the user configuration
-
-gcc -E $D -P -C  - < $model/gear_support/sku_part_large_gear/sku_part_large_gear_template.sdf |  $p/removecomments.perl | sed '/^$/d'   >  $model/gear_support/sku_part_large_gear/sku_part_large_gear.sdf 
-
-gcc -E $D -P -C  - < $model/gear_support/sku_part_medium_gear/sku_part_medium_gear_template.sdf |  $p/removecomments.perl | sed '/^$/d'   >  $model/gear_support/sku_part_medium_gear/sku_part_medium_gear.sdf
-
-gcc -E $D -P -C  - < $model/gear_support/sku_part_small_gear/sku_part_small_gear_template.sdf |  $p/removecomments.perl | sed '/^$/d'   >  $model/gear_support/sku_part_small_gear/sku_part_small_gear.sdf
 
 
 

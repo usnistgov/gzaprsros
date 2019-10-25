@@ -103,7 +103,7 @@ void CGzModelReader::start()
 {
     _sub = CGazebo::_node->Subscribe<gazebo::msgs::Model>(_modeltopicname, &CGzModelReader::onUpdate,this);
     Globals.sleep(1000);
-    std::cout << "Gazebo model reader subscriber started\n";
+    std::cout << "Gazebo model reader subscriber"  << _sub << "started\n";
 }
 /////////////////////////////////////////////////////////////////////////////
 void CGzModelReader::stop()
@@ -236,14 +236,23 @@ void CGzRobotHandler::start(std::vector<std::string> robotnames,
     _bRunning=true;
     _robotCmdJoints.name=robotnames;
     _gripperJoints.name = fingernames;
+    this->_robotStatusJoints.name=robotnames;
+    this->_robotStatusJoints.position.resize(robotnames.size(), 0.0);
+    this->_robotStatusJoints.velocity.resize(robotnames.size(), 0.0);
+    this->_robotStatusJoints.effort.resize(robotnames.size(), 0.0);
+
 
     // create publish gazebo connection
     if(!_mGzRobotCmdTopicName.empty())
+    {
         _robotCmdPub= CGazebo::_node->Advertise<message::JointsComm>(_mGzRobotCmdTopicName);
+    }
 
-    if(!_mGzRobotCmdTopicName.empty())
+    if(!_mGzRobotStatusTopicName.empty())
+    {
         _robotStatusSub= CGazebo::_node->Subscribe<message::JointsComm>(_mGzRobotStatusTopicName,
                                                                         &CGzRobotHandler::OnStatusUpdate,this);
+    }
 }
 /////////////////////////////////////////////////////////////////////////////
 void CGzRobotHandler::stop() {
@@ -287,6 +296,11 @@ void CGzRobotHandler::OnStatusUpdate(ConstRobotCmdPtr &_msg)
 {
     std::lock_guard<std::mutex> guard(_mymutex);
     _readCycles++;
+    if(_msg->name_size() == 0)
+    {
+        std::cout << "Problem with on robot status update\n";
+        return;
+    }
     this->_robotStatusJoints.name.clear();
     this->_robotStatusJoints.position.clear();
     this->_robotStatusJoints.velocity.clear();

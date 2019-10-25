@@ -202,10 +202,10 @@ void CController::setup()
     // Initialze status - open loop for now
     _status.init();
 
-    std::cout << "Waiting feedback from robot";
+    std::cout << "Waiting feedback from robot ";
     while(!_writer.readCycles())
     {
-        Globals.sleep(25);
+        Globals.sleep(250);
         std::cout << "." << std::flush;
     }
     std::cout << "\n" << std::flush;
@@ -216,7 +216,9 @@ void CController::setup()
 //    _status.robotjoints.position.resize(_status.robotjoints.name.size(), 0.0);
 
     // this prevents the robot from outputting garbage.
+#ifdef FIXME
     _nextcc.joints=_writer.robotStatus();
+#endif
 
 #if 0
     _status._eepercent=0.0;

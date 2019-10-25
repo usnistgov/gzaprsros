@@ -87,11 +87,13 @@
 
 #ifdef CAMERAS
    <model name="motoman_camera">
+#define CAMERA_NAME motoman_camera
 #include "camera.world"
        <pose frame=''>0.030841 -0.690050 2.004990 1.569999 0.000004 1.574377</pose>
       </model>
 
     <model name="fanuc_camera">
+#define CAMERA_NAME fanuc_camera
 #include "camera.world"
        <pose frame=''>0.359072 -1.157340 1.962610 1.569998 0.000002 1.571644</pose>
       </model>
@@ -100,10 +102,8 @@
 #include "robots.world"
 #include "gzvisionsim.world"
 
-#ifdef ODE
 #ifdef SAFETY
 #include "safety_system.world"
-#endif
 #endif
 
 #ifdef FURNITURE

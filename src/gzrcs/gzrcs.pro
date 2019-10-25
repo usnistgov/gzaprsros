@@ -106,9 +106,13 @@ LIBS += -lgazebo_math
 
 QMAKE_CXXFLAGS +=-std=c++11
 # Local includes
-INCLUDEPATH += "../../include"
-INCLUDEPATH += "./include"
-INCLUDEPATH += "./src"
+message(Current folder $$PWD)
+INCLUDEPATH += $$PWD/../../include
+INCLUDEPATH += $$PWD/include
+INCLUDEPATH += $$PWD/src
+
+# Ros installation headers
+INCLUDEPATH += $$PWD/../../install/include
 
 # Eigen - header only
 INCLUDEPATH += "/usr/include/eigen3"
@@ -133,6 +137,8 @@ LIBS += -lassimp
 LIBS += -L$$PWD/../../lib
 LIBS +=  -lgotraj
 LIBS +=  -lcrcllib
+
+LIBS += -L$$PWD/../../install/lib
 
 # Installed Ros libs
 LIBS += -L/opt/ros/kinetic/lib
