@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = gzparallelgripperplugin1.0.0
-DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros/src/gzplugins/gzparallelgripperplugin/debug/.obj/gzparallelgripperplugin1.0.0
+DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzplugins/gzparallelgripperplugin/debug/.obj/gzparallelgripperplugin1.0.0
 LINK          = g++
 LFLAGS        = -m64 -shared -Wl,-soname,libgzparallelgripperplugin.so.1
 LIBS          = $(SUBLIBS) -lgazebo -lgazebo_common -lgazebo_transport -lgazebo_msgs -lboost_system -lboost_regex -lpthread 
@@ -426,19 +426,19 @@ debug/.obj/JointsComm.pb.o: JointsComm.pb.cc JointsComm.pb.h
 ####### Install
 
 install_target: first FORCE
-	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzplugins/gzparallelgripperplugin/../../../plugins9 || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzplugins/gzparallelgripperplugin/../../../plugins9
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzplugins/gzparallelgripperplugin/../../../plugins9 || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzplugins/gzparallelgripperplugin/../../../plugins9
 	@test -d $(INSTALL_ROOT)/home/isd/michalos/.gazebo/plugins || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/.gazebo/plugins
-	-$(INSTALL_PROGRAM) debug/$(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET0)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET1)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET2)
+	-$(INSTALL_PROGRAM) debug/$(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET0)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET1)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET2)
 
 uninstall_target: FORCE
-	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET0) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET1) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/plugins9/$(TARGET2)
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzplugins/gzparallelgripperplugin/../../../plugins9/ 
+	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET0) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET1) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/plugins9/$(TARGET2)
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzplugins/gzparallelgripperplugin/../../../plugins9/ 
 
 
 install: install_target  FORCE

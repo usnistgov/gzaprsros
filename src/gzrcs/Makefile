@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=177 -DQT_CORE_LIB
+DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=211 -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -Wno-unused-variable -Wno-sign-compare -Wno-unused-parameter -Wno-reorder -Wno-format-extra-args -Wno-unused-local-typedefs -Wno-ignored-qualifiers -Wno-deprecated-declarations -Wno-unused-function -Wno-unused-but-set-variable -Wno-missing-field-initializers -Wno-unused-parameter -std=c++11 -g -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../../include -Iinclude -Isrc -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
+INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../../include -Iinclude -Isrc -I../../install/include -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -33,10 +33,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = gzrcs1.0.0
-DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/debug/.obj/gzrcs1.0.0
+DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/.obj/gzrcs1.0.0
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -lgazebo -lgazebo_client -lgazebo_common -lgazebo_transport -lgazebo_msgs -lprotobuf -lboost_system -lboost_chrono -lboost_thread -lboost_filesystem -lboost_date_time -lassimp -L/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../lib -lgotraj -lcrcllib -L/opt/ros/kinetic/lib -lroscpp -lcpp_common -lroslib -lrosconsole -lrostime -lrospack -lurdf -lurdfdom_sensor -lurdfdom_model_state -lurdfdom_model -lurdfdom_world -ltf -ltf2 -lclass_loader -lxmlrpcpp -lroscpp_serialization -lrosconsole_bridge -lrosconsole_log4cxx -lrosconsole_backend_interface -lactionlib -ltf2_ros -lQt5Core -lpthread 
+LIBS          = $(SUBLIBS) -lgazebo -lgazebo_client -lgazebo_common -lgazebo_transport -lgazebo_msgs -lprotobuf -lboost_system -lboost_chrono -lboost_thread -lboost_filesystem -lboost_date_time -lassimp -L/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../lib -lgotraj -lcrcllib -L/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib -L/opt/ros/kinetic/lib -lroscpp -lcpp_common -lroslib -lrosconsole -lrostime -lrospack -lurdf -lurdfdom_sensor -lurdfdom_model_state -lurdfdom_model -lurdfdom_world -ltf -ltf2 -lclass_loader -lxmlrpcpp -lroscpp_serialization -lrosconsole_bridge -lrosconsole_log4cxx -lrosconsole_backend_interface -lactionlib -ltf2_ros -lQt5Core -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -667,7 +667,7 @@ debug/.obj/Controller.o: src/Controller.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/package.h \
 		../../include/aprs_headers/LoggerMacros.h \
 		../../include/aprs_headers/Logger.h \
-		../../include/crcllib/nistcrcl.h
+		../../install/include/crcllib/nistcrcl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/Controller.o src/Controller.cpp
 
 debug/.obj/CrclApi.o: src/CrclApi.cpp include/gzrcs/CrclApi.h \
@@ -2908,27 +2908,27 @@ debug/.obj/JointsComm.pb.o: src/JointsComm.pb.cc include/gzrcs/JointsComm.pb.h
 ####### Install
 
 install_config_features: first FORCE
-	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config
-	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/config/Config.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/
-	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/config/MotomanSia20d.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/
-	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/config/FanucLRMate200iD.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/
-	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/config/motoman_sia20d.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/Config.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/MotomanSia20d.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/FanucLRMate200iD.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/motoman_sia20d.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/
 
 uninstall_config_features: FORCE
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/motoman_sia20d.ini
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/FanucLRMate200iD.urdf
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/MotomanSia20d.urdf
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/Config.ini
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/config/ 
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/motoman_sia20d.ini
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/FanucLRMate200iD.urdf
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/MotomanSia20d.urdf
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/Config.ini
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/ 
 
 
 install_target: first FORCE
-	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/ || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/
-	-$(INSTALL_PROGRAM) debug/$(QMAKE_TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/install/lib/gzrcs/$(QMAKE_TARGET)
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/ || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/
+	-$(INSTALL_PROGRAM) debug/$(QMAKE_TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/install/lib/gzrcs/$(QMAKE_TARGET)
 
 uninstall_target: FORCE
-	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/install/lib/gzrcs/$(QMAKE_TARGET)
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gzrcs/../../install/lib/gzrcs/ 
+	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/install/lib/gzrcs/$(QMAKE_TARGET)
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/ 
 
 
 install: install_config_features install_target  FORCE

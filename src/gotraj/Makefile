@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = gotraj1.0.0
-DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/debug/.obj/gotraj1.0.0
+DISTDIR = /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/debug/.obj/gotraj1.0.0
 LINK          = g++
 LFLAGS        = -m64 -shared -Wl,-soname,libgotraj.so.1
 LIBS          = $(SUBLIBS) -L/usr/lib/x86_64-linux-gnu -lboost_system -lboost_chrono -lboost_thread -lboost_filesystem -lboost_date_time -lboost_regex -lboost_log_setup -lboost_log -lboost_locale -L/opt/ros/kinetic/lib -lroscpp -lcpp_common -lroslib -lrosconsole -lrostime -lrospack -lurdf -lurdfdom_sensor -lurdfdom_model_state -lurdfdom_model -lurdfdom_world -ltf -ltf2 -lclass_loader -lxmlrpcpp -lroscpp_serialization -lrosconsole_bridge -lrosconsole_log4cxx -lrosconsole_backend_interface -lactionlib -ltf2_ros -ltf_conversions -lQt5Core -lpthread 
@@ -709,37 +709,37 @@ debug/.obj/gotraj_.o: src/gotraj_.cpp include/gotraj/gotypes.h \
 ####### Install
 
 install_config_features: first FORCE
-	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gointerp.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gomath.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gomotion.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gotraj.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gotraj_.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
-	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/include/gotraj/gotypes.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gointerp.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gomath.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gomotion.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gotraj.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gotraj_.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
+	-$(INSTALL_FILE) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/include/gotraj/gotypes.h $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/
 
 uninstall_config_features: FORCE
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gotypes.h
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gotraj_.h
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gotraj.h
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gomotion.h
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gomath.h
-	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/gointerp.h
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../include/gotraj/ 
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gotypes.h
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gotraj_.h
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gotraj.h
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gomotion.h
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gomath.h
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/gointerp.h
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../include/gotraj/ 
 
 
 install_target: first FORCE
-	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../lib || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../lib
-	-$(INSTALL_PROGRAM) debug/$(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET0)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET1)
-	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET2)
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../lib || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../lib
+	-$(INSTALL_PROGRAM) debug/$(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET0)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET1)
+	-$(SYMLINK) $(TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET2)
 
 uninstall_target: FORCE
-	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET0) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET1) 
-	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/lib/$(TARGET2)
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros/src/gotraj/../../lib/ 
+	-$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET0) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET1) 
+	 -$(DEL_FILE) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib/$(TARGET2)
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/../../lib/ 
 
 
 install: install_config_features install_target  FORCE
