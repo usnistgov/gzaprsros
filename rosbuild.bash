@@ -1,6 +1,11 @@
 #!/bin/bash
 
 
+if [ "$1" == "clean" ]
+then
+echo cleaning packages
+rm -rd build devel install
+fi
 
 # Check if all the installation prerequisites are met.
 bash ./isvalid.bash

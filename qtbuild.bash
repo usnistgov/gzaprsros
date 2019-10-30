@@ -14,10 +14,14 @@ if ! test -x /usr/bin/qmake
 then
   # The Qt library is missing...
   echo "error: Qt must be installed for this build to work."
-  echo "Installing qt 5.9.1 which works on Ubuntu 16.04"
-  wget http://download.qt.io/official_releases/qt/5.9/5.9.1/qt-opensource-linux-x64-5.9.1.run
+  read -p "Installing qt 5.9.1?" -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+   wget http://download.qt.io/official_releases/qt/5.9/5.9.1/qt-opensource-linux-x64-5.9.1.run
   chmod +x qt-opensource-linux-x64-5.9.1.run
   ./qt-opensource-linux-x64-5.9.1.run
+  fi
+
 fi
 
 
@@ -55,18 +59,21 @@ make install
 # Gazebo plugin: gzjointcmdplugin
 cd $p/src/gzplugins/gzjointcmdplugin
 qmake gzjointcmdplugin.pro  -r -Wall  CONFIG+=debug
+if [ "$1" == "clean" ]; then make clean; fi
 make
 make install
 
 # Gazebo plugin: gzjointcmdplugin
 cd $p/src/gzplugins/gzmodelplugin
 qmake gzmodelplugin.pro  -r -Wall  CONFIG+=debug
+if [ "$1" == "clean" ]; then make clean; fi
 make
 make install
 
 # Gazebo plugin: gzjointcmdplugin 
 cd $p/src/gzplugins/gzparallelgripperplugin
 qmake gzparallelgripperplugin.pro  -r -Wall  CONFIG+=debug
+if [ "$1" == "clean" ]; then make clean; fi
 make
 make install
 
@@ -74,6 +81,7 @@ make install
 # Gomotion trajectory generator: gotraj
 cd $p/src/gotraj
 qmake gotraj.pro  -r -Wall  CONFIG+=debug
+if [ "$1" == "clean" ]; then make clean; fi
 make
 make install
 
@@ -81,6 +89,7 @@ make install
 # Prerequisites: gotraj, aprs headers
 cd $p/src/gzrcs
 qmake gzrcs.pro  -r -Wall  CONFIG+=debug
+if [ "$1" == "clean" ]; then make clean; fi
 make
 make install
 

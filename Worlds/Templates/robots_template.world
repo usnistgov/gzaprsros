@@ -9,16 +9,7 @@
                 <uri>model://fanuc_lrmate200id</uri>
                 <pose>-0.169 -1.140 0.934191 0 0 0</pose>
             </include>
-            
-            
-            <plugin filename="libgzjointcmdplugin.so" name="fanuc_jnts">
-                <topic>~/fanuc/joints</topic>
-                    <finger>fanuc_lrmate200id::fanuc_prism1</finger>
-                    <finger>fanuc_lrmate200id::fanuc_prism2</finger>
-                <cmdtopic> ~/fanuc/jtscmd </cmdtopic>
-
-            </plugin>
-            
+                      
             <plugin filename="libgzjointcmdplugin.so" name="fanuc_jnts">
                      <finger>fanuc_lrmate200id::fanuc_prism1</finger>
                     <finger>fanuc_lrmate200id::fanuc_prism2</finger>
