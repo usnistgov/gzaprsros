@@ -53,7 +53,8 @@ cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;ROS\a\";source
 
 cmd+=( --tab   --working-directory="$p"  -e 'bash -c "printf \"\e]2;gazebo\a\";source /opt/ros/kinetic/setup.bash; LD_LIBRARY_PATH=/opt/ros/kinetic/lib:/usr/lib/x86_64-linux-gnu/gazebo-$gzver/plugins:$LD_LIBRARY_PATH;export LD_LIBRARY_PATH ; GAZEBO_PLUGIN_PATH=$plugins:/opt/ros/kinetic/lib:$GAZEBO_PLUGIN_PATH; export GAZEBO_PLUGIN_PATH;GAZEBO_MODEL_PATH=$models;export GAZEBO_MODEL_PATH; cd `pwd`; gazebo $aprs --verbose ; exec bash"')
 
-cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;vision telnet 5002\a\"; sleep 25s; telnet 127.0.0.1 5002 ;exec bash"')
+# Echo vision simulator output for debugging purposes
+#cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;vision telnet 5002\a\"; sleep 25s; telnet 127.0.0.1 5002 ;exec bash"')
 
 cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;aprs_objects\a\"; sleep 15s; source /opt/ros/kinetic/setup.bash; cd $aprs_objects; ./aprs_objects  ;exec bash"')
 

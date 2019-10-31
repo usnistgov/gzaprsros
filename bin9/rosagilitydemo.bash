@@ -37,7 +37,7 @@ cmd=( gnome-terminal )
 
 cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;ROS\a\";cd $aprs; source /opt/ros/kinetic/setup.bash;source devel/setup.bash;pwd; roslaunch gzrcs agilitylab.launch ;exec bash"')
 
-cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;vision telnet 5002\a\"; sleep 25s; telnet 127.0.0.1 5002 ;exec bash"')
+#cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;vision telnet 5002\a\"; sleep 25s; telnet 127.0.0.1 5002 ;exec bash"')
 
 cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;aprs_objects\a\"; sleep 15s; source /opt/ros/kinetic/setup.bash; cd $aprs_objects; ./aprs_objects  ;exec bash"')
 
