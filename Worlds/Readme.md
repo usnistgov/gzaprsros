@@ -4,10 +4,10 @@
 
 
 
-This readme gives a brief overview of how to configure the gzaprsros World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, robots, kitting models, flags and the like.
+This readme gives a brief overview of how to configure the gzaprsros World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, robots, kitting models, flags and the like. Configuration of the world was developed to provide a variety of platforms with differing simulation performance.
 
 
-Modelling in Gazebo is done with SDF. SDF is formalized XML to describe visualization, physics and control for objects in a simulated world. Object in the simulated world include robots, sensors and static or dynamic objects. The ability to communicate with these objects is enabled with the Gazebo message transport. The ability to extend SDF models is allowed through plugins
+Modelling in Gazebo is done with SDF. SDF is formalized XML to describe visualization, physics and control for objects in a simulated world. Objects in the simulated world include robots, sensors and static or dynamic objects. The ability to communicate with these objects is enabled with the Gazebo message transport. The ability to extend SDF models is allowed through plugins
 # <a name="Configuration"></a>Configuration
 
 
@@ -28,7 +28,7 @@ Using the script engine bash, yad/zenity, g++ preprocessor, a Perl script, and t
 
 
 
-We will assume g++ is already installed. The g++ preprocessor is used for #define value definitions that are embedded in the template SDF files to delineate conditional inclusions.  The template folder contains parts of the world with embedded preprocessor conditionals to factor in or out certain configurations. Then, the Perl script removecomments.perl, which is part of the folder, is used to clear out the comments left behind by the g++ preprocessor. All these components are combined into the selected aprs version  to produce the aprs-lab.world  file used by the gzaprsros application.
+We will assume g++ is already installed. The g++ preprocessor is used for #define value definitions that are embedded in the template SDF files to delineate conditional inclusions.  The template folder contains parts of the world with embedded preprocessor conditionals to factor in or out certain configurations. Then, the Perl script removecomments.perl, which is part of the folder, is used to clear out the comments non-SDF/XML header left behind by the g++ preprocessor. All these components are combined into the selected aprs version  to produce the aprs-lab.world  file used by the gzaprsros application.
 
 
 Double click on the world_setup.bash file or invoke the world_setup.bash  script from the command line.  Once invoked you will get a simple yad GUI as shown in the figure below to configure the aprs-lab.world  file used by the gzaprsros application.
@@ -75,11 +75,11 @@ The breakdown of the various configuration variable in shown in the table below.
 </TR>
 <TR>
 <TD>Camera<BR></TD>
-<TD>If True, the cameras<BR></TD>
+<TD>If True, the Gazebo cameras are present in the model. You will need ROS plugins to communicate with cameras.<BR></TD>
 </TR>
 <TR>
 <TD>Conveyor<BR></TD>
-<TD>If True, the conveyor model will be included in the model.<BR></TD>
+<TD>If True, the conveyor model will be included in the model. Note untested.<BR></TD>
 </TR>
 <TR>
 <TD>Furniture<BR></TD>
@@ -91,7 +91,7 @@ The breakdown of the various configuration variable in shown in the table below.
 </TR>
 <TR>
 <TD>Gz Vision Sim<BR></TD>
-<TD>If True, the vision simulator plugin will run which emits the Gazebo model for all kitting models on a given socket port (typically port 5002 but configurable).<BR></TD>
+<TD>If True, the vision simulator plugin will run which emits the Gazebo model for all kitting models on a given socket port (typically port 5001 or 5002 but configurable).<BR></TD>
 </TR>
 </TABLE>
 
@@ -99,7 +99,7 @@ The breakdown of the various configuration variable in shown in the table below.
 
 
 
-One of the major considerations of the simulation fidelity is the processing load of the configured world. Many of the objects in the world are designated to be static to reduce physics calculations, which can degrade simulation. Such designated static objects include the kits and trays, chairs, tables, and PCs. Static objects do not incur any physics so that a static tray elevated to a fixed position in space will stay at this position (making the requirement for an underlying table moot). However, the placement of a "live" gear in a static tray will produce physics to detect and report collisions between the static tray and the dynamic gear, which is not computationally free. Below is a screenshot of Gazebo simulation with Version 6 Agility lab and the safety system (which includes 86 laser ROS plugins) resulting in a real-time factor shown at the bottom to be 0.34 which is quite computationally intensive especially when you consider that "nothing is being done".
+One of the major considerations of the simulation fidelity is the processing load of the configured world. Many of the objects in the world are designated to be static, which reduces the physics calculations. Such designated static objects include the kits and trays, chairs, tables, and PCs. Static objects do not incur any physics so that a static tray elevated to a fixed position in space will stay at this position (making the requirement for an underlying table moot). However, the placement of a "live" gear in a static tray will produce physics to detect and report collisions between the static tray and the dynamic gear, which is not computationally free. Below is a screenshot of Gazebo simulation with Version 6 Agility lab and the safety system (which includes 86 laser ROS plugins) resulting in a real-time factor shown at the bottom to be 0.34 which is quite computationally intensive especially when you consider that "nothing is being done". So, an attempt was made to reduce the computational overhead by making objects such as trays and tables to be static to avoid the physics collision overhead.
 
 ![Figure3](./images/gzworldsetup_image3.gif)
 
@@ -108,7 +108,7 @@ One of the major considerations of the simulation fidelity is the processing loa
 
 
 
-So, an attempt was made to reduce the computational overhead by making objects such as trays and tables to be static to avoid the physics collision overhead. The configuration to make this simulation visualization is: 
+The configuration to make this simulation visualization is: 
 	Version=6, Debug=0, Motoman=1, Fanuc=1, Safety=1, Camera=1, Conveyor=1, Furniture=1, ROS Plugins=1
 
 
@@ -120,7 +120,7 @@ A quick summary of the APRS label model versions is given. Version 2 only has th
 
 
 
-The Gazebo SDF world allows "plugin" to be embedded in a model to provide access to a model. In fact, the same plugin can be used twice for different models in the world, but with different SDF/XML options so that the plugin acts differently. A plugin is code that is compiled as a shared library and inserted into the simulation as part of the SDF XML. The plugin has direct access to all the functionality of Gazebo through the standard C++ classes.
+The Gazebo SDF world allows "plugin(s)" to be embedded in a model to provide access, control, and status to a model(s). In fact, the same plugin can be used twice for different models in the world, but with different SDF/XML options so that the plugin acts differently. A plugin is code that is compiled as a shared library and inserted into the simulation as part of the SDF XML. The plugin has direct access to all the functionality of Gazebo through the standard C++ classes.
 ## <a name="gzjointcmdplugin"></a>gzjointcmdplugin
 
 
@@ -153,10 +153,10 @@ There are some peculiarities to defining the a fully qualified joint name (e.g.,
 
 
 
-The gzparallelgripper plugin is used to control the gripper joints of the robot model assuming the gripper is a disembodied parallel gripper (two fingers open/close).  The gzparallelgripper plugin monitors the pose error of a grasped object while the gripper is subject to various user-defined forces. The parallel gripper fingertips can be actuated using the GripCommand.pb.{h,cc} to accept (enabled/disabled) command which to send a close(true) or open(false) to actuate the gripper.  The plugin uses a simplified control scheme: a constant user-defined force is applied through both finger joints with a proportional corrective force used to maintain the symmetrical position of the gripper's fingertips. This scheme was used to better reflect the functionality of actual pneumatic grippers.
+The gzparallelgripper plugin is used to control the gripper joints of the robot model assuming the gripper is a disembodied parallel gripper (two fingers open/close).  The gzparallelgripper plugin monitors the pose error of a grasped object while the gripper is subject to various user-defined forces. The parallel gripper fingertips can be actuated using the GripCommand.pb.{h,cc} to accept (enabled/disabled) command which sends a close(true) or open(false) to actuate the gripper.  The plugin uses a simplified control scheme: a constant user-defined force is applied through both finger joints with a proportional corrective force used to maintain the symmetrical position of the gripper's fingertips. This scheme was used to better reflect the functionality of actual pneumatic grippers.
 
 
-a gripper plugin SDF/XML example is shown below:
+A gripper plugin SDF/XML example is shown below:
 	<plugin name="ParallelGripperPlugin" filename="libgzparallelgripperplugin.so">
 	  <grip_force_close>5</grip_force_close>
 	  <joint1>motoman_sia20d::motoman_left_finger_joint</joint1>
@@ -189,13 +189,13 @@ The gzmodelplugin is a custom plugin that communicates the active poses of all t
 
 
 
-There are two primary purposes for the kitting model information: vision simulation and for testing.  In testing, the grasping of the top of a gear is an important element in transferring a gear from a tray to a kit. However, one system configuration variable that must be hard coded and adjusted according to the object is the grasping offset from the given object pose. Contained within the model plugin are a couple ways to return the bounding box of the object from which it is assumed since the gears are so simple, the grasping offset can be determined. Since gears are the only objects being grasped in the kitting simulation, the only difference in grasping location is based on the size of the gear. However, the bounding box is provided for each kitting object, but is currently not used so the hard coded z offset is still used.
+There are two primary purposes for the kitting model information: vision simulation and for testing.  In testing, the grasping of the top of a gear is an important element in transferring a gear from a tray to a kit. However, one system configuration variable that must be hard coded and adjusted according to the object is the grasping offset from the given object pose. Contained within the model plugin are a couple ways to return the bounding box of the object in the commmunication message from which it is assumed, the grasping offset can be determined. Since gears are the only objects being grasped in the kitting simulation, the only difference in grasping location is based on the size of the gear. However, the bounding box is provided for each kitting object, but is currently not used so the hard-coded z offset is still used.
 
 
 
 
 
-The kitting model object pose information primary purpose is to be used by a vision simulator which reformats the information into the same format as the APRS laboratory vision system.  The folder src/aprs_objects contain the code to read the Gazebo communication and then reformat into the vision simulation format that is streamed as text over port 5002 (configurable by ROS params at its startup). If you use the agilitydemo bash scripts they launch a script to read the Gazebo model update and translate into the APRS agility lab vision reporting format. Below is a screen shot of a telnet session that connects to the vision simulator stream (port 5002):
+The kitting model object pose information primary purpose is to be used by a vision simulator which reformats the information into the same format as the APRS laboratory vision system.  The folder src/aprs_objects contains the code to read the Gazebo communication and then reformat into the vision simulation format that is streamed as text over port 5001 or 5002 (configurable by ROS params at startup). If you use the agilitydemo bash scripts they launch a script to read the Gazebo model update and translate into the APRS agility lab vision reporting format. Below is a screen shot of a telnet session that connects to the vision simulator stream (port 5002):
 
 
     
@@ -208,15 +208,17 @@ The kitting model object pose information primary purpose is to be used by a vis
 
 
 There is a vision simulation of the APRS agility lab vision system in the folder src/aprs_objects that uses the Gazebo World model. The vision simulation code uses ULAPI, Gazebo and ROS to communicate, command, control a TCP stream of simulated vision data. The vision simulated format is continually streamed  to different ports depending on the configuration, but in general on port #5002 (Motoman robot camera) and port #5001 for (Fanuc robot camera). The vision simulation code generates a line per object pose detailing all the detected objects in its field of view. The vision report contains the object, type, confidence and xy position. There is no z position as the camera sensing is not adroit enough, so the vision simulation code discards the z value from the Gazebo model information.  Therein, the agility lab vision format is: 
-	parttype,rotation, x,y, confidence%, metatype
+	parttype,rotation, x,y, confidence%, metatype,
 
 
 
 
 
 where:
-	parttype= { sku_part_large_gear|sku_part_small_gear|sku_small_gear_vessel|sku_large_gear_vessel|sku_kit_s2l2_vessel}
+	parttype= { sku_part_large_gear |sku_part_small_gear| sku_small_gear_vessel | sku_large_gear_vessel | sku_kit_s2l2_vessel}
 	metatype = { P|PT| KT}
+	rot = (0,360)
+	confidence= (0,100)
 
 
 for example:
@@ -226,7 +228,7 @@ for example:
 
 
 
-Upon operation, the visual simulation code creates a ROS aprs_objects_node that is a Gazebo client and while performing minimal ROS interaction – console and parameter reading.  Below are the two simulated cameras circled in read (which can actually return images) with one camera analyzing the Fanuc LRMate kitting working volume and the other camera analyzing the Motoman sia200D kitting working volume.
+Upon operation, the visual simulation code creates a ROS aprs_objects_node that is a Gazebo client while performing minimal ROS interaction – console logging output and parameter reading.  Below are the two simulated cameras circled in read (which can actually return images) with one camera analyzing the Fanuc LRMate kitting working volume and the other camera analyzing the Motoman sia200D kitting working volume.
 
 ![Figure5](./images/gzworldsetup_image5.gif)
 
@@ -241,7 +243,7 @@ Thus, aprs_objects_node is configurable using ROS params at ROS startup. You can
 
 
 
-So these camera ROS parameters bounding boxes are defined in a Gazebo world space which uses meters as units. After reading these values, the vision simulator will then filter objects based on pose location to simulate either for camera1 or camera2 to stream to the appropriate TCP port.
+So these camera ROS parameters bounding boxes are defined in a Gazebo world space which uses meters as units. After reading these values, the vision simulator will then filter objects based on pose location to produce simulated values for either camera1 or camera2 to stream to the appropriate TCP port.
 
 
 These camera parameters are set in the launch file:

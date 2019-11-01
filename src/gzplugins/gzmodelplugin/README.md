@@ -69,13 +69,13 @@ The gazebo sdf world includes the gzmodelplugin as a model plugin for the world.
 
 
 
-There are two primary purposes for the kitting model information: vision simulation and for testing.  In testing, the grasping of the top of a gear is an important element in transferring a gear from a tray to a kit. However, one system configuration variable that must be hard coded and adjusted according to the object is the grasping offset from the given object pose. Contained within the model plugin are a couple ways to return the bounding box of the object from which it is assumed since the gears are so simple, the grasping offset can be determined. Since gears are the only objects being grasped in the kitting simulation, the only difference in grasping location is based on the size of the gear. However, the bounding box is provided for each kitting object, but is currently not used so the hard coded z offset is still used.
+There are two primary purposes for the kitting model information: vision simulation and for testing.  In testing, the grasping of the top of a gear is an important element in transferring a gear from a tray to a kit. However, one system configuration variable that must be hard coded and adjusted according to the object is the grasping offset from the given object pose. Contained within the model plugin are a couple ways to return the bounding box of the object in the commmunication message from which it is assumed, the grasping offset can be determined. Since gears are the only objects being grasped in the kitting simulation, the only difference in grasping location is based on the size of the gear. However, the bounding box is provided for each kitting object, but is currently not used so the hard-coded z offset is still used.
 
 
 
 
 
-The kitting model object pose information primary purpose is to be used by a vision simulator which reformats the information into the same format as the APRS laboratory vision system.  The folder src/aprs_objects contain the code to read the Gazebo communication and then reformat into the vision simulation format that is streamed as text over port 5002 (configurable by ROS params at its startup). If you use the agilitydemo bash scripts they launch a script to read the Gazebo model update and translate into the APRS agility lab vision reporting format. Below is a screen shot of a telnet session that connects to the vision simulator stream (port 5002):
+The kitting model object pose information primary purpose is to be used by a vision simulator which reformats the information into the same format as the APRS laboratory vision system.  The folder src/aprs_objects contains the code to read the Gazebo communication and then reformat into the vision simulation format that is streamed as text over port 5001 or 5002 (configurable by ROS params at startup). If you use the agilitydemo bash scripts they launch a script to read the Gazebo model update and translate into the APRS agility lab vision reporting format. Below is a screen shot of a telnet session that connects to the vision simulator stream (port 5002):
 
 
     
@@ -88,15 +88,17 @@ The kitting model object pose information primary purpose is to be used by a vis
 
 
 There is a vision simulation of the APRS agility lab vision system in the folder src/aprs_objects that uses the Gazebo World model. The vision simulation code uses ULAPI, Gazebo and ROS to communicate, command, control a TCP stream of simulated vision data. The vision simulated format is continually streamed  to different ports depending on the configuration, but in general on port #5002 (Motoman robot camera) and port #5001 for (Fanuc robot camera). The vision simulation code generates a line per object pose detailing all the detected objects in its field of view. The vision report contains the object, type, confidence and xy position. There is no z position as the camera sensing is not adroit enough, so the vision simulation code discards the z value from the Gazebo model information.  Therein, the agility lab vision format is: 
-	parttype,rotation, x,y, confidence%, metatype
+	parttype,rotation, x,y, confidence%, metatype,
 
 
 
 
 
 where:
-	parttype= { sku_part_large_gear|sku_part_small_gear|sku_small_gear_vessel|sku_large_gear_vessel|sku_kit_s2l2_vessel}
+	parttype= { sku_part_large_gear |sku_part_small_gear| sku_small_gear_vessel | sku_large_gear_vessel | sku_kit_s2l2_vessel}
 	metatype = { P|PT| KT}
+	rot = (0,360)
+	confidence= (0,100)
 
 
 for example:
@@ -106,7 +108,7 @@ for example:
 
 
 
-Upon operation, the visual simulation code creates a ROS aprs_objects_node that is a Gazebo client and while performing minimal ROS interaction – console and parameter reading.  Below are the two simulated cameras circled in read (which can actually return images) with one camera analyzing the Fanuc LRMate kitting working volume and the other camera analyzing the Motoman sia200D kitting working volume.
+Upon operation, the visual simulation code creates a ROS aprs_objects_node that is a Gazebo client while performing minimal ROS interaction – console logging output and parameter reading.  Below are the two simulated cameras circled in read (which can actually return images) with one camera analyzing the Fanuc LRMate kitting working volume and the other camera analyzing the Motoman sia200D kitting working volume.
 
 ![Figure2](./images/gzmodelplugin_image2.gif)
 
@@ -121,7 +123,7 @@ Thus, aprs_objects_node is configurable using ROS params at ROS startup. You can
 
 
 
-So these camera ROS parameters bounding boxes are defined in a Gazebo world space which uses meters as units. After reading these values, the vision simulator will then filter objects based on pose location to simulate either for camera1 or camera2 to stream to the appropriate TCP port.
+So these camera ROS parameters bounding boxes are defined in a Gazebo world space which uses meters as units. After reading these values, the vision simulator will then filter objects based on pose location to produce simulated values for either camera1 or camera2 to stream to the appropriate TCP port.
 
 
 These camera parameters are set in the launch file:
@@ -152,6 +154,9 @@ These camera parameters are set in the launch file:
 	    <arg name="debug" default="0" />
 	  </include>
 	</launch>
+
+
+
 
 
 
