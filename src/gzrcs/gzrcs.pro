@@ -213,8 +213,6 @@ HEADERS += \
     include/gzrcs/Gripper.h \
     include/gzrcs/kinematicring.h \
     include/gzrcs/Kinematics.h \
-    include/gzrcs/MotionControl.h \
-    include/gzrcs/MotionException.h \
     include/gzrcs/nist_robotsnc.h \
     include/gzrcs/RCSInterpreter.h \
     include/gzrcs/RobotControlException.h \

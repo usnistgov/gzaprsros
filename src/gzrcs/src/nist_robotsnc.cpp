@@ -376,13 +376,6 @@ int main(int argc, char** argv)
         cli.interpretMacro("macro_homing");
 
 
-#if 0
-        // slow it downfor gazebo
-        if(Globals.bCannedDemo)
-            for (size_t j = 0; j < ncs.size(); j++)
-                ncs[j]->slow_speeds();
-#endif
-
         CGlobals::bPaused=false;
         cli.state=CController::NORMAL;
         int state=0;
