@@ -272,7 +272,7 @@ void CController::publishStatus()
                     system_clock::now().time_since_epoch()
                     );
         _writer.updateRobot(ms.count(), robotJoints);
-        if(Globals.bPavelGripperPlugin )
+        if(Globals.bGzGripperPlugin )
         {
             if (_status._eepercent>=0.0)
                 _cncGripper.updateGripper(ms.count(),  _status._eepercent);
@@ -479,7 +479,7 @@ nextposition:
 
 
             // Change: Preprocess gripper to pavel gripping plugin
-            if(Globals.bPavelGripperPlugin && msg.crclcommand ==CanonCmdType::CANON_SET_GRIPPER)
+            if(Globals.bGzGripperPlugin && msg.crclcommand ==CanonCmdType::CANON_SET_GRIPPER)
             {
                 std::unique_lock<std::mutex> lock(cncmutex);
                 msg.crclcommand = CanonCmdType::CANON_PAVEL_GRIPPER;

@@ -417,12 +417,12 @@ std::string CGzParallelGripper::init(std::string robotName)
 void CGzParallelGripper::start()
 {
     _bRunning=true;
-    if(Globals.bPavelGripperPlugin && !_mGzGripperCmdTopicName.empty())
+    if(Globals.bGzGripperPlugin && !_mGzGripperCmdTopicName.empty())
     {
         _gripperpub = CGazebo::_node->Advertise<message::GripCommand>(_mGzGripperCmdTopicName);
     }
 
-    if(Globals.bPavelGripperPlugin && !_mGzGripperStatusTopicName.empty())
+    if(Globals.bGzGripperPlugin && !_mGzGripperStatusTopicName.empty())
     {
         _grippersub=CGazebo::_node->Subscribe<message::GripCommand>(_mGzGripperStatusTopicName.c_str(), &CGzParallelGripper::OnStatusUpdate,this);;
     }
@@ -450,7 +450,7 @@ int CGzParallelGripper::isGrasping()
 /////////////////////////////////////////////////////////////////////////////
 bool CGzParallelGripper::updateGripper(double time, double eepercent)
 {
-    if(!Globals.bPavelGripperPlugin)
+    if(!Globals.bGzGripperPlugin)
     {
         std::cerr << "updating Pavel gripper plugin but not enabled\n";
         return false;

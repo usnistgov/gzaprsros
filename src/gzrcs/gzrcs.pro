@@ -263,5 +263,13 @@ message("gzrcs install $$config_features.path")
 message("gzrcs instal files $$config_features.files")
 INSTALLS  += config_features
 
+# Hard to make distinction between general build and command line qmake build
+build_features.path     = "$$OUT_PWD/$$DESTDIR/config"
+build_features.files     =    $$PWD/config/Config.ini \
+   $$PWD/config/MotomanSia20d.urdf\
+   $$PWD/config/FanucLRMate200iD.urdf\
+   $$PWD/config/motoman_sia20d.ini
+INSTALLS  += build_features
+
 target.path = ../../install/lib/$$TARGET/
 INSTALLS += target

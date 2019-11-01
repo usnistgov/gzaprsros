@@ -201,24 +201,12 @@ The [system] section within the Config.ini file describes global parameters for 
 <TD>Turn on the canned test demonstration of grasping and moving gears.<BR></TD>
 </TR>
 <TR>
-<TD>GraspingDwellTime<BR></TD>
-<TD>How long should the robot dwell after grasping an object (in seconds).<BR></TD>
-</TR>
-<TR>
-<TD>DwellTime<BR></TD>
-<TD>General dwell time between primitive motions.<BR></TD>
-</TR>
-<TR>
 <TD>WorldCRCLCoordinates<BR></TD>
 <TD>Historic- use World coordinates in commands robot goal positions.<BR></TD>
 </TR>
 <TR>
 <TD>GzGearLocations<BR></TD>
-<TD>Read gear locations from gazebo plugin.<BR></TD>
-</TR>
-<TR>
-<TD>GzEnableForce<BR></TD>
-<TD>Enable gazebo to do gripper force control.<BR></TD>
+<TD>Read gear locations from gazebo plugin for testing of kitting locally not with agility lab.<BR></TD>
 </TR>
 <TR>
 <TD>SmartGripperClosing<BR></TD>
@@ -231,6 +219,10 @@ The [system] section within the Config.ini file describes global parameters for 
 <TR>
 <TD>RosPackageName<BR></TD>
 <TD>Package name to give to ROS. Robot name is appended to package name for moderate level of uniqueness.<BR></TD>
+</TR>
+<TR>
+<TD>GzGripperPlugin<BR></TD>
+<TD>Gazebo plugin is used to control gripper, not joint values<BR></TD>
 </TR>
 </TABLE>
 
@@ -259,10 +251,26 @@ The demo section describes some parameter to assist in the CannedDemo or within 
 <TD>smart_speed<BR></TD>
 <TD>Use smart speed – which is?<BR></TD>
 </TR>
+<TR>
+<TD>fanuc_.dwell.grasping<BR></TD>
+<TD>How long should the Fanuc robot dwell after grasping an object (in seconds).<BR></TD>
+</TR>
+<TR>
+<TD>fanuc_.dwell.time<BR></TD>
+<TD>General dwell time between demo primitive motions for the Fanuc robot.<BR></TD>
+</TR>
+<TR>
+<TD>motoman_.dwell.grasping<BR></TD>
+<TD>How long should the Motoman robot dwell after grasping an object (in seconds).<BR></TD>
+</TR>
+<TR>
+<TD>motoman_.dwell.time<BR></TD>
+<TD>General dwell time between demo primitive motions for the Motoman robot..<BR></TD>
+</TR>
 </TABLE>
 
 
-
+ 
 
 
 
@@ -375,13 +383,10 @@ There is the description of the[debug]section in the Config.ini file. The [debug
 </TABLE>
 
 
-
-
-
-Next comes the robot specification given as the name assigned as the value to [system] robots parameter. Each robot instance should define the following parameters (or use the default assigned internal to the executing program.) Note that the secion name includes the underscore.
+The gazebo related configuration parameters.
 <TABLE>
 <TR>
-<TD>[motoman_]<BR></TD>
+<TD>[gazebo]<BR></TD>
 </TR>
 <TR>
 <TD>longname<BR></TD>
@@ -391,53 +396,93 @@ Next comes the robot specification given as the name assigned as the value to [s
 <TD>prefix<BR></TD>
 <TD>Prefix used for urdf information, e.g., motoman_ <BR></TD>
 </TR>
+</TABLE>
+<TABLE>
 <TR>
-<TD><BR></TD>
-<TD><BR></TD>
+<TD>modeltopicname<BR></TD>
+<TD>Gazebo communication topic name that model information is published. Uses gazebo model message format.<BR></TD>
 </TR>
 <TR>
-<TD># Dwell times, especially for grasping<BR></TD>
-<TD><BR></TD>
+<TD>fanuc_.gzJointPrefix<BR></TD>
+<TD>Joint prefix to use when setting Fanuc robot joint<BR></TD>
 </TR>
 <TR>
-<TD>GraspingDwellTime<BR></TD>
-<TD>dwell time after each grasping operation (open/close) in seconds, e.g.,  2.5 to insure plugin kludge realizes grasping operation underway/completed<BR></TD>
+<TD>fanuc_.gzLeftFingerContactTopic<BR></TD>
+<TD>Fanuc robot left finger contact topic when contact sensor enabled in world model  for left finger.<BR></TD>
 </TR>
 <TR>
-<TD>DwellTime<BR></TD>
-<TD>Canned demo general dwell between non-grasping operations.<BR></TD>
+<TD>fanuc_.gzRightFingerContactTopic<BR></TD>
+<TD>Fanuc robot right finger contact topic when contact sensor enabled in world model  for right finger..<BR></TD>
 </TR>
 <TR>
-<TD><BR></TD>
-<TD><BR></TD>
+<TD>fanuc_.gzRobotCmdTopicName<BR></TD>
+<TD>Fanuc topic for robot joint plugin  commanding robot joints<BR></TD>
 </TR>
 <TR>
-<TD>gzJointPrefix<BR></TD>
-<TD>Fully instantiated gazebo model joint prefix, e.g., sia20d::motoman_sia20d:: <BR></TD>
+<TD>fanuc_.gzRobotStatusTopicName<BR></TD>
+<TD>Fanuc topic for robot joint plugin  reading status of robot joints<BR></TD>
 </TR>
 <TR>
-<TD>gzTopicName<BR></TD>
-<TD>Topic name to communicate joint updates (including gripper) e.g., ~/motoman/joints<BR></TD>
+<TD>fanuc_.gzGripperCmdTopicName<BR></TD>
+<TD>Fanuc topic name for gripper plugin command <BR></TD>
 </TR>
 <TR>
-<TD>gzLeftFingerContactTopic<BR></TD>
-<TD>If contact plugin enabled, gazebo topic to read for left finger contact information. This topic name is specific to the contact plugin link plugin naming E.g., /gazebo/default/sia20d/motoman_sia20d/motoman_left_finger/left_finger_contact<BR></TD>
+<TD>fanuc_.gzGripperStatusTopicName<BR></TD>
+<TD>Fanuc topic name for gripper plugin status <BR></TD>
 </TR>
 <TR>
-<TD>gzRightFingerContactTopic<BR></TD>
-<TD><BR></TD>
+<TD>motoman_.gzJointPrefix<BR></TD>
+<TD>Joint prefix to use when setting Motoman robot joint<BR></TD>
 </TR>
 <TR>
-<TD>crclPublishStatusPeriod<BR></TD>
-<TD>CRCL publishing rate to listener in seconds. E.g., 0.05 is 50 millisecond (approximate) between updates to listening CRCL handler.<BR></TD>
+<TD>motoman_.gzLeftFingerContactTopic<BR></TD>
+<TD>Motoman robot left finger contact topic when contact sensor enabled in world model  for left finger.<BR></TD>
 </TR>
 <TR>
-<TD>crclIp<BR></TD>
+<TD>motoman_.gzRightFingerContactTopic<BR></TD>
+<TD>Motoman robot right finger contact topic when contact sensor enabled in world model  for right finger..<BR></TD>
+</TR>
+<TR>
+<TD>motoman_.gzGripperCmdTopicName<BR></TD>
+<TD>Motoman topic name for gripper plugin command <BR></TD>
+</TR>
+<TR>
+<TD>motoman_.gzGripperStatusTopicName<BR></TD>
+<TD>Motoman topic name for gripper plugin status <BR></TD>
+</TR>
+<TR>
+<TD>motoman_.gzRobotCmdTopicName<BR></TD>
+<TD>Motoman topic for robot joint plugin  commanding robot joints<BR></TD>
+</TR>
+<TR>
+<TD>motoman_.gzRobotStatusTopicName<BR></TD>
+<TD>Motoman topic for robot joint plugin  reading status of robot joints<BR></TD>
+</TR>
+</TABLE>
+
+
+
+
+
+
+
+
+Next comes the robot specification given as the name assigned as the value to [system] robots parameter. Each robot instance should define the following parameters (or use the default assigned internal to the executing program.) Note that the section name includes the underscore.
+<TABLE>
+<TR>
+<TD>[motoman_]<BR></TD>
+</TR>
+<TR>
+<TD>crcl.Ip<BR></TD>
 <TD>IP/Host name of CRCL handler, assuming handler is ROS node. Should always be local host, i.e., 127.0.0.1<BR></TD>
 </TR>
 <TR>
-<TD>crclPort<BR></TD>
+<TD>crcl.Port<BR></TD>
 <TD>CRCL port to listen for connecting clients. For motoman, port = 64445<BR></TD>
+</TR>
+<TR>
+<TD>crcl.PublishStatusPeriod<BR></TD>
+<TD>CRCL publishing rate to listener in seconds. E.g., 0.05 is 50 millisecond (approximate) between updates to listening CRCL handler.<BR></TD>
 </TR>
 <TR>
 <TD>finger_contact_topic<BR></TD>
@@ -448,23 +493,7 @@ Next comes the robot specification given as the name assigned as the value to [s
 <TD>/gazebo/default/sia20d/motoman_sia20d/motoman_robotiq_85_right_finger_tip_link/right_finger_contact<BR></TD>
 </TR>
 <TR>
-<TD>base<BR></TD>
-<TD>Transform (xyz quaternion) apply from origin to get to robot base frame<BR></TD>
-</TR>
-<TR>
-<TD>bend<BR></TD>
-<TD>Quaternion representation of robot bend to reach gears (used in canned demo and other grasping command line interface).<BR></TD>
-</TR>
-<TR>
-<TD>retract<BR></TD>
-<TD>Parameter to describe retract transform from grasping goal pose<BR></TD>
-</TR>
-<TR>
-<TD><BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>gear.small.gripperoffset <BR></TD>
+<TD>gear.large.gripperoffset <BR></TD>
 <TD><BR></TD>
 </TR>
 <TR>
@@ -472,108 +501,92 @@ Next comes the robot specification given as the name assigned as the value to [s
 <TD><BR></TD>
 </TR>
 <TR>
-<TD>gear.large.gripperoffset <BR></TD>
+<TD>gear.small.gripperoffset <BR></TD>
 <TD><BR></TD>
 </TR>
 <TR>
-<TD>vessel.slotoffset <BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD><BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>cycletime <BR></TD>
-<TD>Cycle time of robot control cycle in seconds. E.g., 0.01 is 10 millisecond duty cycle.<BR></TD>
-</TR>
-<TR>
-<TD>jointmovenames <BR></TD>
-<TD>Named joint moves as commas separated list.<BR>Note, for motoman "home" is joints at all zero which is singularity and causes problems with IK. Thus a nothome was defined.<BR>E.g.,<BR>jointmovenames = Safe,Home,NotHome<BR></TD>
-</TR>
-<TR>
-<TD>Safe<BR></TD>
-<TD>1.30,.22,0.08,2.26, 3.12, -1.0, -1.28<BR></TD>
-</TR>
-<TR>
-<TD>Home<BR></TD>
+<TD>joints.Home<BR></TD>
 <TD>0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0<BR></TD>
 </TR>
 <TR>
-<TD>NotHome<BR></TD>
+<TD>joints.movenames <BR></TD>
+<TD>Named joint moves as commas separated list.<BR>Note, for motoman "home" is joints at all zero which is singularity and causes problems with IK. Thus a nothome was defined.<BR>E.g.,<BR>jointmovenames = Safe,Home,NotHome<BR></TD>
+</TR>
+<TR>
+<TD>joints.NotHome<BR></TD>
 <TD>0.001,0.001,0.001,0.001,0.001,0.001,0.001<BR></TD>
-</TR>
-<TR>
-<TD>baselink<BR></TD>
-<TD>Name of base link for robot for parsing URDF.<BR></TD>
-</TR>
-<TR>
-<TD><BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>eelink<BR></TD>
-<TD>Name of end effector link for robot for parsing URDF.<BR></TD>
 </TR>
 <TR>
 <TD>kinsolver<BR></TD>
 <TD>Name of the kinematic solver. At one time there was ikfast, track-ik and gokin. Now only gokin which is given by, GoMotoKin<BR></TD>
 </TR>
 <TR>
-<TD>traj<BR></TD>
+<TD>nc.cycletime <BR></TD>
+<TD>Cycle time of robot control cycle in seconds. E.g., 0.01 is 10 millisecond duty cycle.<BR></TD>
+</TR>
+<TR>
+<TD>nc.traj<BR></TD>
 <TD>Trajectory generator selection. Now only "Go" can be used. BangBang and others have been removed.<BR></TD>
-</TR>
-<TR>
-<TD>linearmax<BR></TD>
-<TD>Trajectory linear motion maximum e.g., 1.0, 10.0, 100.0<BR></TD>
-</TR>
-<TR>
-<TD>rotationmax<BR></TD>
-<TD>Trajector rotation motion vel/zcc/jerk maximum, e.g., .1, 1.0, 10.0<BR></TD>
-</TR>
-<TR>
-<TD><BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>#Gripper<BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>gripper<BR></TD>
-<TD>Type of gripper. Value refers to another section in Config.ini file.<BR></TD>
-</TR>
-<TR>
-<TD><BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD># gearing hack for testing<BR></TD>
-<TD><BR></TD>
 </TR>
 <TR>
 <TD>parts<BR></TD>
 <TD>List of part names that will be included in this section for <BR></TD>
 </TR>
 <TR>
-<TD>parts+<BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>parts+<BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
-<TD>parts+<BR></TD>
-<TD><BR></TD>
-</TR>
-<TR>
 <TD>parts.transform<BR></TD>
 <TD><BR></TD>
 </TR>
 <TR>
+<TD>parts+<BR></TD>
 <TD><BR></TD>
+</TR>
+<TR>
+<TD>parts+<BR></TD>
 <TD><BR></TD>
+</TR>
+<TR>
+<TD>parts+<BR></TD>
+<TD><BR></TD>
+</TR>
+<TR>
+<TD>rate.linearmax<BR></TD>
+<TD>Trajectory linear motion maximum e.g., 1.0, 10.0, 100.0<BR></TD>
+</TR>
+<TR>
+<TD>rate.rotationmax<BR></TD>
+<TD>Trajector rotation motion vel/zcc/jerk maximum, e.g., .1, 1.0, 10.0<BR></TD>
+</TR>
+<TR>
+<TD>robot.baselink<BR></TD>
+<TD>Name of base link for robot for parsing URDF.<BR></TD>
+</TR>
+<TR>
+<TD>robot.eelink<BR></TD>
+<TD>Name of end effector link for robot for parsing URDF.<BR></TD>
+</TR>
+<TR>
+<TD>robot.gripper<BR></TD>
+<TD>Type of gripper. Value refers to another section in Config.ini file.<BR></TD>
+</TR>
+<TR>
+<TD>robot.longname<BR></TD>
+<TD>Long name for identification only, e.g., MotomanSia20d<BR></TD>
+</TR>
+<TR>
+<TD>robot.prefix<BR></TD>
+<TD>Prefix used for urdf information, e.g., motoman_ <BR></TD>
+</TR>
+<TR>
+<TD>xform.base<BR></TD>
+<TD>Transform (xyz quaternion) apply from origin to get to robot base frame<BR></TD>
+</TR>
+<TR>
+<TD>xform.bend<BR></TD>
+<TD>Quaternion representation of robot bend to reach gears (used in canned demo and other grasping command line interface).<BR></TD>
+</TR>
+<TR>
+<TD>xform.retract<BR></TD>
+<TD>Parameter to describe retract transform from grasping goal pose<BR></TD>
 </TR>
 </TABLE>
 
@@ -587,7 +600,7 @@ Next comes the robot specification given as the name assigned as the value to [s
 There are sections for the various grippers used. The following is based on the  Motoman gripper in agility lab. It was developed by Peter Mnev 
 <TABLE>
 <TR>
-<TD>[agilitylab]<BR></TD>
+<TD>[gripper parameters]<BR></TD>
 </TR>
 <TR>
 <TD>correction<BR></TD>

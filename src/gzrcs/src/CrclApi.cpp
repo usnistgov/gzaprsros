@@ -337,15 +337,7 @@ int CCrclApi::grasp(std::string objname)
     // Grasp
     moveTo(tf::Pose(_nc->QBend(), offset) * gripperoffset);
     doDwell(_mydwell);
-    if(Globals.bGzEnableForce)
-    {
-        setVelGripper(.5, graspforce);
-    }
-    else
-    {
-        closeGripper();
-
-    }
+    closeGripper();
     doDwell(_mygraspdwell);
     return 0;
 

@@ -122,7 +122,7 @@ int main(int argc, char** argv)
             Globals.bGazebo=RCS::robotconfig.getSymbolValue<int>("system.gazebo","0");
             Globals.bCannedDemo=RCS::robotconfig.getSymbolValue<int>("system.CannedDemo","0");
             Globals.bWorldCRCLCoordinates=RCS::robotconfig.getSymbolValue<int>("system.WorldCRCLCoordinates","0");
-            Globals.bPavelGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.PavelGripperPlugin","0");;
+            Globals.bGzGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.GzGripperPlugin","0");;
 
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
@@ -170,7 +170,6 @@ int main(int argc, char** argv)
 #endif
             // Configuration options
             Globals.bGearLocations = RCS::robotconfig.getSymbolValue<int>("system.GzGearLocations","0");
-            Globals.bGzEnableForce = RCS::robotconfig.getSymbolValue<int>("system.GzEnableForce","0");
             Globals.bFlywheel=RCS::robotconfig.getSymbolValue<double>("CRCL.flywheel", "0");
 
 
@@ -322,10 +321,10 @@ int main(int argc, char** argv)
                     throw RobotControlException(Interpreter_not_specified, "Not specified in ini file");
                 }
                 std::cout << "Trajectory generator " <<  ncs[i]->robotInterpreter()->_name << "\n" << std::flush;
-                std::string algorithm = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".fingerContactAlgorithm", "force");
+                //std::string algorithm = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".fingerContactAlgorithm", "force");
                 // fixme: should check that enum string exists
-                ncs[i]->robotInterpreter()->fingerContactAlgorithm =  ncs[i]->robotInterpreter()->s2eFingerContactAlgorithm[algorithm];
-                std::cout << "Trajectory finger contact algorithm " <<  ncs[i]->robotInterpreter()->fingerContactAlgorithm << "="<< algorithm << "\n" << std::flush;
+                //ncs[i]->robotInterpreter()->fingerContactAlgorithm =  ncs[i]->robotInterpreter()->s2eFingerContactAlgorithm[algorithm];
+                //std::cout << "Trajectory finger contact algorithm " <<  ncs[i]->robotInterpreter()->fingerContactAlgorithm << "="<< algorithm << "\n" << std::flush;
 
 
                 // Setup up robot controller - assign gripper
@@ -335,14 +334,8 @@ int main(int argc, char** argv)
                 // should read robot joints, but moving to home ok too
                 ncs[i]->robotInterpreter()->init(ncs[i]->namedJointMove()["joints.home"]);
 
-//                double dDwellTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".dwell.time", "1000.0");
-//                double dGraspingDwellTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".dwell.grasping", "1000.0");
-
                 // Crcl api command interface to robot
                 crclApi= std::shared_ptr<CCrclApi>(new CCrclApi(ncs[i]));
-//                crclApi->setDwell(dDwellTime);
-//                crclApi->setGraspingDwell(dGraspingDwellTime);
-//                crclApi->medium();
 
                 ncs[i]->part_list() = RCS::robotconfig.getTokens<std::string>( robots[i] + ".parts", ",");
                 geardemo.init(ncs[i]->robotPrefix());
