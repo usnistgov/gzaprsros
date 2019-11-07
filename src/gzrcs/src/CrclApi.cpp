@@ -11,7 +11,6 @@ See NIST Administration Manual 4.09.07 b and Appendix I.
 
 
 #include "gzrcs/CrclApi.h"
-#include "gzrcs/Controller.h"
 #include "gzrcs/Globals.h"
 #include "gzrcs/Shape.h"
 #include "gzrcs/RobotControlException.h"
@@ -41,20 +40,17 @@ void CCrclApi::slow()
 {
     rates.CurrentTransSpeed() = rates.CurrentTransSpeed()/2.;
     rates.MaxJointVelocity() = rates.MaxJointVelocity() / 2.0;
-    _nc->slowSpeeds();
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::medium()
 {
     setVelocity(1.0);
-    _nc->mediumSpeeds();
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::fast()
 {
     rates.CurrentTransSpeed()= rates.CurrentTransSpeed()*2.;
     rates.MaxJointVelocity() = rates.MaxJointVelocity() * 2.0;
-    _nc->fastSpeeds();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

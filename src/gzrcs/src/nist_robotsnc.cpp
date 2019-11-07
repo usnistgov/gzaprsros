@@ -186,7 +186,7 @@ int main(int argc, char** argv)
                 ncs[i]->robotBaselink() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.baselink", "ERROR");
 
                 ncs[i]->crclPublishStatusRate()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.PublishStatusPeriod", "0.05");
-                ncs[i]->crclIp()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.Ip", "127.0.0.1");
+                ncs[i]->crclIp()=RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".crcl.Ip", "127.0.0.1");
                 ncs[i]->crclPort()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.Port", "64444");
 
                 // Part offsets
