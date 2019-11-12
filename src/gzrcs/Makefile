@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=211 -DQT_CORE_LIB
+DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=237 -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -Wno-unused-variable -Wno-sign-compare -Wno-unused-parameter -Wno-reorder -Wno-format-extra-args -Wno-unused-local-typedefs -Wno-ignored-qualifiers -Wno-deprecated-declarations -Wno-unused-function -Wno-unused-but-set-variable -Wno-missing-field-initializers -Wno-unused-parameter -std=c++11 -g -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../../include -Iinclude -Isrc -I../../install/include -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
@@ -210,8 +210,6 @@ DIST          = Notes.txt \
 		include/gzrcs/Gripper.h \
 		include/gzrcs/kinematicring.h \
 		include/gzrcs/Kinematics.h \
-		include/gzrcs/MotionControl.h \
-		include/gzrcs/MotionException.h \
 		include/gzrcs/nist_robotsnc.h \
 		include/gzrcs/RCSInterpreter.h \
 		include/gzrcs/RobotControlException.h \
@@ -485,7 +483,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/gzrcs/Controller.h include/gzrcs/CrclApi.h include/gzrcs/Demo.h include/gzrcs/Globals.h include/gzrcs/Gripper.h include/gzrcs/Kinematics.h include/gzrcs/RobotControlException.h include/gzrcs/RCSInterpreter.h include/gzrcs/Shape.h include/gzrcs/gazebo.h include/gzrcs/cros.h include/gzrcs/kinematicring.h include/gzrcs/commandlineinterface.h include/gzrcs/Communication.h include/gzrcs/Controller.h include/gzrcs/CrclApi.h include/gzrcs/cros.h include/gzrcs/Demo.h include/gzrcs/gazebo.h include/gzrcs/Globals.h include/gzrcs/Gripper.h include/gzrcs/kinematicring.h include/gzrcs/Kinematics.h include/gzrcs/MotionControl.h include/gzrcs/MotionException.h include/gzrcs/nist_robotsnc.h include/gzrcs/RCSInterpreter.h include/gzrcs/RobotControlException.h include/gzrcs/Shape.h ../../include/aprs_headers/Config.h ../../include/aprs_headers/Conversions.h ../../include/aprs_headers/Core.h ../../include/aprs_headers/Debug.h ../../include/aprs_headers/IRcs.h ../../include/aprs_headers/Logger.h ../../include/aprs_headers/LoggerMacros.h ../../include/aprs_headers/RCSMsgQueue.h ../../include/aprs_headers/RCSTimer.h ../../include/aprs_headers/Config.h ../../include/aprs_headers/Conversions.h ../../include/aprs_headers/Core.h ../../include/aprs_headers/Debug.h ../../include/aprs_headers/File.h ../../include/aprs_headers/IRcs.h ../../include/aprs_headers/Logger.h ../../include/aprs_headers/LoggerMacros.h ../../include/aprs_headers/RCSMsgQueue.h ../../include/aprs_headers/RCSPriorityQueue.h ../../include/aprs_headers/RCSTimer.h include/gzrcs/assimp.h ../../include/aprs_headers/env.h include/gzrcs/GripCommand.pb.h include/gzrcs/JointsComm.pb.h $(DISTDIR)/
+	$(COPY_FILE) --parents include/gzrcs/Controller.h include/gzrcs/CrclApi.h include/gzrcs/Demo.h include/gzrcs/Globals.h include/gzrcs/Gripper.h include/gzrcs/Kinematics.h include/gzrcs/RobotControlException.h include/gzrcs/RCSInterpreter.h include/gzrcs/Shape.h include/gzrcs/gazebo.h include/gzrcs/cros.h include/gzrcs/kinematicring.h include/gzrcs/commandlineinterface.h include/gzrcs/Communication.h include/gzrcs/Controller.h include/gzrcs/CrclApi.h include/gzrcs/cros.h include/gzrcs/Demo.h include/gzrcs/gazebo.h include/gzrcs/Globals.h include/gzrcs/Gripper.h include/gzrcs/kinematicring.h include/gzrcs/Kinematics.h include/gzrcs/nist_robotsnc.h include/gzrcs/RCSInterpreter.h include/gzrcs/RobotControlException.h include/gzrcs/Shape.h ../../include/aprs_headers/Config.h ../../include/aprs_headers/Conversions.h ../../include/aprs_headers/Core.h ../../include/aprs_headers/Debug.h ../../include/aprs_headers/IRcs.h ../../include/aprs_headers/Logger.h ../../include/aprs_headers/LoggerMacros.h ../../include/aprs_headers/RCSMsgQueue.h ../../include/aprs_headers/RCSTimer.h ../../include/aprs_headers/Config.h ../../include/aprs_headers/Conversions.h ../../include/aprs_headers/Core.h ../../include/aprs_headers/Debug.h ../../include/aprs_headers/File.h ../../include/aprs_headers/IRcs.h ../../include/aprs_headers/Logger.h ../../include/aprs_headers/LoggerMacros.h ../../include/aprs_headers/RCSMsgQueue.h ../../include/aprs_headers/RCSPriorityQueue.h ../../include/aprs_headers/RCSTimer.h include/gzrcs/assimp.h ../../include/aprs_headers/env.h include/gzrcs/GripCommand.pb.h include/gzrcs/JointsComm.pb.h $(DISTDIR)/
 	$(COPY_FILE) --parents src/Controller.cpp src/CrclApi.cpp src/fanuclrmate200idkinematics.cpp src/Globals.cpp src/Kinematics.cpp src/RobotControlException.cpp src/motomansia20dkinematics.cpp src/nist_robotsnc.cpp src/RCSInterpreter.cpp src/Shape.cpp src/Demo.cpp src/gazebo.cpp src/commandlineinterface.cpp src/cros.cpp src/kinematicring.cpp src/gripper.cpp src/gokin/gokin.cpp src/gokin/genserkins.c src/gokin/gomath.c src/gokin/gotypes.c src/gokin/inifile.c src/assimp.cpp src/GripCommand.pb.cc src/JointsComm.pb.cc $(DISTDIR)/
 
 
@@ -2922,6 +2920,21 @@ uninstall_config_features: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/config/ 
 
 
+install_build_features: first FORCE
+	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/Config.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/MotomanSia20d.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/FanucLRMate200iD.urdf $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/
+	-$(INSTALL_PROGRAM) /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/config/motoman_sia20d.ini $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/
+
+uninstall_build_features: FORCE
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/motoman_sia20d.ini
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/FanucLRMate200iD.urdf
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/MotomanSia20d.urdf
+	-$(DEL_FILE) -r $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/Config.ini
+	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/debug/config/ 
+
+
 install_target: first FORCE
 	@test -d $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/ || mkdir -p $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/
 	-$(INSTALL_PROGRAM) debug/$(QMAKE_TARGET) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/install/lib/gzrcs/$(QMAKE_TARGET)
@@ -2931,9 +2944,9 @@ uninstall_target: FORCE
 	-$(DEL_DIR) $(INSTALL_ROOT)/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/../../install/lib/gzrcs/ 
 
 
-install: install_config_features install_target  FORCE
+install: install_config_features install_build_features install_target  FORCE
 
-uninstall: uninstall_config_features uninstall_target  FORCE
+uninstall: uninstall_config_features uninstall_build_features uninstall_target  FORCE
 
 FORCE:
 

@@ -181,6 +181,7 @@ void CController::setup()
         if(Globals.DEBUG_LogRobotCrcl())
             pCrclServer()->setDebugStream(&ofsRobotCrcl);
         pCrclServer()->start();
+        std::cout << "Crcl server connected port=" << crclPort() << "\n";
     }
 #endif
 
