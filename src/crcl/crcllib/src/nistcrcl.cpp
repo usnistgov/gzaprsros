@@ -49,9 +49,6 @@ port: 47548
 #include <xercesc/framework/XMLGrammarPoolImpl.hpp>
 
 // ros header includes
-//#include <ros/ros.h>
-//#include <ros/package.h>
-//#include <ros/master.h>
 #include "std_msgs/String.h"
 
 #include "crcl_rosmsgs/CrclCommandMsg.h"
@@ -131,8 +128,8 @@ namespace crcl
 {
 
 
-bool crclServer::bDebugStatusMsg=false;
-bool crclServer::bDebugCommandMsg=false;
+bool crclServer::bDebugCrclStatusMsg=false;
+bool crclServer::bDebugCrclCommandMsg=false;
 bool crclServer::bCrclStopIgnore=false;
 bool crclServer::bFlywheel=false;
 bool crclServer::bProcessAllCrclMessages=false;
@@ -161,7 +158,7 @@ crclServer::crclServer(std::string crclIp,
     this->tip_link=tip_link;
 
     // CRCl Communication handler - bundles xml into messages
-    CBufferHandler::_bTrace = false;
+    CBufferHandler::_bTrace = true;
 
     crcl2ros=std::shared_ptr<CCrcl2RosMsg> (new CCrcl2RosMsg(urdf_xml, base_link, tip_link));
     crcl2ros->setCmdQueue(NULL);
@@ -192,7 +189,7 @@ void crclServer::start ( )
     std::string inifile =getexefolder()+   + "config/Config.ini";
 
 
-    CBufferHandler::_bTrace = false;
+   // CBufferHandler::_bTrace = false;
 
     // Initialize xercesc used by code synthesis to parse CRCL XML
     xercesc::XMLPlatformUtils::Initialize();
@@ -204,7 +201,6 @@ void crclServer::start ( )
 
     std::string logFolder=CrclLogger.loggerFolder();
     CrclLogger.open(logFolder+"/crclxml_" + crcl2ros->robotName + ".log");
-    CrclLogger.debugLevel()=3;
     CrclLogger.isTimestamping( )=true;
     CrclLogger.isOutputConsole()=true;
 
@@ -226,17 +222,26 @@ void crclServer::start ( )
     {
         logFatal( "SetAngleUnits from ini file failed\n");
     }
-    crclServer::bDebugStatusMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugStatusMsg", "0");
-    crclServer::bDebugCommandMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugCommandMsg", "0");
+    CrclLogger.debugLevel() = cfg.getSymbolValue<int>("CRCL.DebugLevel", "5");
+    crclServer::bDebugCrclStatusMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugStatusMsg", "0");
+    crclServer::bDebugCrclCommandMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugCommandMsg", "0");
     crclServer::bCrclStopIgnore = (bool) cfg.getSymbolValue<int>("CRCL.StopIgnore", "0");
-    CCrclSession::bDebugXML = (bool) cfg.getSymbolValue<int>("CRCL.DebugXML", "0");
+    CCrclSession::bDebugCrclXML = (bool) cfg.getSymbolValue<int>("CRCL.DebugXML", "0");
     crclServer::bFlywheel=(bool) cfg.getSymbolValue<double>("CRCL.flywheel", "0");
     crclServer::bProcessAllCrclMessages=(bool) cfg.getSymbolValue<double>("CRCL.processAllCrclMessages", "0");
     crclServer::sRobot= cfg.getSymbolValue<std::string>("system.robots","robie");
 
     logStatus( " crclServer started %s\n", getTimeStamp(GMT_UV_SEC).c_str());
-    if(crcl2ros->crclcmdsq != NULL)
-        logStatus( " crcl2ros crclcmdsq is set\n");
+    logStatus( " crclServer bDebugCrclStatusMsg= %d\n", crclServer::bDebugCrclStatusMsg);
+    logStatus( " crclServer bDebugCrclCommandMsg= %d\n", crclServer::bDebugCrclCommandMsg);
+    logStatus( " crclServer bCrclStopIgnore= %d\n", crclServer::bCrclStopIgnore);
+    logStatus( " crclServer bDebugCrclXML= %d\n", CCrclSession::bDebugCrclXML);
+    logStatus( " crclServer bFlywheel= %d\n", crclServer::bFlywheel);
+    logStatus( " crclServer bProcessAllCrclMessages= %d\n", crclServer::bProcessAllCrclMessages);
+    logStatus( " crclServer sRobot= %s\n", crclServer::sRobot.c_str());
+
+    if(crcl2ros->crclcmdsq == NULL)
+        logStatus( " ERROR: crcl2ros crclcmdsq is NOT set\n");
 
     // Start asio crcl reader
     logStatus( "Start crcl socket reader\n");
