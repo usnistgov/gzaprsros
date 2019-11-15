@@ -1,0 +1,240 @@
+
+
+- feedback from gazebo events and joint status
+- pkill gtz
+- calibrate simulated robot to gazebo model - there are errors in the ik due to incorrect lengths in links, tools, etc.
+- Add light source
+    https://vimeo.com/68620660
+
+- Check joint limits exceeded in robot motion
+
+Replace all boost with std C11 wherever possible. However, gazebo and ros rely on it.
+
+finger only
+joint_name=|sia20d::motoman_sia20d::world_joint|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_s|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_l|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_e|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_u|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_r|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_b|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_t|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_leftfinger|
+joint_name=|sia20d::motoman_sia20d::motoman_joint_rightfinger|
+
+
+
+GAZEBO GRIPPER ILLS
+
+https://answers.ros.org/question/201625/turtlebot-arm-on-gazebo-lets-fall-all-grasped-objects/
+illustrates adding pad to gripper and palm
+The <gripper> tag is a hack that creates joints between the gripper and objects that the gripper is in contact with. This relies on a few stable contacts. You can try adjusting the <attach_steps> and <detach_steps> parameters.
+
+Grasping of objects has improved in newer versions of Gazebo. The <gripper> is no longer needed. The caveats are that the both the gripper and objects must have good(realistic) inertia values, and you may need to tune the contact properties of the gripper.
+
+https://bitbucket.org/osrf/drcsim/src/2116863adbc07ac803a7750152e0aa9ceefb46e7/robotiq_hand_description/urdf/robotiq_hand.urdf.xacro?at=default&fileviewer=file-view-default
+contains description of robotiq gripper with masses and inertias
+
+
+http://gazebosim.org/tutorials/?tut=ros_urdf
+very good summary of the variables used in defining grasping
+
+http://answers.gazebosim.org/question/7082/using-sdf-tags-in-urdf-gazebo-extension-directly/
+http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros
+more urdf -> sdf
+
+https://answers.ros.org/question/240076/gazebo-ros-collision-detection/
+http://gazebosim.org/tutorials?tut=contact_sensor
+http://docs.ros.org/kinetic/api/gazebo_plugins/html/gazebo__ros__bumper_8cpp_source.html
+https://answers.ros.org/question/208735/pickup-object-in-gazebo-graspped-object-doesnt-move/
+http://answers.gazebosim.org/question/14887/object-slips-out-of-gripper-gazebo-7-ur5-robotiq-3-finger/
+https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin
+
+Go  reduced cycle time to 10
+> home
+> safe
+> where
+Pose     T   = -0.219559:-0.448447:0.968208
+RPY = -97.3102:-30.2153:178.802
+Q   = -0.164584:0.72656:-0.635678:-0.202327
+Joints    0.87: 0.15: 0.05: 1.51: 2.08:-0.67: 0.00
+> where
+Pose     T   = -0.0497052:-0.281719:0.518967
+RPY = -179.896:-5.78617:-101.613
+Q   = -0.631175:0.773996:-0.0326007:-0.0385419
+Joints    1.30: 0.22: 0.08: 2.26: 3.12:-1.00: 0.00
+
+
+Bang Bang will work - no latency issues.
+> safe
+> whre
+ not command found
+> where
+Pose     T   = -0.0497052:-0.281719:0.518967
+RPY = -179.896:-5.78617:-101.613
+Q   = -0.631175:0.773996:-0.0326007:-0.0385419
+Joints    1.30: 0.22: 0.08: 2.26: 3.12:-1.00: 0.00
+
+
+
+
+
+THIS APPEARS TO BE A PROBLEM:
+> approach sku_part_small_gear13
+> motoman_controller: CANON_MOVE_TO
+WORLD COORDINATES
+    Final Pose    =    0.01:  -0.52:   1.02|180.00:-0.00:180.00
+    Cur  Pose     =    0.01:  -0.52:   1.02|-180.00:-0.00:-180.00
+
+FK from current joints such that robot coordinates translated into world coordinates
+
+THIS MAY BE WRONG:
+// Need to subtract off tool offset from robot wrist or final tcp
+// there is no base, assumes robot centered at (0,0,0)
+tf::Pose r_lastpose=_kinematics->FK(_nc->status.currentjoints.position);
+
+as maybe the gripper is included in forward kinematics?
+
+
+
+
+GRIPPING PHSICS PROBLEM
+
+<kp>1000000.0</kp>
+  <kd>100.0</kd>
+  <mu1>1.5</mu1>
+  <mu2>1.5</mu2>
+  <fdir1>1 0 0</fdir1>
+  <maxVel>1.0</maxVel>
+  <minDepth>0.00</minDepth>
+
+
+Need to convert all controller dependencies to pointers - e.g., gripper
+
+gotraj with slower velocity while planning moves,
+possible longer dwells
+
+
+http://answers.gazebosim.org/question/18593/grab-object-with-robotic-grip/
+
+>>>http://answers.gazebosim.org/question/14887/object-slips-out-of-gripper-gazebo-7-ur5-robotiq-3-finger/
+http://gazebosim.org/tutorials?tut=ros_control
+Friction of gripper and plastic knob:
+https://www.engineeringtoolbox.com/friction-coefficients-d_778.html
+
+https://answers.ros.org/question/208735/pickup-object-in-gazebo-graspped-object-doesnt-move/
+Non answer
+<surface>
+      <contact>
+          <ode>
+              <kp>1e+07</kp>
+              <kd>1e+05</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.001</min_depth>
+          </ode>
+      </contact>
+      <bounce/>
+      <friction>
+        <ode>
+          <mu>1.1</mu>
+          <mu2>1.1</mu2>
+        </ode>
+      </friction>
+    </surface>
+
+Go motion issues - change cycle time in code? :
+
+> moveto sku_part_small_gear9
+>     Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Current Joints  =-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Current Joints  =-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Current Joints  =-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Current Joints  =-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.66: 3.01: 1.92: 3.00:-0.58:-1.52
+    Current Joints  =-1.40: 0.65: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.66: 3.02: 1.92: 3.00:-0.57:-1.52
+    Current Joints  =-1.40: 0.66: 3.01: 1.92: 3.00:-0.58:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.40: 0.66: 3.02: 1.92: 3.00:-0.57:-1.52
+    Current Joints  =-1.40: 0.66: 3.02: 1.92: 3.00:-0.57:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.41: 0.67: 3.02: 1.92: 3.00:-0.56:-1.52
+    Current Joints  =-1.40: 0.66: 3.02: 1.92: 3.00:-0.57:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.41: 0.67: 3.02: 1.92: 3.00:-0.56:-1.52
+    Current Joints  =-1.41: 0.67: 3.02: 1.92: 3.00:-0.56:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.41: 0.68: 3.02: 1.92: 3.00:-0.55:-1.52
+    Current Joints  =-1.41: 0.67: 3.02: 1.92: 3.00:-0.56:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.41: 0.69: 3.03: 1.92: 3.00:-0.54:-1.52
+    Current Joints  =-1.41: 0.68: 3.02: 1.92: 3.00:-0.55:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.41: 0.70: 3.03: 1.92: 3.00:-0.53:-1.52
+    Current Joints  =-1.41: 0.69: 3.03: 1.92: 3.00:-0.54:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.42: 0.71: 3.03: 1.92: 3.00:-0.52:-1.52
+    Current Joints  =-1.41: 0.70: 3.03: 1.92: 3.00:-0.53:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.42: 0.72: 3.04: 1.92: 3.00:-0.51:-1.52
+    Current Joints  =-1.42: 0.71: 3.03: 1.92: 3.00:-0.52:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.42: 0.73: 3.04: 1.92: 3.00:-0.50:-1.52
+    Current Joints  =-1.42: 0.72: 3.04: 1.92: 3.00:-0.51:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.42: 0.74: 3.04: 1.92: 3.00:-0.49:-1.52
+    Current Joints  =-1.42: 0.73: 3.04: 1.92: 3.00:-0.50:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.43: 0.75: 3.05: 1.92: 3.00:-0.48:-1.52
+    Current Joints  =-1.42: 0.74: 3.04: 1.92: 3.00:-0.49:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.43: 0.76: 3.05: 1.92: 3.00:-0.47:-1.52
+    Current Joints  =-1.43: 0.75: 3.05: 1.92: 3.00:-0.48:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.43: 0.77: 3.05: 1.92: 3.00:-0.46:-1.52
+    Current Joints  =-1.43: 0.76: 3.05: 1.92: 3.00:-0.47:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.43: 0.78: 3.05: 1.92: 3.00:-0.45:-1.52
+    Current Joints  =-1.43: 0.77: 3.05: 1.92: 3.00:-0.46:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.43: 0.79: 3.06: 1.92: 3.00:-0.44:-1.52
+    Current Joints  =-1.43: 0.78: 3.05: 1.92: 3.00:-0.45:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.79: 3.06: 1.92: 3.00:-0.44:-1.52
+    Current Joints  =-1.43: 0.79: 3.06: 1.92: 3.00:-0.44:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.80: 3.06: 1.92: 3.00:-0.43:-1.52
+    Current Joints  =-1.44: 0.79: 3.06: 1.92: 3.00:-0.44:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.80: 3.06: 1.92: 3.00:-0.43:-1.52
+    Current Joints  =-1.44: 0.80: 3.06: 1.92: 3.00:-0.43:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.80: 3.06: 1.92: 3.00:-0.43:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Goal Joints     =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Commanded Joints=-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52
+    Current Joints  =-1.44: 0.81: 3.06: 1.92: 3.00:-0.42:-1.52

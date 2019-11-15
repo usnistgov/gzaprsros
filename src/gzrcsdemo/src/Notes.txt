@@ -1,0 +1,1704 @@
+
+Tue 22 Nov 2016 11:35:35 AM EST 
+  +---+---+---+---+---+---+---+---+
+0 |   | r |   | B |   | r |   | r |
+  +---+---+---+---+---+---+---+---+
+1 |   |   |   |   |   |   | r |   |
+  +---+---+---+---+---+---+---+---+
+2 |   |   |   |   |   | r |   |   |
+  +---+---+---+---+---+---+---+---+
+3 |   |   | r |   |   |   |   |   |
+  +---+---+---+---+---+---+---+---+
+4 |   |   |   |   |   | b |   | b |
+  +---+---+---+---+---+---+---+---+
+5 |   |   |   |   |   |   |   |   |
+  +---+---+---+---+---+---+---+---+
+6 |   | b |   | b |   |   |   | b |
+  +---+---+---+---+---+---+---+---+
+7 | b |   |   |   |   |   | b |   |
+  +---+---+---+---+---+---+---+---+
+    0   1   2   3   4   5   6   7
+
+Move:
+       friend        bool operator < (const Move &left, const Move &other )
+       {
+             return(   (left.row*8+left.col)< (other.row*8 + other.col));
+       }
+       // For serialization
+       friend std::ostream & operator<<(std::ostream & output_out, const Move & move_in)
+       {
+             return output_out << move_in.player<<"\t" <<  move_in.srow  <<"\t" << move_in.scol  <<"\t"
+                    << move_in.row  <<"\t" << move_in.col  <<"\t" << move_in.bJump ;
+       }
+       friend std::istream& operator>>(std::istream& s_in, Move & move_out)
+    {
+        s_in >> move_out.player >> move_out.srow>> move_out.scol >> move_out.row >> move_out.col >> move_out.bJump ;
+        return s_in;
+    }
+ 
+struct Checkers
+{
+. . .
+ 
+       Checkers::BoardType outboard;
+        std::stringstream str;
+        str<< rvizgame.Game().TestBoard();
+#if 1
+        LOG_DEBUG << str.str().c_str();
+        rvizgame.Game().Deserialize(str, outboard);
+         LOG_DEBUG << rvizgame.Game().printDisplayFancy(outboard).c_str();
+ 
+ 
+ 
+       void Restore(std::string filename, std::vector<Move> & moves )
+       {
+             std::ifstream f( filename.c_str() );
+             if(!f)
+                    throw std::exception(std::string("Checkers game could not open file : " + filename + " for reading!").c_str());
+             moves.clear();
+             std::copy(std::istream_iterator<Move>(f), std::istream_iterator<Move>(), std::back_inserter(moves));
+       }
+       void Save(std::string filename)
+       {
+             std::ofstream f( filename.c_str() );
+             if(!f)
+                    throw std::exception(std::string("Checkers game could not open file : " + filename + " for writing!").c_str());
+             std::ostream_iterator<Move> out_it (f,"\n");
+             std::copy ( allmoves.begin(), allmoves.end(), out_it );
+       }
+       void Dump(std::ostream &str, const Move move)
+       {
+             std::string typemove = move.bJump ? "jump" : "move";
+             std::string splayer = ISBLACK(move.player) ? "BLACK" : "RED";
+             str <<  StrFormat("%s %s from %d,%d to %d,%d\n",splayer.c_str(), typemove.c_str(), move.srow, move.scol, move.row, move.col);
+ 
+       }
+       void Dump(std::ostream &str, const std::vector<Move> &moves)
+       {
+             for(size_t i=0; i< moves.size() ; i++)
+             {
+                    std::string typemove = moves[i].bJump ? "jump" : "move";
+                    std::string splayer = ISBLACK(moves[i].player) ? "BLACK" : "RED";
+                    str <<  StrFormat("%s %s from %d,%d to %d,%d\n",splayer.c_str(), typemove.c_str(), moves[i].srow, moves[i].scol, moves[i].row, moves[i].col);
+            
+             }
+       }
+================================================
+Mon 21 Nov 2016 01:49:56 PM EST
+    //geometry_msgs::Pose convertPointToPose(const geometry_msgs::Point &point);
+    geometry_msgs::Point convertPoint(const geometry_msgs::Vector3 &point);
+    //geometry_msgs::Pose convertPose(const Eigen::Affine3d &pose);
+    geometry_msgs::Point convertPoseToPoint(const Eigen::Affine3d &pose);
+    //geometry_msgs::Point convertPoint(const Eigen::Vector3d &point);
+    //geometry_msgs::Pose PoseAffineToGeomMsg(const Eigen::Affine3d &e);
+   ////////////////////////////////////////////////////////////////////////////
+
+    geometry_msgs::Pose PoseAffineToGeomMsg(const Eigen::Affine3d &e) {
+        geometry_msgs::Pose m;
+        m.position.x = e.translation().x();
+        m.position.y = e.translation().y();
+        m.position.z = e.translation().z();
+        // This is a column major vs row major matrice faux pas!
+#if 0
+        MatrixEXd em = e.rotation();
+
+        Eigen::Quaterniond q = EMatrix2Quaternion(em);
+#endif
+        Eigen::Quaterniond q(e.rotation());
+        m.orientation.x = q.x();
+        m.orientation.y = q.y();
+        m.orientation.z = q.z();
+        m.orientation.w = q.w();
+#if 0
+        if (m.orientation.w < 0) {
+            m.orientation.x *= -1;
+            m.orientation.y *= -1;
+            m.orientation.z *= -1;
+            m.orientation.w *= -1;
+        }
+#endif
+    }
+
+===================================================================
+
+    // Vector conversions
+    std::vector<geometry_msgs::Pose> RcsPoses2PoseMsgs(const std::vector<tf::Pose> &src);
+    std::vector<tf::Pose> PoseMsgs2RcsPoses(const std::vector<geometry_msgs::Pose> &src);
+    std::vector<Eigen::Affine3d> PoseMsgs2AffEigenPoses(const std::vector<geometry_msgs::Pose> &src);
+    std::vector<geometry_msgs::Pose> AffEigenPoses2PoseMsgs(const std::vector<Eigen::Affine3d> &src);
+    //JointState     Vector2JointState(const  std::vector<double>  &src);
+    //------------------------------------------------
+    // vector conversions
+
+    std::vector<geometry_msgs::Pose> RcsPoses2PoseMsgs(const std::vector<tf::Pose> &src) {
+        std::vector<geometry_msgs::Pose> dest;
+        dest.resize(src.size());
+        std::transform(src.begin(), src.end(), dest.begin(), Conversion::Convert<tf::Pose, geometry_msgs::Pose> );
+    }
+
+    std::vector<tf::Pose> PoseMsgs2RcsPoses(const std::vector<geometry_msgs::Pose> &src) {
+        std::vector<tf::Pose> dest;
+        dest.resize(src.size());
+        std::transform(src.begin(), src.end(), dest.begin(), Conversion::Convert<geometry_msgs::Pose, tf::Pose>);
+    }
+
+    std::vector<Eigen::Affine3d> PoseMsgs2AffEigenPoses(const std::vector<geometry_msgs::Pose> &src) {
+        std::vector<Eigen::Affine3d> dest;
+        dest.resize(src.size());
+        std::transform(src.begin(), src.end(), dest.begin(), Conversion::GeomMsgPose2Affine3d);
+    }
+
+    std::vector<geometry_msgs::Pose> AffEigenPoses2PoseMsgs(const std::vector<Eigen::Affine3d> &src) {
+        std::vector<geometry_msgs::Pose> dest;
+        dest.resize(src.size());
+        std::transform(src.begin(), src.end(), dest.begin(), Conversion::PoseAffineToGeomMsg);
+    }
+===================================================================
+
+#if 0
+    //#ifdef BOLTDEMO
+    // Scene gear and gearholder objects
+    CreateMesh("gearholder1", "gearholder", gid++,
+            (Eigen::Affine3d::Identity() *
+            //           (Eigen::Translation3d(-0.026, -0.028, 0.0)*Eigen::UniformScaling< double >(.5))),
+            Eigen::Translation3d(0.038, 0.030, 0.0)),
+            "file:///usr/local/michalos/nistfanuc_ws/src/nist_fanuc/worldmodel/medium_gear_holder.stl",
+            "RED", // rviz_visual_tools::RED,
+            0.018);
+
+
+    CreateWireframeCuboid("gearholderoutline",
+            "trayoutline",
+            //(Eigen::Affine3d::Identity() * Eigen::Translation3d(-.111125/2.,-.111125/2., 0.0)), // midpoint
+            (Eigen::Affine3d::Identity() * Eigen::Translation3d(0., 0., 0.0)), // midpoint
+            .111125, .111125, .04, // depth, width, height
+            "GREEN" ); // rviz_visual_tools::GREEN);
+
+
+    for (size_t i = 0; i < 4; i++) {
+
+        std::string gearname = Globals.StrFormat("gear%d", i + 1);
+        Eigen::Affine3d gearpose = Conversion::poseTFToEigen(gearspot[i]);
+        LOG_DEBUG << "Gearpose" << RCS::DumpEigenPose(gearpose).c_str();
+        CreateMesh(gearname, "gear",
+                gid++, 
+                Conversion::poseTFToEigen(gearspot[i]),
+                //Eigen::Affine3d::Identity() * gearspot[i], //* fanucoffset00, // Eigen::Translation3d(0.25, -.45, 0.04),
+                "file:///usr/local/michalos/nistfanuc_ws/src/nist_fanuc/worldmodel/medium_gear.stl",
+                "RED", // rviz_visual_tools::RED,
+                0.0178);
+    }
+#endif
+    //#endif
+
+===================================================================
+#if 0
+        try {
+            //            ShapeModel::Instance outline = _shapes.NamedInstance("outline_" + holdername);
+            //
+            //            double width = _shapes.GetInstanceValue<double>(outline, "width");
+            //            double height = _shapes.GetInstanceValue<double>(outline, "height");
+            //            pScene->CreateWireframeCuboid("gearholderoutline",
+            //                    "trayoutline",
+            //                    Conversion::tfPose2Affine3d(gearpose),
+            //                    width, height, .04, "GREEN");
+
+            // 
+            // Now  fill in slots where gears are to go  in array sku_gear_vessel
+            std::vector<std::string> slotnames = _shapes.GetShapeChildrenNames(instances[i].metatype, "contains");
+            // Do they match - skip for now
+            for (size_t j = 0; j < s // FIXME: check that this is a mesh
+                    lotnames.size(); j++) {
+                tf::Pose slotpose = _shapes.GetChildPose(slotnames[j]);
+                LOG_DEBUG << "before slotpose " << RCS::DumpPoseSimple(gearpose).c_str();
+                // gear pose will already include rotation
+                slotpose = gearpose * slotpose;
+                LOG_DEBUG << "after slotpose " << RCS::DumpPoseSimple(slotpose).c_str();
+                pScene->CreateMarker("marker",
+                        Conversion::tfPose2Affine3d(slotpose),
+                        "GREEN");
+                pScene->sku_gear_vessel.push_back(slotpose);
+            }
+
+
+        } catch (...) {
+        }
+#endif
+=============================================================
+#if 0   
+
+tf::Pose GearDemo::GetFirstSlotHolder(boost::shared_ptr<ShapeModel::Instance> instance, std::string skupart, bool bFill) {
+    // Now  fill in slots where gears are to go  in array sku_gear_vessel
+    std::vector<std::string> slots = _shapes.GetChildrenNames("parts." + instance->metatype + ".contains");
+    std::vector<std::string> slotnames = _shapes.GetShapeChildrenNames(instance->metatype, "contains");
+    // Do they match - skip for now
+    for (size_t j = 0; j < slotnames.size(); j++) {
+        // Check that type == holder and metatype == metatype
+        std::string type = _shapes.GetChildValue<std::string>(slotnames[j] + ".type");
+        std::string metatype = _shapes.GetChildValue<std::string>(slotnames[j] + ".metatype");
+        if (type != "holder" || metatype != skupart)
+            continue;
+        std::string statechild = instance->propname + ".contains." + slots[j] + ".state";
+        std::string state = _shapes.GetChildValue<std::string>(statechild);
+        if (state == "full")
+            continue;
+        // We will now mark it as full
+        if (bFill) {
+            _shapes.PutChildValue<std::string>(statechild, "full");
+            //LOG_DEBUG << shapes.GetChildValue<std::string>(statechild);
+        }
+        return _shapes.GetChildPose(slotnames[j]);
+    }
+    throw MotionException(1030, "");
+}
+#endif
+//////////////////////////////////////////////////////////////////////////
+
+#if 0
+    std::string xml_string;
+
+    std::string urdf_xml, full_urdf_xml;
+    node_handle.param("urdf_xml", urdf_xml, robot_description);
+    node_handle.searchParam(urdf_xml, full_urdf_xml);
+
+    ROS_DEBUG_NAMED("ikfast", "Reading xml file from parameter server");
+    if (!node_handle.getParam(full_urdf_xml, xml_string)) {
+        ROS_FATAL_NAMED("ikfast", "Could not load the xml from parameter server: %s", urdf_xml.c_str());
+        return false;
+    }
+
+    node_handle.param(full_urdf_xml, xml_string, std::string());
+#endif
+
+// This waits for a publish point from rviz before proceeding
+ #if 1
+    while (!rvizdemo.Ready()) {
+        ros::Duration(1.0).sleep();
+    }
+    ros::Duration(5.0).sleep();
+#endif
+
+////////////////////////////////////////////////////////////
+
+You can define a function that iterates on each node recursively and calls a method for each node:
+
+template<typename T>
+void traverse_recursive(const boost::property_tree::ptree &parent, const boost::property_tree::ptree::path_type &childPath, const boost::property_tree::ptree &child, T &method)
+{
+  using boost::property_tree::ptree;
+
+  method(parent, childPath, child);
+  for(ptree::const_iterator it=child.begin();it!=child.end();++it) {
+    ptree::path_type curPath = childPath / ptree::path_type(it->first);
+    traverse_recursive(parent, curPath, it->second, method);
+  }
+}
+
+We can define a simpler function in order to call the previous one:
+
+template<typename T>
+void traverse(const boost::property_tree::ptree &parent, T &method)
+{
+  traverse_recursive(parent, "", parent, method);
+}
+
+Now, you can modify the class A in order to add one method to merge just one node and fill the update_ptree method:
+
+#include <boost/bind.hpp>
+
+class A {  
+  ptree pt_; 
+
+public:   
+  void set_ptree(const ptree &pt)   {    
+    pt_ = pt; 
+  }
+
+  void update_ptree(const ptree &pt)   {  
+    using namespace boost;
+    traverse(pt, bind(&A::merge, this, _1, _2, _3));
+  }
+
+  ptree get_ptree()   { 
+    return pt_;  
+  }
+
+protected:
+  void merge(const ptree &parent, const ptree::path_type &childPath, const ptree &child) {
+    pt_.put(childPath, child.data());
+  }    
+}; 
+
+The only limitation is that it is possible to have several nodes with the same path. Every one of them would be used, but only the last one will be merged.
+////////////////////////////////////////////////////////////
+#if 0
+        std::vector<std::string> robots = cfg.GetTokens("system.robots", ",");
+        std::vector<double> ds;
+
+        std::vector<boost::shared_ptr<CController> > ncs;
+        std::vector<InlineRobotCommands > nccmds;
+        for (size_t i = 0; i < robots.size(); i++) {
+
+            std::string robotname = cfg.GetSymbolValue(robots[i] + ".longname", "robot").c_str();
+            double dCycleTime = cfg.GetSymbolValue(robots[i] + ".cycletime", "robot").toNumber<double>();
+            std::string prefix = cfg.GetSymbolValue(robots[i] + ".prefix", "").c_str();
+            std::string eelink = cfg.GetSymbolValue(robots[i] + ".eelink", "").c_str();
+            std::string baselink = cfg.GetSymbolValue(robots[i] + ".baselink", "").c_str();
+            std::vector<double> dbase = cfg.GetDblTokens(robots[i] + ".base", ",");
+            std::vector<double> dtool = cfg.GetDblTokens(robots[i] + ".tool", ",");
+            std::vector<double> dbend = cfg.GetDblTokens(robots[i] + ".bend", ",");
+            std::string kinsolver = cfg.GetSymbolValue(robots[i] + ".kinsolver", "").c_str();
+            std::vector<std::string> jointmovenames = cfg.GetTokens(robots[i] + ".jointmovenames", ",");
+            int bCsvLogging = cfg.GetSymbolValue(robots[i] + ".csvlogging", "0").toNumber<int>();
+            // Fixme: add some correctness checking
+
+            ncs.push_back(boost::shared_ptr<CController>(new RCS::CController(robotname, dCycleTime)));
+            ncs[i]->SetToolOffset(Conversion::CreatePose(dtool));
+            ncs[i]->SetBaseOffset(Conversion::CreatePose(dbase));
+            ncs[i]->QBend() = tf::Quaternion(Deg2Rad(dbend[0]), Deg2Rad(dbend[1]), Deg2Rad(dbend[2]));
+            ncs[i]->bCvsPoseLogging() = false;
+            boost::shared_ptr<IKinematics> kin;
+            ncs[i]->CycleTime() = dCycleTime;
+
+            if (kinsolver == "FanucLRMate200idFastKinematics")
+                kin = boost::shared_ptr<IKinematics>(new FanucLRMate200idFastKinematics(ncs[i]));
+            if (kinsolver == "MotomanSia20dFastKinematics")
+                kin = boost::shared_ptr<IKinematics>(new MotomanSia20dFastKinematics(ncs[i]));
+            kin->Init(std::string("manipulator"), eelink, baselink);
+            kin->Init(nh);
+            ncs[i]->Kinematics() = kin;
+            ncs[i]->Setup(nh, prefix);
+
+            // This should be selectable
+            ncs[i]->_interpreter = boost::shared_ptr<IRCSInterpreter>(new RCS::BangBangInterpreter(ncs[i], kin));
+
+            //    ncs[i]->NamedJointMove["Safe"] = ToVector<double>(6, 1.49, -0.17, -1.14, 0.11, -0.45, -1.67);
+            for (size_t j = 0; j < jointmovenames.size(); j++) {
+                ds = cfg.GetDblTokens(robots[i] + "." + jointmovenames[j], ",");
+                ncs[i]->NamedJointMove[jointmovenames[j]] = ds;
+            }
+            nccmds.push_back(InlineRobotCommands(ncs[i])); // , fanuchints);
+
+            LOG_DEBUG << "NC " << ncs[i]->Name().c_str();
+            LOG_DEBUG << "base link " << ncs[i]->Kinematics()->getRootLink().c_str();
+            LOG_DEBUG << "ee link " << ncs[i]->Kinematics()->getTipLink().c_str();
+            LOG_DEBUG << "num joints " << ncs[i]->Kinematics()->NumJoints();
+            LOG_DEBUG << "baseoffset " << RCS::DumpPoseSimple(ncs[i]->basePose()).c_str();
+            LOG_DEBUG << "tooloffset " << RCS::DumpPoseSimple(ncs[i]->gripperPose()).c_str();
+            LOG_DEBUG << "safe " << VectorDump<double>(ncs[i]->NamedJointMove["Safe"]).c_str();
+            LOG_DEBUG << "Joint names " << VectorDump<std::string>(ncs[i]->Kinematics()->JointNames()).c_str();
+            //LOG_DEBUG << "cycletime " << ncs[i]->Name();
+
+        }
+#endif  
+////////////////////////////////////////////////////////////
+#if 0
+                Shape shape;
+                shape.name = v.first.data();
+                shape.metatype = root.get<std::string>("parts." + shape.name + ".metatype");
+                shape.type = root.get<std::string>("parts." + shape.name + ".type");
+                shape.color = root.get<std::string>("parts." + shape.name + ".color");
+                if (shape.metatype == "mesh") {
+                    shape.scale = root.get<double>("parts." + shape.name + ".scale");
+                    shape.meshfile = root.get<std::string>("parts." + shape.name + ".file");
+                }
+                if (shape.metatype == "Rectangle") {
+                    shape.rect.height = root.get<double>("parts." + shape.name + ".height");
+                    shape.rect.width = root.get<double>("parts." + shape.name + ".width");
+                } else if (shape.metatype == "Circle") {
+                    shape.circle.diameter = root.get<double>("parts." + shape.name + ".diameter");
+                } else if (shape.metatype == "Cube") {
+                    shape.cube.height = root.get<double>("parts." + shape.name + ".height");
+                    shape.cube.width = root.get<double>("parts." + shape.name + ".width");
+                    shape.cube.depth = root.get<double>("parts." + shape.name + ".depth");
+                }
+////////////////////////////////////////////////////////////
+
+Get the points where the gear tray insertion points are:
+rostopic echo /clicked_point
+
+New tray points:
+header: 
+  seq: 0
+  stamp: 
+    secs: 1476974587
+    nsecs: 162775308
+  frame_id: world
+point: 
+  x: -0.113489031792
+  y: -0.107274584472
+  z: 0.00935238599777
+---
+header: 
+  seq: 1
+  stamp: 
+    secs: 1476974590
+    nsecs: 103081061
+  frame_id: world
+point: 
+  x: -0.120122790337
+  y: -0.107842855155
+  z: 0.00825500488281
+---
+header: 
+  seq: 2
+  stamp: 
+    secs: 1476974595
+    nsecs:  16737153
+  frame_id: world
+point: 
+  x: -0.000939130783081
+  y: -0.103749327362
+  z: 0.00850313901901
+---
+header: 
+  seq: 3
+  stamp: 
+    secs: 1476974598
+    nsecs: 857814183
+  frame_id: world
+point: 
+  x: -0.00723922252655
+  y: -0.105599813163
+  z: 0.00696647167206
+---
+header: 
+  seq: 4
+  stamp: 
+    secs: 1476974602
+    nsecs: 510162357
+  frame_id: world
+point: 
+  x: -0.112924933434
+  y: 0.00787527207285
+  z: 0.00826048851013
+---
+header: 
+  seq: 5
+  stamp: 
+    secs: 1476974606
+    nsecs: 495012988
+  frame_id: world
+point: 
+  x: 0.000311493873596
+  y: 0.00750041846186
+  z: 0.00651115179062
+---
+
+
+
+////////////////////////////////////////////////////////////
+
+       InitScene();
+
+#ifdef CHECKERS
+        RvizCheckers rvizgame(nh);
+        rvizgame.RvizSetup();
+#endif
+
+        DrawScene(); // Debug: LOG_DEBUG << ObjectDB::DumpDB();
+
+        for(size_t j=0; j< ncs.size(); j++){
+         ncs[j]->Start(); // start the Controller Session thread
+         nccmds[j].MoveJoints(ncs[j]->Kinematics()->AllJointNumbers(), ncs[j]->NamedJointMove["Safe"]);
+           
+        }
+
+
+#ifdef CHECKERS
+        InlineRobotCommands * Ncs[2]={&nccmds[0], &nccmds[1]};
+        //InlineRobotCommands * Ncs[2]={&fanucrobot, &fanucrobot};
+        //InlineRobotCommands * Ncs[2]={&motomanrobot, &motomanrobot};
+        
+                // Play checkers - only move markers, no robot interaction
+                Checkers::Move from, to;
+                int player;
+        for (size_t i = 0; i < 40; i++) {
+            if (bPublishPoint) {
+                while (!rvizgame.Ready())
+                        ros::spinOnce();
+                        rvizgame.Ready() = false;
+                }
+            if (rvizgame.CheckersMove(player, from, to))
+                break;
+                rvizgame.Game().printDisplayFancy(rvizgame.Game().Board());
+            if (player == Checkers::RED) {
+                LOG_DEBUG << "RED Move " << Ncs[0]->cnc()->Name().c_str();
+                rvizgame.PhysicalMove(*Ncs[0], player, from.row, from.col, to);
+            } else {
+                LOG_DEBUG << "BLACK Move " << Ncs[0]->cnc()->Name().c_str();
+                rvizgame.PhysicalMove(*Ncs[1], player, from.row, from.col, to);
+            }
+
+#if 0
+            // Synchronize with rviz let PublishPoint pause execution
+            if (rvizdemo.Clicked()) {
+                for (size_t j = 0; j < Ncs.size(); j++)
+                    Ncs[0]->cnc()->Suspend();
+                while (1) {
+                    ros::spinOnce();
+                    ros::Duration(0.2).sleep();
+                    if (rvizdemo.Clicked())
+                        break;
+                }
+                for (size_t j = 0; j < Ncs.size(); j++)
+                    Ncs[0]->cnc()->Resume();
+
+            }
+#endif
+            ros::spinOnce();
+                    ros::spinOnce();
+                    ros::Duration(0.2).sleep();
+        }
+#endif
+////////////////////////////////////////////////////////////
+
+#if 0
+        // Initialize Controller...
+#ifdef FANUC
+        // ikfast kinematic solver
+        RCS::Fnc->SetToolOffset(Conversion::CreatePose(cfg.GetDblTokens(robots[0] + ".tool", ",")));
+        RCS::Fnc->SetBaseOffset(Conversion::CreatePose(cfg.GetDblTokens(robots[0] + ".base", ",")));
+        ds= cfg.GetDblTokens(robots[0] + ".bend", ",");
+        RCS::Fnc->QBend() = tf::Quaternion(Deg2Rad(ds[0]), Deg2Rad(ds[1]), Deg2Rad(ds[2]));
+        
+        boost::shared_ptr<IKinematics> fkin;
+        fkin = boost::shared_ptr<IKinematics>(new FanucLRMate200idFastKinematics());
+        fkin->Init(std::string("manipulator"), std::string("fanuc_link_6"), std::string("world"));
+        fkin->Init(nh);
+        RCS::Fnc->Kinematics() = fkin;
+        RCS::Fnc->CycleTime() = DEFAULT_LOOP_CYCLE;
+        RCS::Fnc->NamedJointMove["Safe"] = ToVector<double>(6, 1.49, -0.17, -1.14, 0.11, -0.45, -1.67);
+        RCS::Fnc->Setup(nh, "fanuc_");
+        //FanucNearestJointsLookup fanuchints(RCS::Fnc, fkin);
+        // hints fail, and I need to factor in robot base offset
+        //fanuchints.SetRobotHints();  
+        InlineRobotCommands fanucrobot(RCS::Fnc); // , fanuchints);
+        RCS::Fnc->Kinematics() = fkin;
+        RCS::Fnc->_interpreter = boost::shared_ptr<IRCSInterpreter>(new RCS::BangBangInterpreter(RCS::Fnc, fkin)); // , fanuchints));
+#endif
+
+#ifdef MOTOMAN
+        RCS::Mnc->SetToolOffset(Conversion::CreatePose(cfg.GetDblTokens(robots[1] + ".tool", ",")));
+        RCS::Mnc->SetBaseOffset(Conversion::CreatePose(cfg.GetDblTokens(robots[1] + ".base", ",")));
+        ds= cfg.GetDblTokens(robots[1] + ".bend", ",");
+        RCS::Mnc->QBend() = tf::Quaternion(Deg2Rad(ds[0]), Deg2Rad(ds[1]), Deg2Rad(ds[2]));
+
+        
+        boost::shared_ptr<IKinematics> fastkin;
+        fastkin = boost::shared_ptr<IKinematics>(new MotomanSia20dFastKinematics());
+        // Initialization of Controller instantiation of shared objects  
+        fastkin->Init(std::string("manipulator"), std::string("motoman_link_t"), std::string("world"));
+        fastkin->Init(nh);
+        //        LOG_DEBUG << "Motoman Joint Names=" << VectorDump<std::string>(fastkin->JointNames()).c_str();
+        RCS::Mnc->Kinematics() = fastkin;
+        RCS::Mnc->Setup(nh, "motoman_");
+        RCS::Mnc->CycleTime() = DEFAULT_LOOP_CYCLE;
+
+        //RCS::Mnc->NamedJointMove["Safe"] = ToVector<double>(7, 1.30, -0.84, 0.08, 2.26, 2.96, -0.38, -1.28);
+        RCS::Mnc->NamedJointMove["Safe"] = ToVector<double>(7, 1.44, -0.12, 0.19, 2.26, 3.14, -1.34, -1.28);
+
+        //MotomanNearestJointsLookup motohints(RCS::Mnc, fastkin);
+        //motohints.SetRobotHints();
+        InlineRobotCommands motomanrobot(RCS::Mnc); // , motohints);
+        RCS::Mnc->_interpreter = boost::shared_ptr<IRCSInterpreter>(new RCS::BangBangInterpreter(RCS::Mnc, fastkin)); // , motohints));
+#endif
+#endif
+#if 0
+#ifdef   MULTITHREADED
+#ifdef FANUC   
+        RCS::Fnc->Start(); // start the Controller Session thread
+        fanucrobot.MoveJoints(RCS::Fnc->Kinematics()->AllJointNumbers(), RCS::Fnc->NamedJointMove["Safe"]);
+#endif
+#ifdef MOTOMAN
+        RCS::Mnc->Start(); // start the Controller Session thread
+        motomanrobot.MoveJoints(RCS::Mnc->Kinematics()->AllJointNumbers(), RCS::Mnc->NamedJointMove["Safe"]);
+        
+#endif
+#endif
+#endif
+
+
+#ifndef   MULTITHREADED
+            while (RCS::Mnc->IsBusy()) {
+                RCS::Mnc->Action();
+            }
+#endif
+=========================================================================
+#if 0
+        // wait till move  done...
+        while (robot.cnc()->crclcmds.SizeMsgQueue() > 0) // wait till nothing left or messes up timing
+            ros::Duration(0.01).sleep();
+        while (robot.cnc()->robotcmds.SizeMsgQueue() > 0) // canon cmds are translated into robot cmds
+            ros::Duration(0.01).sleep();
+#else
+===========================================================
+
+Condition signaling with boost
+
+    boost::mutex kdlMutex; /**< mutex for stopping */
+    boost::condition kdlCond; /**< condition for stopping */
+
+ //           kdlCond.notify_all();
+
+missing code for waiting for signal .... (deleted :()
+==========================================================
+This is useful for computing gripper offset ( sort of - since full length not captured)
+extern RCS::Pose ComputeGripperOffset();
+extern RCS::Pose AutoComputeGripperOffset(urdf::Model& robot_model, std::string prefix);
+
+
+         ComputeGripperOffset();
+#ifdef FANUCPREFIX
+        AutoComputeGripperOffset(fkin->armkin->robot_model, "fanuc_");
+#else
+        AutoComputeGripperOffset(fkin->armkin->robot_model, "");
+#endif
+
+==========================================================
+THis is for single threaded robot control:
+        while (RCS::Mnc->IsBusy()) {
+
+            RCS::Mnc->Action();
+        }
+==========================================================
+
+#define ARMKIN
+#ifdef ARMKIN
+ #ifdef FANUCPREFIX
+#else
+        fkin = boost::shared_ptr<IKinematics>(new ArmKinematics("", "link_6", "base_link"));
+#endif
+        // Initialization of Controller instantiation of shared objects  
+        // Fixme: there is no tool0?
+        //  rosparam tip_name=	"fanuc_link_6" root_name"="world" 
+ 
+//        boost::shared_ptr<IKinematics> mkin;
+//        mkin = boost::shared_ptr<IKinematics>(new ArmKinematics("motoman_", motomanbaseoffset));
+//        mkin->Init(std::string("manipulator"), std::string("motoman_link_t"), std::string("motoman_base_link"));
+//        // mkin->Init(std::string("manipulator"), std::string("motoman_link_t"),std::string("world"));
+//        mkin->Init(nh);
+
+#endif
+
+#else
+        RCS::Fnc->Setup(nh, "");
+//        RCS::Fnc->status.Init();
+#endif
+
+==========================================================
+
+6.0 ikfast
+#include "Motoman/ikfast.h"
+#include <algorithm>
+using namespace  ikfast;
+class FastKinematics : public IKinematics {
+
+    static double SIGN(double x) {
+        return ( x >= 0.0f) ? +1.0f : -1.0f;
+    }
+
+    static double NORM(double a, double b, double c, double d) {
+        return sqrt(a * a + b * b + c * c + d * d);
+    }
+    // Convert rotation matrix to quaternion (Daisuke Miyazaki)
+    // http://pastebin.com/NikwbL3k
+
+    static RCS::Rotation Convert2Rotation(IkReal *eerot) {
+        double q0 = (eerot[0] + eerot[4] + eerot[8] + 1.0f) / 4.0f;
+        double q1 = (eerot[0] - eerot[4] - eerot[8] + 1.0f) / 4.0f;
+        double q2 = (-eerot[0] + eerot[4] - eerot[8] + 1.0f) / 4.0f;
+        double q3 = (-eerot[0] - eerot[4] + eerot[8] + 1.0f) / 4.0f;
+
+        if (q0 < 0.0f) {
+            q0 = 0.0f;
+        }
+
+        if (q1 < 0.0f) {
+            q1 = 0.0f;
+        }
+
+        if (q2 < 0.0f) {
+            q2 = 0.0f;
+        }
+
+        if (q3 < 0.0f) {
+            q3 = 0.0f;
+        }
+        q0 = sqrt(q0);
+        q1 = sqrt(q1);
+        q2 = sqrt(q2);
+        q3 = sqrt(q3);
+
+        if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3)) {
+            q0 *= +1.0f;
+            q1 *= SIGN(eerot[7] - eerot[5]);
+            q2 *= SIGN(eerot[2] - eerot[6]);
+            q3 *= SIGN(eerot[3] - eerot[1]);
+        } else if ((q1 >= q0) && (q1 >= q2) && (q1 >= q3)) {
+            q0 *= SIGN(eerot[7] - eerot[5]);
+            q1 *= +1.0f;
+            q2 *= SIGN(eerot[3] + eerot[1]);
+            q3 *= SIGN(eerot[2] + eerot[6]);
+        } else if ((q2 >= q0) && (q2 >= q1) && (q2 >= q3)) {
+            q0 *= SIGN(eerot[2] - eerot[6]);
+            q1 *= SIGN(eerot[3] + eerot[1]);
+            q2 *= +1.0f;
+            q3 *= SIGN(eerot[7] + eerot[5]);
+        } else if ((q3 >= q0) && (q3 >= q1) && (q3 >= q2)) {
+            q0 *= SIGN(eerot[3] - eerot[1]);
+            q1 *= SIGN(eerot[6] + eerot[2]);
+            q2 *= SIGN(eerot[7] + eerot[5]);
+            q3 *= +1.0f;
+        } else {
+            throw std::runtime_error("Error while converting to quaternion! \n");
+        }
+        double r = NORM(q0, q1, q2, q3);
+        q0 /= r;
+        q1 /= r;
+        q2 /= r;
+        q3 /= r;
+        RCS::Rotation q(q0, q1, q2, q3);
+        return q;
+    }
+    // Convert input effector pose, in w x y z quaternion notation, to rotation matrix.
+    // Must use doubles, else lose precision compared to directly inputting the rotation matrix.
+    // Found at http://kaist-ros-pkg.googlecode.com/svn/trunk/arm_kinematics_tools/src/ikfastdemo/ikfastdemo.cpp
+
+    static void Convert2RotationMatrix(const RCS::Rotation & quat, IkReal *eerot) {
+        double qq1 = 2 * quat.x() * quat.x();
+        double qq2 = 2 * quat.y() * quat.y();
+        double qq3 = 2 * quat.z() * quat.z();
+        eerot[3 * 0 + 0] = 1 - qq2 - qq3;
+        eerot[3 * 0 + 1] = 2 * (quat.x() * quat.y() - quat.w() * quat.z());
+        eerot[3 * 0 + 2] = 2 * (quat.x() * quat.z() + quat.w() * quat.y());
+        eerot[3 * 1 + 0] = 2 * (quat.x() * quat.y() + quat.w() * quat.z());
+        eerot[3 * 1 + 1] = 1 - qq1 - qq3;
+        eerot[3 * 1 + 2] = 2 * (quat.y() * quat.z() - quat.w() * quat.x());
+        eerot[3 * 2 + 0] = 2 * (quat.x() * quat.z() - quat.w() * quat.y());
+        eerot[3 * 2 + 1] = 2 * (quat.y() * quat.z() + quat.w() * quat.x());
+        eerot[3 * 2 + 2] = 1 - qq1 - qq2;
+    }
+public:
+
+    virtual RCS::Pose FK(std::vector<double> jv) {
+        // Handle gearing of joints
+        std::vector<double> joints;
+        joints.insert(joints.begin(), jv.begin(), jv.end());
+        //joints(1) = thetas[1] - M_PI_2;
+        joints[2] += jv[1];
+
+        // IkReal j[6]={ 0.0, 0.0, 0.0, 0.0, 0.0};
+        IkReal eetrans[4];
+        IkReal eerot[9];
+
+        // / Computes the end effector coordinates given the joint values using ikfast. This function is used to double check ik
+        // Units? joint angles in radians or degree
+        // Elsewhere: Returns the forward kinematic solution given the joint angles (in radians)
+        ComputeFk(&joints[0], eetrans, eerot);
+
+        RCS::Pose pose;
+        pose.getOrigin().setX(eetrans[0]);
+        pose.getOrigin().setY(eetrans[1]);
+        pose.getOrigin().setZ(eetrans[2]);
+        pose.setRotation(Convert2Rotation(eerot));
+        return pose;
+    }
+    // http://docs.ros.org/jade/api/moveit_msgs/html/msg/PositionIKRequest.html
+    //http://docs.ros.org/hydro/api/ric_mc/html/GetPositionIK_8h_source.html
+
+    virtual size_t AllPoseToJoints(RCS::Pose & pose, std::vector<std::vector<double>> &joints) {
+        // Inverse kinematics
+        ikfast::IkSolutionList<IkReal> solutions;
+
+        std::vector<IkReal> vfree(GetNumFreeParameters());
+        IkReal eetrans[3] = {pose.getOrigin().x(), pose.getOrigin().y(), pose.getOrigin().z()}; // + .33};
+
+        IkReal eerot[9];
+        Convert2RotationMatrix(pose.getRotation(), eerot);
+#ifdef DEBUG
+        std::cout << Globals.StrFormat("IKFAST IK\n");
+        std::cout << Globals.StrFormat("Pos  X=%6.4f Y=%6.4f Z=%6.4f\n", eetrans[0], eetrans[1], eetrans[2]);
+        std::cout << Globals.StrFormat("XROT I=%6.4f J=%6.4f K=%6.4f\n", eerot[0], eerot[1], eerot[2]);
+        std::cout << Globals.StrFormat("ZROT I=%6.4f J=%6.4f K=%6.4f\n", eerot[6], eerot[7], eerot[8]);
+#endif
+        bool bSuccess = ComputeIk(eetrans, eerot, vfree.size() > 0 ? &vfree[0] : NULL, solutions);
+
+        if (!bSuccess) {
+            std::cerr << Globals.StrFormat("Failed to get ik solution\n");
+            return -1;
+        }
+
+        // There are no redundant joints, so no free dof
+
+        std::cerr << Globals.StrFormat("Found %d ik solutions:\n", (int) solutions.GetNumSolutions());
+        std::vector<IkReal> solvalues(GetNumJoints());
+
+        for (std::size_t i = 0; i < solutions.GetNumSolutions(); ++i) {
+            const ikfast::IkSolutionBase<IkReal> & sol = solutions.GetSolution(i);
+
+#ifdef DEBUG
+            std::cerr << Globals.StrFormat("sol%d (free=%d): ", (int) i, (int) sol.GetFree().size());
+#endif
+            std::vector<IkReal> vsolfree(sol.GetFree().size());
+            sol.GetSolution(&solvalues[0], vsolfree.size() > 0 ? &vsolfree[0] : NULL);
+
+#ifdef DEBUG
+            for (std::size_t j = 0; j < solvalues.size(); ++j) {
+                std::cerr << Globals.StrFormat("%6.4f, ", Rad2Deg(solvalues[j]));
+            }
+            std::cerr << Globals.StrFormat("\n");
+#endif
+
+            std::vector<double> jnts;
+
+            for (std::size_t j = 0; j < solvalues.size(); ++j) {
+                jnts.push_back(solvalues[j]);
+            }
+            jnts[2] -= jnts[1];
+            joints.push_back(jnts);
+        }
+        return solutions.GetNumSolutions();
+    }
+
+    Eigen::VectorXd ConvertJoints(std::vector<double> v) {
+        Eigen::VectorXd p(v.size());
+        for (size_t i = 0; i < v.size(); i++)
+            p(i) = v[i];
+        return p;
+    }
+
+    std::vector<double> ConvertJoints(Eigen::VectorXd ev) {
+        std::vector<double> v;
+        for (int i = 0; i < ev.size(); i++)
+            v.push_back(ev(i));
+        return v;
+    }
+
+    virtual std::vector<double> NearestJoints(
+            std::vector<double> oldjoints,
+            std::vector<std::vector<double>> &newjoints) {
+        std::vector<double> finaljoints;
+        Eigen::VectorXd oldjointvec = ConvertJoints(oldjoints);
+        double min = std::numeric_limits<double>::infinity();
+        size_t index = 0;
+        for (size_t i = 0; i < newjoints.size(); i++) {
+            Eigen::VectorXd newjointvec = ConvertJoints(newjoints[i]);
+            double diff = (oldjointvec - newjointvec).norm();
+            if (diff < min) {
+                min = diff;
+                index = i;
+            }
+        }
+        // save "best" solution - closset ignoring importance of wrist
+        finaljoints.insert(finaljoints.begin(), newjoints[index].begin(), newjoints[index].end());
+        return finaljoints;
+    }
+
+    virtual std::vector<double> IK(RCS::Pose & pose,
+            std::vector<double> oldjoints) {
+        std::vector<std::vector<double>> allsolutions;
+        size_t bFlag = AllPoseToJoints(pose, allsolutions);
+
+        return NearestJoints(oldjoints, allsolutions);
+        //response.error_code.val == response.error_code.SUCCES
+        //return response.solution.joint_state.position;
+    }
+
+    virtual std::vector<double> IK(RCS::Pose & pose,
+            std::vector<double> minrange, std::vector<double> maxrange) {
+        std::vector<std::vector<double>> allsolutions;
+        size_t bFlag = AllPoseToJoints(pose, allsolutions);
+        for (size_t i = 0; i < allsolutions.size(); i++) {
+            bool bFlag = true;
+            for (size_t j = 0; j < allsolutions[0].size(); j++) {
+                if (allsolutions[i][j] < minrange[j] || allsolutions[i][j] > maxrange[j])
+                    bFlag = false;
+            }
+            if (bFlag)
+                return allsolutions[i];
+
+        }
+        // just pick one
+        size_t n = rand() % allsolutions.size();
+        return allsolutions[n];
+    }
+
+
+    virtual bool IsSingular(RCS::Pose & pose, double threshold) {
+        return false;
+    }
+
+    virtual void Init(ros::NodeHandle &nh) {
+        armkin = boost::shared_ptr<::Kinematics>(new ::Kinematics());
+        armkin->init(nh, _tiplinkname, _rootlinkname);
+        moveit_msgs::GetKinematicSolverInfo::Request request;
+        moveit_msgs::GetKinematicSolverInfo::Response response;
+        armkin->getFKSolverInfo(request, response);
+        joint_names.clear();
+        link_names.clear();
+        num_joints = response.kinematic_solver_info.joint_names.size();
+        for (unsigned int i = 0; i < response.kinematic_solver_info.joint_names.size(); i++) {
+            joint_names.push_back(response.kinematic_solver_info.joint_names[i]);
+        }
+        for (unsigned int i = 0; i < response.kinematic_solver_info.link_names.size(); i++) {
+            link_names.push_back(response.kinematic_solver_info.link_names[i]);
+        }
+        for (int i = 0; i < armkin->joint_min.rows(); i++)
+            joint_min.push_back(armkin->joint_min(i));
+        for (int i = 0; i < armkin->joint_max.rows(); i++)
+            joint_max .push_back(armkin->joint_max(i));
+    }
+
+    void VerifyLimits(std::vector<double> joints) {
+        for (size_t i = 0; i < joints.size(); i++)
+            if (joints[i] < joint_min[i] || joints[i] > joint_max[i])
+                ROS_ERROR_STREAM("Verify Joint Limits Joint" << joint_names[i] << "out of range");
+
+    }
+    virtual std::vector<double> FindBoundedSolution(std::vector<std::vector<double>> &solutions,
+            std::vector<double> &min,
+            std::vector<double> &max);
+
+};
+#include "fanuc_lrmate200id.h"
+
+class FanucLrMate200idKinematics : public IKinematics {
+    fanuc_lrmate200id fanuckin;
+    tf::Pose base;
+public:
+
+    FanucLrMate200idKinematics() {
+        base = tf::Pose(tf::Quaternion(0, 0, 0, 1),
+                tf::Vector3(0.0, 0.0, 0.330));
+    }
+
+    virtual RCS::Pose FK(std::vector<double> jv) {
+
+        tf::Pose pose = fanuckin.fanuc_lrmate200id_kin_fwd(&jv[0]);
+        return base*pose;
+        //return pose;
+    }
+
+    virtual std::vector<double> IK(RCS::Pose & pose,
+            std::vector<double> oldjoints) {
+        tf::Pose base(tf::Quaternion(0, 0, 0, 1),
+                tf::Vector3(0.0, 0.0, 0.330));
+        pose = base.inverse() * pose;
+        std::vector<double> joints = fanuckin.fanuc_lrmate200id_kin_inv(pose);
+        return joints;
+    }
+
+    virtual size_t AllPoseToJoints(RCS::Pose & pose,
+            std::vector<std::vector<double> > & newjoints) {
+        return 0;
+    }
+
+    virtual std::vector<double> NearestJoints(
+            std::vector<double> oldjoints,
+            std::vector<std::vector<double> > & newjoints) {
+        ROS_ERROR("FanucLrMate200idKinematics::NearestJoints() not implemented");
+        return std::vector<double>();
+    }
+
+    virtual void Init(ros::NodeHandle &nh) {
+        armkin = boost::shared_ptr<::Kinematics>(new ::Kinematics());
+        armkin->init(nh, _tiplinkname, _rootlinkname);
+        moveit_msgs::GetKinematicSolverInfo::Request request;
+        moveit_msgs::GetKinematicSolverInfo::Response response;
+        armkin->getFKSolverInfo(request, response);
+        joint_names.clear();
+        link_names.clear();
+        num_joints = response.kinematic_solver_info.joint_names.size();
+        for (unsigned int i = 0; i < response.kinematic_solver_info.joint_names.size(); i++) {
+            joint_names.push_back(response.kinematic_solver_info.joint_names[i]);
+        }
+        for (unsigned int i = 0; i < response.kinematic_solver_info.link_names.size(); i++) {
+            link_names.push_back(response.kinematic_solver_info.link_names[i]);
+        }
+    }
+
+
+
+};
+//////////////////////////////////////////////////////////////////////////////////
+Bang bang no interpretation
+
+#ifdef FEEDBACKTEST
+                Cnc.status.echocmd = cc; /**<  copy of current command */
+                Cnc.status.currentjoints = Cnc.Kinematics()->UpdateJointState(cc.jointnum, Controller.status.currentjoints, cc.joints);
+                Cnc.status.currentpose = Cnc.Kinematics()->FK(Cnc.status.currentjoints.position); /**<  current robot pose */
+                Cnc.status.currentjoints.header.stamp = ros::Time(0);
+                LOG_DEBUG << "Current Joints " << RCS::VectorDump<double>(Cnc.status.currentjoints.position).c_str();
+                rviz_jntcmd.publish(Cnc.status.currentjoints);
+#elif defined FEEDBACKTEST2
+                Cnc.robotcmds.AddMsgQueue(cc); // ok if not pose
+#else   
+... REAL CODE                  
+#endif
+//////////////////////////////////////////////////////////////////////////////////
+        {
+            joints = ToVector<double>(7, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0);
+            pose = fastkin->FK(joints);
+            LOG_DEBUG << "Motoman FK Joints=" << VectorDump<double>(joints).c_str();
+            LOG_DEBUG << "Motoman FK Pose=" << RCS::DumpPoseSimple(pose).c_str();
+            // Can't be done
+            //joints =  mkin->IK(pose, ToVector<double>(7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));           
+            joints =  fastkin->IK(pose, ToVector<double>(7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));           
+            LOG_DEBUG << "Motoman IK Joints=" << VectorDump<double>(joints).c_str();
+            
+            LOG_DEBUG << "====================================";
+            // -0.0821; -0.147; -0.012
+            joints = ToVector<double>(7, 1.64, -1.29, -0.22, 1.56, 0.0, 0.0, 0.0);
+            pose =   fastkin->FK(joints);
+            LOG_DEBUG << "Motoman FK Joints=" << VectorDump<double>(joints).c_str();
+            LOG_DEBUG << "Motoman FK Pose=" << RCS::DumpPoseSimple(motomanbaseoffset * pose).c_str();
+
+            LOG_DEBUG << "Motoman IK Pose=" << RCS::DumpPoseSimple( pose).c_str();
+            joints =  mkin->IK(pose, ToVector<double>(7, 1.64, -1.29, -0.22, 1.56, 0.0, 0.0, 0.0));
+            //joints =  fastkin->IK(pose, ToVector<double>(7, 1.64, -1.29, -0.22, 1.56, 0.0, 0.0, 0.0));
+            //joints =  mkin->IK(motomanbaseoffset * pose, ToVector<double>(7, 1.64, -1.29, -0.22, 1.56, 0.0, 0.0, 0.0));
+            LOG_DEBUG << "Motoman IK Joints=" << VectorDump<double>(joints).c_str();
+        }
+//////////////////////////////////////////////////////////////////////////////////////////
+//        LOG_DEBUG << ExecuteShellCommand("env|sort\n");
+
+        // This is useful for rosbag i suppose
+        //        std::string run_id;
+        //        nh.getParam("run_id", run_id);
+        //        std::cout << run_id.c_str() << std::endl;
+
+
+
+
+lrmate200id_macro.xacro
+
+    <joint name="${prefix}joint_6-tool0" type="fixed">
+<!--      <origin xyz="0 0 0" rpy="${m_pi} ${-m_pi_2} 0" /> -->
+      <origin xyz="0 0 0" rpy="0 0 0" />
+     <parent link="${prefix}link_6" />
+      <child link="${prefix}robotiq_85_adapter_link" />
+     <axis xyz="0 0 0"/> <!-- no rotation -->
+    </joint>
+
+  <link name="${prefix}robotiq_85_adapter_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_adapter_plate.dae"/>
+      </geometry>
+      <origin rpy="1.5707 0 1.5707" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_adapter_plate.dae"/>
+      </geometry>
+      <origin rpy="0 0 1.5707" xyz="0 0 0"/>
+    </collision>
+  </link>
+
+  <!--  /\  -->
+  <joint name="${prefix}robotiq_85_base_joint" type="fixed">
+    <parent link="${prefix}robotiq_85_adapter_link"/>
+    <child link="${prefix}robotiq_85_base_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" xyz=".0085 0 -.0041"/>
+  </joint>
+  <!--  \/  -->
+
+  <link name="${prefix}robotiq_85_base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_base.dae"/>
+      </geometry>
+      <origin rpy="3.1415 0 1.5707" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_base.dae"/>
+      </geometry>
+      <origin rpy="1.5707 0 1.5707" xyz="0 0 0"/>
+    </collision>
+  </link>
+
+  <!--  /\  -->
+  <!--  /\  -->
+  <joint name="${prefix}robotiq_85_left_knuckle_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_base_link"/>
+    <child link="${prefix}robotiq_85_left_knuckle_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="-1.5707 1.5707 0" xyz=".04191 .0306 0"/>
+    <limit lower="0" upper=".8575" velocity="2.0" effort="1000"/>
+  </joint>
+
+  <joint name="${prefix}robotiq_85_right_knuckle_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_base_link"/>
+    <child link="${prefix}robotiq_85_right_knuckle_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="1.5707 -1.5707 0" xyz=".04191 -.0306 0"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+    <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="1"/>
+  </joint>
+  <!--  \/  -->
+  <!--  \/  -->
+
+  <link name="${prefix}robotiq_85_left_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_0_L.dae"/>
+      </geometry>
+      <origin rpy="3.14159 -1.5707 0" xyz="0 .04191 -.0306"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_0_L.dae"/>
+      </geometry>
+      <origin rpy="1.5707 -1.5707 0" xyz="0 .04191 -.0306"/>
+    </collision>
+  </link> 
+
+  <link name="${prefix}robotiq_85_right_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_0_R.dae"/>
+      </geometry>
+      <origin rpy="3.14159 1.5707 0" xyz="0 .04191 -.0306"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_0_R.dae"/>
+      </geometry>
+      <origin rpy="1.5707 1.5707 0" xyz="0 .04191 -.0306"/>
+    </collision>
+  </link>
+
+  <!--  /\  -->
+  <!--  /\  -->
+  <joint name="${prefix}robotiq_85_left_finger_joint" type="fixed">
+    <parent link="${prefix}robotiq_85_left_knuckle_link"/>
+    <child link="${prefix}robotiq_85_left_finger_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="3.1415 0 0" xyz="0 .00508 .03134"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+  </joint>
+
+  <joint name="${prefix}robotiq_85_right_finger_joint" type="fixed">
+    <parent link="${prefix}robotiq_85_right_knuckle_link"/>
+    <child link="${prefix}robotiq_85_right_finger_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="3.1415 0 0" xyz="0 .00508 .03134"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+  </joint>
+  <!--  \/  --> 
+  <!--  \/  -->  
+
+  <link name="${prefix}robotiq_85_left_finger_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_1_L.dae"/>
+      </geometry>
+      <origin rpy="0 1.5707 0" xyz="0 -.03683 .06194"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_1_L.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 1.5707 0" xyz="0 -.03683 .06194"/>
+    </collision>
+  </link> 
+
+  <link name="${prefix}robotiq_85_right_finger_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_1_R.dae"/>
+      </geometry>
+      <origin rpy="0 -1.5707 0" xyz="0 -.03683 .06194"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_1_R.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 -1.5707 0" xyz="0 -.03683 .06194"/>
+    </collision>
+  </link> 
+
+  <!--  /\  -->
+  <!--  /\  -->
+  <joint name="${prefix}robotiq_85_left_inner_knuckle_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_base_link"/>
+    <child link="${prefix}robotiq_85_left_inner_knuckle_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="1.5707 1.5707 0" xyz=".04843 .0127 0"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+    <mimic joint="${prefix}robotiq_85_left_knuckle_joint" offset="0"/>
+  </joint> 
+
+  <joint name="${prefix}robotiq_85_right_inner_knuckle_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_base_link"/>
+    <child link="${prefix}robotiq_85_right_inner_knuckle_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="-1.5707 -1.5707 0" xyz=".04843 -.0127 0"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+    <mimic joint="${prefix}robotiq_85_left_knuckle_joint" offset="0"/>
+  </joint>
+  <!--  \/  --> 
+  <!--  \/  -->  
+
+  <link name="${prefix}robotiq_85_left_inner_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_2_L.dae"/>
+      </geometry>
+      <origin rpy="0 1.5707 0" xyz="0 -.04843 .0127"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_2_L.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 1.5707 0" xyz="0 -.04843 .0127"/>
+    </collision>
+  </link>
+
+  <link name="${prefix}robotiq_85_right_inner_knuckle_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_2_R.dae"/>
+      </geometry>
+      <origin rpy="0 -1.5707 0" xyz="0 -.04843 .0127"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_2_R.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 -1.5707 0" xyz="0 -.04843 .0127"/>
+    </collision>
+  </link>
+
+  <!--  /\  -->
+  <!--  /\  -->
+  <joint name="${prefix}robotiq_85_left_finger_tip_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_left_inner_knuckle_link"/>
+    <child link="${prefix}robotiq_85_left_finger_tip_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" xyz="0 .04196 -.0388"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+    <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1"/>
+  </joint>
+
+  <joint name="${prefix}robotiq_85_right_finger_tip_joint" type="revolute">
+    <parent link="${prefix}robotiq_85_right_inner_knuckle_link"/>
+    <child link="${prefix}robotiq_85_right_finger_tip_link"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" xyz="0 .04196 -.0388"/>
+    <limit lower="0" upper="1.5707" velocity="2.0" effort="1000"/>
+    <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1"/>
+  </joint>
+  <!--  \/  --> 
+  <!--  \/  -->  
+
+  <link name="${prefix}robotiq_85_left_finger_tip_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_3_L.dae"/>
+      </geometry>
+      <origin rpy="0 1.5707 0" xyz="0 -.090381 .051505"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_3_L.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 1.5707 0" xyz="0 -.090381 .051505"/>
+    </collision>
+  </link> 
+
+  <link name="${prefix}robotiq_85_right_finger_tip_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/visual/robotiq_85_gripper_joint_3_R.dae"/>
+      </geometry>
+      <origin rpy="0 -1.5707 0" xyz="0 -.090381 .051505"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://fanuc_lrmate200id_support/meshes/robotiq_c2/collision/robotiq_85_gripper_joint_3_R.dae"/>
+      </geometry>
+      <origin rpy="-1.5707 -1.5707 0" xyz="0 -.090381 .051505"/>
+    </collision>
+  </link>
+
+
+   void RvizSetup() {
+        tf::Quaternion qidentity(0.0, 0.0, 0.0, 1.0);
+
+        for (size_t row = 0; row < rows; row++) {
+            double rowoffset = xoffset + (offset * row);
+            for (size_t i = 0; i <= cols; i = i + 2) {
+                double coloffset = yoffset + (i * offset);
+                if (row % 2 == 0) coloffset = coloffset + offset; // red offset at zero
+
+                Eigen::Vector3d up(rowoffset, coloffset, 0.01);
+                Eigen::Vector3d down(rowoffset + offset, coloffset + offset, 0.0);
+                std::string sqname = Globals.StrFormat("Square[%d:%d]", row, i);
+                ObjectDB * obj = new ObjectDB(sqname,
+                        "Checkerboard",
+                        RcsPose2Affine3d(RCS::Pose(qidentity, vectorEigenToTF<Eigen::Vector3d>(up))),
+                        RcsPose2Affine3d(RCS::Pose(qidentity, vectorEigenToTF<Eigen::Vector3d>(down))),
+                        rviz_visual_tools::WHITE);
+                obj->centroid = Eigen::Vector3d(rowoffset + offset / 2.0, coloffset + offset / 2.0, .01);
+                ObjectDB::Save(obj);
+
+                ObjectDB * checker;
+                size_t checkercol = (row % 2 == 0) ? i + 1 : i; //  coloffset = coloffset + offset; // red offset at zero
+                rviz_visual_tools::colors checkercolor = rviz_visual_tools::CLEAR;
+                if (row < 3) checkercolor = rviz_visual_tools::RED;
+                if (row >= 5) checkercolor = rviz_visual_tools::BLACK;
+                if (checkercolor != rviz_visual_tools::CLEAR) {
+                    std::string checkername = Globals.StrFormat("Checker[%d:%d]", row, checkercol);
+                    checker = new ObjectDB(checkername,
+                            "Cylinder",
+                            Eigen::Affine3d(Eigen::Translation3d(obj->centroid)),
+                            checkercolor,
+                            height,
+                            radius ,
+                            "Cylinder");
+                    ObjectDB::Save(checker);
+                }
+
+                if (row % 2 == 0) coloffset = coloffset - offset; // red offset at zero
+                else coloffset = coloffset + offset;
+                Eigen::Vector3d bup(rowoffset, coloffset, 0.01);
+                Eigen::Vector3d bdown(rowoffset + offset, coloffset + offset, 0.0);
+                sqname = Globals.StrFormat("Square[%d:%d]", row, i);
+                obj = new ObjectDB(sqname,
+                        "Checkerboard",
+                        RcsPose2Affine3d(RCS::Pose(qidentity, vectorEigenToTF<Eigen::Vector3d>(bup))),
+                        RcsPose2Affine3d(RCS::Pose(qidentity, vectorEigenToTF<Eigen::Vector3d>(bdown))),
+                        rviz_visual_tools::BLACK);
+                obj->centroid = Eigen::Vector3d(rowoffset + offset / 2.0, coloffset + offset / 2.0, 0.01);
+                ObjectDB::Save(obj);
+            }
+        }
+    }
+
+
+  +---+---+---+---+---+---+---+---+
+0 |   | r |   | B |   | r |   | r |
+  +---+---+---+---+---+---+---+---+
+1 |   |   |   |   |   |   | r |   |
+  +---+---+---+---+---+---+---+---+
+2 |   |   |   |   |   | r |   |   |
+  +---+---+---+---+---+---+---+---+
+3 |   |   | r |   |   |   |   |   |
+  +---+---+---+---+---+---+---+---+
+4 |   |   |   |   |   | b |   | b |
+  +---+---+---+---+---+---+---+---+
+5 |   |   |   |   |   |   |   |   |
+  +---+---+---+---+---+---+---+---+
+6 |   | b |   | b |   |   |   | b |
+  +---+---+---+---+---+---+---+---+
+7 | b |   |   |   |   |   | b |   |
+  +---+---+---+---+---+---+---+---+
+    0   1   2   3   4   5   6   7
+#if 0
+class SimpleMotionInterpreter: public RCSInterpreter
+{
+public:
+	/*!
+	* \brief RCSInterpreter constructor that optionally accepts pointer to kinematic instance.
+	\param k is the kinematics pointer
+	*/
+    SimpleMotionInterpreter(IKinematicsSharedPtr k = NULL);
+    ~SimpleMotionInterpreter(void);
+
+	/*!
+	* \brief ParseCommand parses a RCS command and queues robot motion commands.
+	\param cmd is the command to interpret
+	*/
+    virtual int ParseCommand(RCS::CanonCmd cmd);
+protected:
+	/*!
+	* \brief AddJointCommands  accepts vector of joint trajectories and adds to robot motion queue.
+	\param gotojoints is the vector of joint states describing the motion.
+	*/
+    void AddJointCommands(std::vector<JointState > gotojoints);
+
+	/*!
+	* \brief PlanCartesianMotion accepts vector of poses and generates a vector of joint trajectories.
+	* Can use a couple of planning algorithms to generate trajectory.
+	\param poses is the vector of cartesian motion.
+	\return vector of planned joint states
+	*/
+    std::vector<JointState> PlanCartesianMotion(std::vector<RCS::Pose> poses);
+
+    //////////////////////////////////////////////////
+public:
+#ifdef DESCARTES
+    TrajectoryVec results; /**< descartes motion planner results */
+#endif
+    std::vector<double> times;  /**< descartes times for  trajectory results */
+    IRate rates; /**< rates structure for simple motion planner  */
+    MotionControl motioncontrol; /**< instance of simple motion control object  */
+ 
+};
+#endif
+#ifdef DESCARTES
+using namespace descartes_core;
+using namespace descartes_trajectory;
+#endif
+
+#if 0
+SimpleMotionInterpreter::SimpleMotionInterpreter(IKinematicsSharedPtr pKinematics) {
+    _kinematics = pKinematics; // hopefully can be null
+    //    _kinematics = IKinematicsSharedPtr(new DummyKinematics());
+    rates = IRate(DEFAULT_CART_MAX_VEL, DEFAULT_CART_MAX_ACCEL, DEFAULT_LOOP_CYCLE);
+}
+
+SimpleMotionInterpreter::~SimpleMotionInterpreter(void) {
+}
+
+void SimpleMotionInterpreter::AddJointCommands(std::vector<JointState > gotojoints) {
+    for (size_t i = 0; i < gotojoints.size(); i++) {
+        RCS::CanonCmd newcc;
+        newcc.crclcommand = CanonCmdType::CANON_MOVE_JOINT;
+        newcc.status = CanonStatusType::CANON_WAITING;
+        newcc.joints.position = gotojoints[i].position;
+#ifdef DEBUG
+        std::cout << "New Joint Position " << VectorDump<double>(newcc.joints.position).c_str();
+#endif
+        newcc.joints.velocity = gotojoints[i].velocity;
+        newcc.joints.effort = gotojoints[i].effort;
+        Cnc.robotcmds.AddMsgQueue(newcc);
+    }
+}
+
+std::vector<JointState> SimpleMotionInterpreter::PlanCartesianMotion(std::vector<RCS::Pose> poses) {
+    std::vector<JointState> gotojoints;
+    if (poses.size() == 0)
+        return gotojoints;
+#ifdef DEBUG
+    std::cout << "Current Pose " << DumpPose(poses[0]).c_str();
+    std::cout << "Goal Pose " << DumpPose(poses[poses.size() - 1]).c_str();
+
+    for (size_t i = 0; i < poses.size(); i++) {
+        std::cout << "CartesianMotion  Poses " << DumpPose(poses[i]).c_str();
+    }
+#endif
+    if (RCS::Cnc.eCartesianMotionPlanner == RCS::CController::MOVEIT) {
+#ifdef MOVEITPLANNER
+        if (RCS::Cnc.MoveitPlanner()->Plan(poses)) {
+            gotojoints = RCS::Cnc.MoveitPlanner()->GetJtsPlan();
+            return gotojoints;
+        }
+
+        // assume first one is where were are already
+        for (size_t j = 1; j < poses.size(); j++) {
+            if (RCS::Cnc.MoveitPlanner()->Plan(poses[j - 1], poses[j])) {
+                std::vector<JointState> intermedjoints;
+                intermedjoints = RCS::Cnc.MoveitPlanner()->GetJtsPlan();
+                gotojoints.insert(gotojoints.end(), intermedjoints.begin(), intermedjoints.end());
+            }
+        }
+#endif
+#ifdef DEBUG
+        std::cout << "*******CARTESIAN MOVE TO POSE******\n";
+        for (size_t k = 0; k < gotojoints.size(); k++) {
+            std::cout << VectorDump<double> (gotojoints[k].position);
+        }
+#endif
+        return gotojoints;
+
+    } else // if (RCS::Cnc.eCartesianMotionPlanner == RCS::CController::WAYPOINT) {
+    {
+#ifdef MOVEITKIN
+        std::vector<double> oldjoints = RCS::Controller.status.currentjoints.position;
+        for (size_t i = 0; i < poses.size(); i++) {
+
+            //RCS::Cnc.Kinematics()->SetJointValues(oldjoints);
+            std::vector<double> joints = RCS::Cnc.Kinematics()-> IK(poses[i], oldjoints);
+#ifdef DEBUG
+            std::cout << "GotoPose " << DumpPose(poses[i]).c_str();
+            std::cout << "New Joints " << VectorDump<double>(joints).c_str();
+#endif
+            gotojoints.push_back(EmptyJointState(joints.size()));
+            gotojoints.back().position = joints;
+            oldjoints = joints;
+        }
+#endif
+        return gotojoints;
+    }
+}
+
+int SimpleMotionInterpreter::ParseCommand(RCS::CanonCmd cc) {
+    //   IfDebug(Globals.ErrorMessage("SimpleMotionInterpreter::ParseCommand\n"));
+
+    // This approach should debounce multiple commands to same position - e.g., 0->30, 0->30
+    JointState currentjoints;
+    RCS::Pose currentpose; // = RCS::Controller.status.currentpose;
+
+    //RCS::CanonCmd lastrobotcmd = Cnc.GetLastRobotCommand();
+    currentjoints = RCS::Cnc.GetLastJointState(); //  open loop - "not actual"
+    currentpose = RCS::Cnc.Kinematics()->FK(currentjoints.position);
+#ifdef HEAVYDEBUG
+    std::cout << "Current Joints " << VectorDump<double>(currentjoints.position).c_str();
+    std::cout << "Current Pose " << DumpPose(currentpose).c_str();
+#endif
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // SET GRIPPERTS
+    if (cc.crclcommand == CanonCmdType::CANON_SET_GRIPPER) {
+        RCS::CanonCmd newcc = cc;
+        //newcc.crclcommand = CanonCmdType::CANON_SET_GRIPPER;
+        //newcc.eepercent=cc.eepercent;
+        newcc.status = CanonStatusType::CANON_WAITING;
+        Cnc.robotcmds.AddMsgQueue(newcc);
+    }        ////////////////////////////////////////////////////////////////////////////////////////////////
+        // MOVE JOINTS
+    else if (cc.crclcommand == CanonCmdType::CANON_MOVE_JOINT) {
+        rates = IRate(DEFAULT_JOINT_MAX_VEL, DEFAULT_JOINT_MAX_ACCEL, DEFAULT_LOOP_CYCLE);
+
+        JointState joints;
+        for (size_t i = 0; i < currentjoints.position.size(); i++) {
+            joints.position.push_back(currentjoints.position[i]);
+            joints.velocity.push_back(DEFAULT_JOINT_MAX_VEL);
+            joints.effort.push_back(DEFAULT_JOINT_MAX_ACCEL);
+        }
+
+        std::vector<double> maxvel;
+        std::vector<double> maxacc;
+        // Check each joint, to see if joint is being actuated, if so, change goal position
+        for (size_t i = 0; i < cc.jointnum.size(); i++) {
+            size_t n = cc.jointnum[i];
+            joints.position[n] = cc.joints.position[n]; // joint numbers already adjusted from CRCL to rcs model
+            joints.velocity[n] = cc.joints.velocity[n];
+            joints.effort[n] = cc.joints.effort[n];
+            maxvel.push_back(cc.joints.velocity[n]);
+            maxacc.push_back(cc.joints.effort[n]);
+        }
+        // not sure what happends if no elements in maxvel or maxacc... - should never happen
+        double jointsmaxvel = *(std::min_element(std::begin(maxvel), std::end(maxvel)));
+        double jointsmaxacc = *(std::min_element(std::begin(maxacc), std::end(maxacc)));
+#ifdef HEAVYDEBUG
+        std::cout << "Updated Joints Position " << VectorDump<double>(joints.position).c_str();
+        std::cout << "Updated Joints Velocity " << VectorDump<double>(joints.velocity).c_str();
+        std::cout << "Updated Joints Effort " << VectorDump<double>(joints.effort).c_str();
+#endif
+        std::vector<JointState > gotojoints;
+
+        if (RCS::Cnc.eJointMotionPlanner == RCS::CController::WAYPOINT) {
+            gotojoints = motioncontrol.computeCoorindatedWaypoints(currentjoints.position, joints.position, 0.001, true);
+        } else if (RCS::Cnc.eJointMotionPlanner == RCS::CController::BASIC) {
+            TrajectoryMaker maker;
+            maker.Rates().CurrentFeedrate() = jointsmaxvel;
+            maker.Rates().MaximumAccel() = jointsmaxacc;
+            maker.setRates(rates);
+            maker.makeJointPositionTrajectory(rates, currentjoints.position, joints.position);
+            gotojoints = maker.GetJtsPlan();
+        }
+#ifdef MOVEITPLANNER
+        else if (RCS::Cnc.eJointMotionPlanner == RCS::CController::MOVEIT) {
+            if (!RCS::Cnc.MoveitPlanner()->Plan(joints))
+                return -1;
+            gotojoints = RCS::Cnc.MoveitPlanner()->GetJtsPlan();
+        }
+#endif
+        else {
+            gotojoints = motioncontrol.computeCoorindatedWaypoints(currentjoints.position, joints.position, 0.001, true);
+        }
+        if (cc.bCoordinated) {
+            AddJointCommands(gotojoints);
+        } else {
+            // uncoordinated motion - 1st 0 joint, then 1 joint motion, etc.
+            // unlikely to crash into itself with this joint motion
+            for (size_t k = 0; k < currentjoints.position.size(); k++) {
+                JointState eachjoint;
+                eachjoint.position = currentjoints.position;
+                eachjoint.position[k] = joints.position[k];
+                TrajectoryMaker maker;
+                maker.Rates().CurrentFeedrate() = jointsmaxvel;
+                maker.Rates().MaximumAccel() = jointsmaxacc;
+                maker.setRates(rates);
+                maker.makeJointPositionTrajectory(rates, currentjoints.position, eachjoint.position);
+                gotojoints = maker.GetJtsPlan();
+                AddJointCommands(gotojoints);
+            }
+        }
+    }////////////////////////////////////////////////////////////////////////////////////////////////
+        // STOP MOTION
+    else if (cc.crclcommand == CanonCmdType::CANON_STOP_MOTION) {
+        std::vector<std::vector<double> > displacements(status.currentjoints.velocity.size(), std::vector<double>());
+        cc.jointnum.clear();
+
+        // clear motion queue   - we are stopping asap!
+        robotcmds.ClearMsgQueue();
+    }////////////////////////////////////////////////////////////////////////////////////////////////
+        // MOVE CARTESIAN
+    else if (cc.crclcommand == CanonCmdType::CANON_MOVE_TO) {
+
+        rates = cc.Rates(); // IRate(DEFAULT_CART_MAX_VEL, DEFAULT_CART_MAX_ACCEL, DEFAULT_LOOP_CYCLE);
+        RCS::Pose goalpose;
+        tf::poseMsgToTF(cc.finalpose, goalpose);
+#ifdef MOVEITKIN
+        if (RCS::Cnc.Kinematics()->IsSingular(goalpose, 0.0001)) {
+            std::cout << "Is singular pose: " << DumpPose(goalpose).c_str();
+        }
+#endif
+        std::vector<JointState> gotojoints;
+        std::cout << "Current Pose " << DumpPose(currentpose).c_str();
+        std::vector<RCS::Pose> poses = motioncontrol.computeWaypoints(currentpose, goalpose,
+                0.01, // cc.Rates().CurrentFeedrate() * DEFAULT_LOOP_CYCLE, //0.01, 
+                true);
+        for (size_t k = 0; k < poses.size(); k++)
+            std::cout << "\n\nWaypoint[" << k << "]" << DumpPose(poses[k]).c_str();
+
+        gotojoints = PlanCartesianMotion(poses);
+        AddJointCommands(gotojoints);
+    } else if (cc.crclcommand == CanonCmdType::CANON_MOVE_THRU) {
+        rates = IRate(DEFAULT_CART_MAX_VEL, DEFAULT_CART_MAX_ACCEL, DEFAULT_LOOP_CYCLE);
+        std::vector<JointState> gotojoints;
+        // FIXME: waypoints must have a point!
+        std::vector<RCS::Pose> poses(sizeof (cc.waypoints) / sizeof (cc.waypoints[0]));
+        poses.insert(poses.begin(), currentpose); // add beginning pose -again?
+        // and in case interrupted
+        gotojoints = PlanCartesianMotion(poses);
+        AddJointCommands(gotojoints);
+    } else if (cc.crclcommand == CanonCmdType::CANON_DWELL) {
+        // wait here or at robot command thread?
+        // Could just copy over command to robot
+        RCS::CanonCmd newcc;
+        newcc.crclcommand = CanonCmdType::CANON_DWELL;
+        newcc.status = CanonStatusType::CANON_WAITING;
+        newcc.dwell_seconds = cc.dwell_seconds;
+        Cnc.robotcmds.AddMsgQueue(newcc);
+    }
+    return 0;
+}
+#endif
+
+
+#if 0
+void MotomanSia20dFastKinematics::Init(ros::NodeHandle &nh) {
+    armkin = boost::shared_ptr<::Kinematics>(new ::Kinematics());
+    armkin->init(nh, _tiplinkname, _rootlinkname);
+    moveit_msgs::GetKinematicSolverInfo::Request request;
+    moveit_msgs::GetKinematicSolverInfo::Response response;
+    armkin->getFKSolverInfo(request, response);
+    joint_names.clear();
+    link_names.clear();
+    num_joints = response.kinematic_solver_info.joint_names.size();
+    for (unsigned int i = 0; i < response.kinematic_solver_info.joint_names.size(); i++) {
+        joint_names.push_back(response.kinematic_solver_info.joint_names[i]);
+    }
+    for (unsigned int i = 0; i < response.kinematic_solver_info.link_names.size(); i++) {
+        link_names.push_back(response.kinematic_solver_info.link_names[i]);
+    }
+    for (int i = 0; i < armkin->joint_min.rows(); i++)
+        joint_min.push_back(armkin->joint_min(i));
+    for (int i = 0; i < armkin->joint_max.rows(); i++)
+        joint_max .push_back(armkin->joint_max(i));
+}
+#endif
+
+#if 0
+                    if (!_newcc.partname.empty()) {
+                        Eigen::Affine3d& pose = ObjectDB::FindPose(_newcc.partname);
+                        UpdateScene(_newcc.partname, pose, rviz_visual_tools::CLEAR);
+                    }
+#endif

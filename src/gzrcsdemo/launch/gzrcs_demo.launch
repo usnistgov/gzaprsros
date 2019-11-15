@@ -1,0 +1,19 @@
+<launch>
+
+<!--
+Run as, e.g., 
+
+    roslaunch gzrcs gzrcs_demos.launch 
+-->
+
+<arg name="robot" default="motoman_" />
+<env name="GAZEBO_PLUGIN_PATH"  value="$(find aprs_objects)/../../gzdatabase/plugins" />   
+<env name="GAZEBO_MODEL_PATH"  value="$(find aprs_objects)/../../gzdatabase/models" />   
+<env name="GAZEBO_MEDIA_PATH"  value="$(find aprs_objects)/../../gzdatabase/media" />   
+
+
+<node pkg="gzrcs" name="gzrcs_motoman" type="gzrcs" 
+args="-r $(arg robot)" output="screen" required="true" />
+
+
+</launch>

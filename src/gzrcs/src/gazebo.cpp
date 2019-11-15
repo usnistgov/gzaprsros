@@ -65,6 +65,8 @@ std::string CGazebo::init(std::string robotname, std::string inifile)
 ////////////////////////////////////////////////////////////////////////////////
 void CGazebo::stop()
 {
+    _node=nullptr;
+
     // Make sure to shut everything down.
 #if GAZEBO_MAJOR_VERSION < 6
     gazebo::shutdown();
