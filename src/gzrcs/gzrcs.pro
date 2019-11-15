@@ -107,7 +107,14 @@ LIBS += -lgazebo_math
 QMAKE_CXXFLAGS +=-std=c++11
 # Local includes
 message(Current folder $$PWD)
-INCLUDEPATH += $$PWD/../../include
+#INCLUDEPATH += $$PWD/../../include
+
+INCLUDEPATH += "../crcl/crcl_rosmsgs/include"
+INCLUDEPATH += "../crcl/crcllib/include"
+INCLUDEPATH += "../aprs_headers/include"
+INCLUDEPATH += "../gotraj/include"
+
+
 INCLUDEPATH += $$PWD/include
 INCLUDEPATH += $$PWD/src
 

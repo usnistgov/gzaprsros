@@ -102,6 +102,8 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             RCS::robotconfig.throwExceptions()=true;
 #endif
+            RCS::robotconfig.throwExceptions()=false; // use defaults
+
             if(!RCS::robotconfig.loadFile(inifile))
                 throw "ini file  " + inifile + "did not open";
 

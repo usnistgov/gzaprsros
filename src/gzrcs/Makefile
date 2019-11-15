@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=237 -DQT_CORE_LIB
+DEFINES       = -DQT_NO_VERSION_TAGGING -DCNC -DGZCONTACT -DGRIPPER -DROS -DGAZEBO -DDEBUG -DKDL_CONVERSION -DCRCL_DLL -DMOTOGOKIN -DMAJOR=1 -DMINOR=0 -DBUILD=257 -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -Wno-unused-variable -Wno-sign-compare -Wno-unused-parameter -Wno-reorder -Wno-format-extra-args -Wno-unused-local-typedefs -Wno-ignored-qualifiers -Wno-deprecated-declarations -Wno-unused-function -Wno-unused-but-set-variable -Wno-missing-field-initializers -Wno-unused-parameter -std=c++11 -g -std=c++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../../include -Iinclude -Isrc -I../../install/include -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
+INCPATH       = -I. -isystem /usr/include/ignition/math4 -isystem /usr/include/ignition/msgs1 -isystem /usr/include/ignition/transport4 -isystem /usr/include/sdformat-6.2 -isystem /usr/include/gazebo-9 -isystem /usr/include/assimp -I../crclib/include -I../../aprs_headers/include -I../../gotraj/include -Iinclude -Isrc -I../../install/include -isystem /usr/include/eigen3 -I/opt/ros/kinetic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -Idebug/.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -522,13 +522,8 @@ compiler_clean:
 ####### Compile
 
 debug/.obj/Controller.o: src/Controller.cpp include/gzrcs/Controller.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		include/gzrcs/RCSInterpreter.h \
+		/opt/ros/kinetic/include/geometry_msgs/Point.h \
 		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/serialization.h \
 		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
@@ -544,43 +539,14 @@ debug/.obj/Controller.o: src/Controller.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/datatypes.h \
 		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
+		/opt/ros/kinetic/include/ros/ros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
@@ -595,6 +561,7 @@ debug/.obj/Controller.o: src/Controller.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -618,130 +585,105 @@ debug/.obj/Controller.o: src/Controller.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
-		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
-		include/gzrcs/Kinematics.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
 		include/gzrcs/kinematicring.h \
 		include/gzrcs/RobotControlException.h \
 		include/gzrcs/cros.h \
-		/opt/ros/kinetic/include/ros/package.h \
-		../../include/aprs_headers/LoggerMacros.h \
-		../../include/aprs_headers/Logger.h \
-		../../install/include/crcllib/nistcrcl.h
+		/opt/ros/kinetic/include/ros/package.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/Controller.o src/Controller.cpp
 
 debug/.obj/CrclApi.o: src/CrclApi.cpp include/gzrcs/CrclApi.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
-		/opt/ros/kinetic/include/ros/types.h \
-		/opt/ros/kinetic/include/ros/serialization.h \
-		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/kinetic/include/ros/macros.h \
+		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
+		/opt/ros/kinetic/include/ros/ros.h \
 		/opt/ros/kinetic/include/ros/time.h \
 		/opt/ros/kinetic/include/ros/platform.h \
 		/opt/ros/kinetic/include/ros/exception.h \
 		/opt/ros/kinetic/include/ros/duration.h \
 		/opt/ros/kinetic/include/ros/rostime_decl.h \
-		/opt/ros/kinetic/include/ros/serialized_message.h \
-		/opt/ros/kinetic/include/ros/message_traits.h \
-		/opt/ros/kinetic/include/ros/message_forward.h \
-		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
-		/opt/ros/kinetic/include/ros/datatypes.h \
-		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/ros/macros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
 		/opt/ros/kinetic/include/ros/forwards.h \
 		/opt/ros/kinetic/include/ros/exceptions.h \
+		/opt/ros/kinetic/include/ros/datatypes.h \
+		/opt/ros/kinetic/include/ros/serialized_message.h \
+		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/node_handle.h \
 		/opt/ros/kinetic/include/ros/publisher.h \
 		/opt/ros/kinetic/include/ros/message.h \
+		/opt/ros/kinetic/include/ros/serialization.h \
+		/opt/ros/kinetic/include/ros/message_traits.h \
+		/opt/ros/kinetic/include/ros/message_forward.h \
+		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/subscriber.h \
 		/opt/ros/kinetic/include/ros/subscription_callback_helper.h \
 		/opt/ros/kinetic/include/ros/parameter_adapter.h \
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -765,45 +707,62 @@ debug/.obj/CrclApi.o: src/CrclApi.cpp include/gzrcs/CrclApi.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/Kinematics.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/ros/message_operations.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Point.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -872,7 +831,7 @@ debug/.obj/fanuclrmate200idkinematics.o: src/fanuclrmate200idkinematics.cpp incl
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Core.h \
+		include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/tf/tf.h \
 		/opt/ros/kinetic/include/tf/exceptions.h \
 		/opt/ros/kinetic/include/tf2/exceptions.h \
@@ -911,29 +870,14 @@ debug/.obj/fanuclrmate200idkinematics.o: src/fanuclrmate200idkinematics.cpp incl
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
@@ -941,13 +885,9 @@ debug/.obj/fanuclrmate200idkinematics.o: src/fanuclrmate200idkinematics.cpp incl
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/RobotControlException.h \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -1052,21 +992,12 @@ debug/.obj/Globals.o: src/Globals.cpp include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/ros/master.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
-		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Core.h \
-		../../include/aprs_headers/LoggerMacros.h \
-		../../include/aprs_headers/Logger.h \
-		../../include/aprs_headers/File.h
+		/opt/ros/kinetic/include/ros/topic.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/Globals.o src/Globals.cpp
 
 debug/.obj/Kinematics.o: src/Kinematics.cpp include/gzrcs/Controller.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		include/gzrcs/RCSInterpreter.h \
+		/opt/ros/kinetic/include/geometry_msgs/Point.h \
 		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/serialization.h \
 		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
@@ -1082,43 +1013,14 @@ debug/.obj/Kinematics.o: src/Kinematics.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/datatypes.h \
 		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
+		/opt/ros/kinetic/include/ros/ros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
@@ -1133,6 +1035,7 @@ debug/.obj/Kinematics.o: src/Kinematics.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -1156,51 +1059,63 @@ debug/.obj/Kinematics.o: src/Kinematics.cpp include/gzrcs/Controller.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
-		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
-		include/gzrcs/Kinematics.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
 		include/gzrcs/kinematicring.h \
 		include/gzrcs/RobotControlException.h \
-		../../include/aprs_headers/LoggerMacros.h \
-		../../include/aprs_headers/Logger.h \
 		src/gokin/gokin.h \
 		src/gokin/goserkins.h \
 		src/gokin/_gokin.h \
@@ -1305,9 +1220,7 @@ debug/.obj/RobotControlException.o: src/RobotControlException.cpp include/gzrcs/
 		/opt/ros/kinetic/include/ros/master.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
-		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Core.h \
-		../../include/aprs_headers/Config.h
+		/opt/ros/kinetic/include/ros/topic.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/RobotControlException.o src/RobotControlException.cpp
 
 debug/.obj/motomansia20dkinematics.o: src/motomansia20dkinematics.cpp include/gzrcs/Kinematics.h \
@@ -1370,7 +1283,7 @@ debug/.obj/motomansia20dkinematics.o: src/motomansia20dkinematics.cpp include/gz
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Core.h \
+		include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/tf/tf.h \
 		/opt/ros/kinetic/include/tf/exceptions.h \
 		/opt/ros/kinetic/include/tf2/exceptions.h \
@@ -1409,29 +1322,14 @@ debug/.obj/motomansia20dkinematics.o: src/motomansia20dkinematics.cpp include/gz
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
 		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
@@ -1439,13 +1337,9 @@ debug/.obj/motomansia20dkinematics.o: src/motomansia20dkinematics.cpp include/gz
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/RobotControlException.h \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -1454,7 +1348,7 @@ debug/.obj/motomansia20dkinematics.o: src/motomansia20dkinematics.cpp include/gz
 		include/gzrcs/Motoman/ikfast_sia20d_manipulator.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/motomansia20dkinematics.o src/motomansia20dkinematics.cpp
 
-debug/.obj/nist_robotsnc.o: src/nist_robotsnc.cpp ../../include/aprs_headers/Debug.h \
+debug/.obj/nist_robotsnc.o: src/nist_robotsnc.cpp include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/tf/tf.h \
 		/opt/ros/kinetic/include/tf/exceptions.h \
 		/opt/ros/kinetic/include/tf2/exceptions.h \
@@ -1550,47 +1444,26 @@ debug/.obj/nist_robotsnc.o: src/nist_robotsnc.cpp ../../include/aprs_headers/Deb
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
+		include/gzrcs/Kinematics.h \
 		/opt/ros/kinetic/include/urdf/model.h \
 		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/Config.h \
-		../../include/aprs_headers/LoggerMacros.h \
-		../../include/aprs_headers/Logger.h \
-		include/gzrcs/Globals.h \
-		include/gzrcs/Kinematics.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -1622,49 +1495,14 @@ debug/.obj/RCSInterpreter.o: src/RCSInterpreter.cpp include/gzrcs/RCSInterpreter
 		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/datatypes.h \
 		/opt/ros/kinetic/include/ros/message_operations.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
+		/opt/ros/kinetic/include/ros/ros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
@@ -1679,6 +1517,7 @@ debug/.obj/RCSInterpreter.o: src/RCSInterpreter.cpp include/gzrcs/RCSInterpreter
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -1702,51 +1541,64 @@ debug/.obj/RCSInterpreter.o: src/RCSInterpreter.cpp include/gzrcs/RCSInterpreter
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		../../include/gotraj/gotraj.h \
-		include/gzrcs/Kinematics.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
 		include/gzrcs/kinematicring.h \
-		include/gzrcs/RobotControlException.h \
-		../../include/aprs_headers/Logger.h \
-		../../include/aprs_headers/LoggerMacros.h
+		include/gzrcs/RobotControlException.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/RCSInterpreter.o src/RCSInterpreter.cpp
 
 debug/.obj/Shape.o: src/Shape.cpp include/gzrcs/Shape.h \
@@ -1846,98 +1698,48 @@ debug/.obj/Shape.o: src/Shape.cpp include/gzrcs/Shape.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
 		include/gzrcs/Globals.h \
-		../../include/aprs_headers/Core.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/Debug.h \
 		include/gzrcs/assimp.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/Shape.o src/Shape.cpp
 
 debug/.obj/Demo.o: src/Demo.cpp include/gzrcs/Demo.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
-		/opt/ros/kinetic/include/ros/types.h \
-		/opt/ros/kinetic/include/ros/serialization.h \
-		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/kinetic/include/ros/macros.h \
+		include/gzrcs/CrclApi.h \
+		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
+		/opt/ros/kinetic/include/ros/ros.h \
 		/opt/ros/kinetic/include/ros/time.h \
 		/opt/ros/kinetic/include/ros/platform.h \
 		/opt/ros/kinetic/include/ros/exception.h \
 		/opt/ros/kinetic/include/ros/duration.h \
 		/opt/ros/kinetic/include/ros/rostime_decl.h \
-		/opt/ros/kinetic/include/ros/serialized_message.h \
-		/opt/ros/kinetic/include/ros/message_traits.h \
-		/opt/ros/kinetic/include/ros/message_forward.h \
-		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
-		/opt/ros/kinetic/include/ros/datatypes.h \
-		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/ros/macros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
 		/opt/ros/kinetic/include/ros/forwards.h \
 		/opt/ros/kinetic/include/ros/exceptions.h \
+		/opt/ros/kinetic/include/ros/datatypes.h \
+		/opt/ros/kinetic/include/ros/serialized_message.h \
+		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/node_handle.h \
 		/opt/ros/kinetic/include/ros/publisher.h \
 		/opt/ros/kinetic/include/ros/message.h \
+		/opt/ros/kinetic/include/ros/serialization.h \
+		/opt/ros/kinetic/include/ros/message_traits.h \
+		/opt/ros/kinetic/include/ros/message_forward.h \
+		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/subscriber.h \
 		/opt/ros/kinetic/include/ros/subscription_callback_helper.h \
 		/opt/ros/kinetic/include/ros/parameter_adapter.h \
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -1961,46 +1763,62 @@ debug/.obj/Demo.o: src/Demo.cpp include/gzrcs/Demo.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/CrclApi.h \
-		include/gzrcs/Kinematics.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/ros/message_operations.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Point.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -2009,13 +1827,8 @@ debug/.obj/Demo.o: src/Demo.cpp include/gzrcs/Demo.h \
 		include/gzrcs/RobotControlException.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/Demo.o src/Demo.cpp
 
-debug/.obj/gazebo.o: src/gazebo.cpp ../../include/aprs_headers/Debug.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+debug/.obj/gazebo.o: src/gazebo.cpp include/gzrcs/gazebo.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/serialization.h \
 		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
@@ -2032,6 +1845,15 @@ debug/.obj/gazebo.o: src/gazebo.cpp ../../include/aprs_headers/Debug.h \
 		/opt/ros/kinetic/include/ros/datatypes.h \
 		/opt/ros/kinetic/include/ros/message_operations.h \
 		/opt/ros/kinetic/include/std_msgs/Header.h \
+		include/gzrcs/GripCommand.pb.h \
+		include/gzrcs/JointsComm.pb.h \
+		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
 		/opt/ros/kinetic/include/geometry_msgs/Point.h \
 		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
 		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
@@ -2105,25 +1927,6 @@ debug/.obj/gazebo.o: src/gazebo.cpp ../../include/aprs_headers/Debug.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		include/gzrcs/gazebo.h \
-		../../include/aprs_headers/Config.h \
-		include/gzrcs/GripCommand.pb.h \
-		include/gzrcs/JointsComm.pb.h \
-		include/gzrcs/Globals.h \
 		include/gzrcs/Shape.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/gazebo.o src/gazebo.cpp
 
@@ -2224,45 +2027,26 @@ debug/.obj/commandlineinterface.o: src/commandlineinterface.cpp include/gzrcs/co
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/Core.h \
 		include/gzrcs/Kinematics.h \
 		/opt/ros/kinetic/include/urdf/model.h \
 		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
@@ -2272,79 +2056,41 @@ debug/.obj/commandlineinterface.o: src/commandlineinterface.cpp include/gzrcs/co
 		include/gzrcs/Shape.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/commandlineinterface.o src/commandlineinterface.cpp
 
-debug/.obj/cros.o: src/cros.cpp ../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
-		/opt/ros/kinetic/include/ros/types.h \
-		/opt/ros/kinetic/include/ros/serialization.h \
-		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/kinetic/include/ros/macros.h \
+debug/.obj/cros.o: src/cros.cpp include/gzrcs/cros.h \
+		/opt/ros/kinetic/include/ros/ros.h \
 		/opt/ros/kinetic/include/ros/time.h \
 		/opt/ros/kinetic/include/ros/platform.h \
 		/opt/ros/kinetic/include/ros/exception.h \
 		/opt/ros/kinetic/include/ros/duration.h \
 		/opt/ros/kinetic/include/ros/rostime_decl.h \
-		/opt/ros/kinetic/include/ros/serialized_message.h \
-		/opt/ros/kinetic/include/ros/message_traits.h \
-		/opt/ros/kinetic/include/ros/message_forward.h \
-		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
-		/opt/ros/kinetic/include/ros/datatypes.h \
-		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/ros/macros.h \
+		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/console.h \
 		/opt/ros/kinetic/include/ros/console_backend.h \
 		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
 		/opt/ros/kinetic/include/ros/assert.h \
 		/opt/ros/kinetic/include/ros/static_assert.h \
 		/opt/ros/kinetic/include/ros/common.h \
 		/opt/ros/kinetic/include/ros/forwards.h \
 		/opt/ros/kinetic/include/ros/exceptions.h \
+		/opt/ros/kinetic/include/ros/datatypes.h \
+		/opt/ros/kinetic/include/ros/serialized_message.h \
+		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/kinetic/include/ros/types.h \
 		/opt/ros/kinetic/include/ros/node_handle.h \
 		/opt/ros/kinetic/include/ros/publisher.h \
 		/opt/ros/kinetic/include/ros/message.h \
+		/opt/ros/kinetic/include/ros/serialization.h \
+		/opt/ros/kinetic/include/ros/message_traits.h \
+		/opt/ros/kinetic/include/ros/message_forward.h \
+		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
 		/opt/ros/kinetic/include/ros/subscriber.h \
 		/opt/ros/kinetic/include/ros/subscription_callback_helper.h \
 		/opt/ros/kinetic/include/ros/parameter_adapter.h \
 		/opt/ros/kinetic/include/ros/message_event.h \
 		/opt/ros/kinetic/include/ros/service_server.h \
 		/opt/ros/kinetic/include/ros/service_client.h \
+		/opt/ros/kinetic/include/ros/service_traits.h \
 		/opt/ros/kinetic/include/ros/timer.h \
 		/opt/ros/kinetic/include/ros/timer_options.h \
 		/opt/ros/kinetic/include/ros/wall_timer.h \
@@ -2368,170 +2114,73 @@ debug/.obj/cros.o: src/cros.cpp ../../include/aprs_headers/Core.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/cros.h \
 		/opt/ros/kinetic/include/ros/package.h \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
+		/opt/ros/kinetic/include/geometry_msgs/Point.h \
+		/opt/ros/kinetic/include/ros/message_operations.h \
 		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
 		include/gzrcs/Globals.h \
+		/opt/ros/kinetic/include/tf/tf.h \
+		/opt/ros/kinetic/include/tf/exceptions.h \
+		/opt/ros/kinetic/include/tf2/exceptions.h \
+		/opt/ros/kinetic/include/tf/time_cache.h \
+		/opt/ros/kinetic/include/tf/transform_datatypes.h \
+		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
+		/opt/ros/kinetic/include/std_msgs/Header.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
+		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
+		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
+		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
+		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
+		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
+		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
+		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer.h \
+		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
+		/opt/ros/kinetic/include/tf2/buffer_core.h \
+		/opt/ros/kinetic/include/tf2/transform_storage.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
+		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
+		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
+		/opt/ros/kinetic/include/tf2/convert.h \
+		/opt/ros/kinetic/include/tf2/impl/convert.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
+		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
 		/opt/ros/kinetic/include/kdl/chain.hpp \
 		/opt/ros/kinetic/include/kdl_parser/visibility_control.hpp \
 		include/gzrcs/Gripper.h \
+		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
 		include/gzrcs/gazebo.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
 		include/gzrcs/kinematicring.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/cros.o src/cros.cpp
 
-debug/.obj/kinematicring.o: src/kinematicring.cpp include/gzrcs/kinematicring.h \
-		../../include/aprs_headers/Core.h \
-		/opt/ros/kinetic/include/tf/tf.h \
-		/opt/ros/kinetic/include/tf/exceptions.h \
-		/opt/ros/kinetic/include/tf2/exceptions.h \
-		/opt/ros/kinetic/include/tf/time_cache.h \
-		/opt/ros/kinetic/include/tf/transform_datatypes.h \
-		/opt/ros/kinetic/include/geometry_msgs/PointStamped.h \
-		/opt/ros/kinetic/include/ros/types.h \
-		/opt/ros/kinetic/include/ros/serialization.h \
-		/opt/ros/kinetic/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/kinetic/include/ros/macros.h \
-		/opt/ros/kinetic/include/ros/time.h \
-		/opt/ros/kinetic/include/ros/platform.h \
-		/opt/ros/kinetic/include/ros/exception.h \
-		/opt/ros/kinetic/include/ros/duration.h \
-		/opt/ros/kinetic/include/ros/rostime_decl.h \
-		/opt/ros/kinetic/include/ros/serialized_message.h \
-		/opt/ros/kinetic/include/ros/message_traits.h \
-		/opt/ros/kinetic/include/ros/message_forward.h \
-		/opt/ros/kinetic/include/ros/builtin_message_traits.h \
-		/opt/ros/kinetic/include/ros/datatypes.h \
-		/opt/ros/kinetic/include/ros/message_operations.h \
-		/opt/ros/kinetic/include/std_msgs/Header.h \
-		/opt/ros/kinetic/include/geometry_msgs/Point.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3Stamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Vector3.h \
-		/opt/ros/kinetic/include/geometry_msgs/QuaternionStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Quaternion.h \
-		/opt/ros/kinetic/include/geometry_msgs/TransformStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Transform.h \
-		/opt/ros/kinetic/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Pose.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Transform.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Matrix3x3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Scalar.h \
-		/opt/ros/kinetic/include/tf/LinearMath/MinMax.h \
-		/opt/ros/kinetic/include/tf/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf/LinearMath/QuadWord.h \
-		/opt/ros/kinetic/include/ros/console.h \
-		/opt/ros/kinetic/include/ros/console_backend.h \
-		/opt/ros/kinetic/include/rosconsole/macros_generated.h \
-		/opt/ros/kinetic/include/geometry_msgs/TwistStamped.h \
-		/opt/ros/kinetic/include/geometry_msgs/Twist.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer.h \
-		/opt/ros/kinetic/include/tf2_ros/buffer_interface.h \
-		/opt/ros/kinetic/include/tf2/buffer_core.h \
-		/opt/ros/kinetic/include/tf2/transform_storage.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Vector3.h \
-		/opt/ros/kinetic/include/tf2/LinearMath/Quaternion.h \
-		/opt/ros/kinetic/include/tf2/transform_datatypes.h \
-		/opt/ros/kinetic/include/tf2/convert.h \
-		/opt/ros/kinetic/include/tf2/impl/convert.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraph.h \
-		/opt/ros/kinetic/include/ros/service_traits.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphRequest.h \
-		/opt/ros/kinetic/include/tf2_msgs/FrameGraphResponse.h \
-		/opt/ros/kinetic/include/ros/ros.h \
-		/opt/ros/kinetic/include/ros/rate.h \
-		/opt/ros/kinetic/include/ros/assert.h \
-		/opt/ros/kinetic/include/ros/static_assert.h \
-		/opt/ros/kinetic/include/ros/common.h \
-		/opt/ros/kinetic/include/ros/forwards.h \
-		/opt/ros/kinetic/include/ros/exceptions.h \
-		/opt/ros/kinetic/include/ros/node_handle.h \
-		/opt/ros/kinetic/include/ros/publisher.h \
-		/opt/ros/kinetic/include/ros/message.h \
-		/opt/ros/kinetic/include/ros/subscriber.h \
-		/opt/ros/kinetic/include/ros/subscription_callback_helper.h \
-		/opt/ros/kinetic/include/ros/parameter_adapter.h \
-		/opt/ros/kinetic/include/ros/message_event.h \
-		/opt/ros/kinetic/include/ros/service_server.h \
-		/opt/ros/kinetic/include/ros/service_client.h \
-		/opt/ros/kinetic/include/ros/timer.h \
-		/opt/ros/kinetic/include/ros/timer_options.h \
-		/opt/ros/kinetic/include/ros/wall_timer.h \
-		/opt/ros/kinetic/include/ros/wall_timer_options.h \
-		/opt/ros/kinetic/include/ros/steady_timer.h \
-		/opt/ros/kinetic/include/ros/steady_timer_options.h \
-		/opt/ros/kinetic/include/ros/advertise_options.h \
-		/opt/ros/kinetic/include/ros/advertise_service_options.h \
-		/opt/ros/kinetic/include/ros/service_callback_helper.h \
-		/opt/ros/kinetic/include/ros/subscribe_options.h \
-		/opt/ros/kinetic/include/ros/transport_hints.h \
-		/opt/ros/kinetic/include/ros/service_client_options.h \
-		/opt/ros/kinetic/include/ros/spinner.h \
-		/opt/ros/kinetic/include/ros/init.h \
-		/opt/ros/kinetic/include/xmlrpcpp/XmlRpcValue.h \
-		/opt/ros/kinetic/include/xmlrpcpp/XmlRpcDecl.h \
-		/opt/ros/kinetic/include/ros/single_subscriber_publisher.h \
-		/opt/ros/kinetic/include/ros/service.h \
-		/opt/ros/kinetic/include/ros/names.h \
-		/opt/ros/kinetic/include/ros/master.h \
-		/opt/ros/kinetic/include/ros/this_node.h \
-		/opt/ros/kinetic/include/ros/param.h \
-		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/sensor_msgs/JointState.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h
+debug/.obj/kinematicring.o: src/kinematicring.cpp include/gzrcs/kinematicring.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/kinematicring.o src/kinematicring.cpp
 
 debug/.obj/gripper.o: src/gripper.cpp include/gzrcs/Gripper.h \
@@ -2552,7 +2201,7 @@ debug/.obj/gripper.o: src/gripper.cpp include/gzrcs/Gripper.h \
 		/opt/ros/kinetic/include/ros/datatypes.h \
 		/opt/ros/kinetic/include/ros/message_operations.h \
 		/opt/ros/kinetic/include/std_msgs/Header.h \
-		../../include/aprs_headers/Core.h \
+		include/gzrcs/Globals.h \
 		/opt/ros/kinetic/include/tf/tf.h \
 		/opt/ros/kinetic/include/tf/exceptions.h \
 		/opt/ros/kinetic/include/tf2/exceptions.h \
@@ -2632,41 +2281,22 @@ debug/.obj/gripper.o: src/gripper.cpp include/gzrcs/Gripper.h \
 		/opt/ros/kinetic/include/ros/this_node.h \
 		/opt/ros/kinetic/include/ros/param.h \
 		/opt/ros/kinetic/include/ros/topic.h \
-		../../include/aprs_headers/IRcs.h \
-		../../include/crcl_rosmsgs/CrclCommandMsg.h \
-		/opt/ros/kinetic/include/std_msgs/ColorRGBA.h \
-		../../include/crcl_rosmsgs/CrclMaxProfileMsg.h \
-		../../include/crcl_rosmsgs/CrclStatusMsg.h \
-		../../include/aprs_headers/Debug.h \
-		../../include/aprs_headers/Conversions.h \
-		/opt/ros/kinetic/include/urdf/model.h \
-		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
-		/opt/ros/kinetic/include/kdl/frames_io.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/utility_io.h \
-		/opt/ros/kinetic/include/kdl/frames.hpp \
-		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
-		/opt/ros/kinetic/include/kdl/utilities/utility.h \
-		/opt/ros/kinetic/include/kdl/frames.inl \
-		/opt/ros/kinetic/include/kdl/jntarray.hpp \
-		/opt/ros/kinetic/include/kdl/jacobian.hpp \
-		/opt/ros/kinetic/include/tf_conversions/tf_eigen.h \
-		../../include/aprs_headers/RCSPriorityQueue.h \
-		include/gzrcs/Globals.h \
 		include/gzrcs/gazebo.h \
-		../../include/aprs_headers/Config.h \
 		include/gzrcs/GripCommand.pb.h \
 		include/gzrcs/JointsComm.pb.h \
 		include/gzrcs/Controller.h \
-		../../include/aprs_headers/RCSThreadTemplate.h \
-		../../include/aprs_headers/RCSTimer.h \
-		../../include/aprs_headers/RCSMsgQueue.h \
 		include/gzrcs/RCSInterpreter.h \
-		../../include/gotraj/gotraj.h \
 		include/gzrcs/Kinematics.h \
+		/opt/ros/kinetic/include/urdf/model.h \
+		/opt/ros/kinetic/include/urdf/urdfdom_compatibility.h \
 		/opt/ros/kinetic/include/kdl_parser/kdl_parser.hpp \
 		/opt/ros/kinetic/include/kdl/tree.hpp \
 		/opt/ros/kinetic/include/kdl/config.h \
 		/opt/ros/kinetic/include/kdl/segment.hpp \
+		/opt/ros/kinetic/include/kdl/frames.hpp \
+		/opt/ros/kinetic/include/kdl/utilities/kdl-config.h \
+		/opt/ros/kinetic/include/kdl/utilities/utility.h \
+		/opt/ros/kinetic/include/kdl/frames.inl \
 		/opt/ros/kinetic/include/kdl/rigidbodyinertia.hpp \
 		/opt/ros/kinetic/include/kdl/rotationalinertia.hpp \
 		/opt/ros/kinetic/include/kdl/joint.hpp \
@@ -2778,7 +2408,6 @@ debug/.obj/gokin.o: src/gokin/gokin.cpp src/gokin/gokin.h \
 		src/gokin/gomath.h \
 		src/gokin/genserkins.h \
 		src/gokin/Debug.h \
-		../../include/aprs_headers/Core.h \
 		include/gzrcs/RobotControlException.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/.obj/gokin.o src/gokin/gokin.cpp
 
