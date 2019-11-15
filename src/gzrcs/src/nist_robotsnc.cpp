@@ -124,7 +124,7 @@ int main(int argc, char** argv)
             Globals.bGazebo=RCS::robotconfig.getSymbolValue<int>("system.gazebo","0");
             Globals.bCannedDemo=RCS::robotconfig.getSymbolValue<int>("system.CannedDemo","0");
             Globals.bWorldCRCLCoordinates=RCS::robotconfig.getSymbolValue<int>("system.WorldCRCLCoordinates","0");
-            Globals.bGzGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.GzGripperPlugin","0");;
+            Globals.bGzGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.GzGripperPlugin","1");;
 
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
