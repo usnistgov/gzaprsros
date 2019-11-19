@@ -16,7 +16,7 @@ public:
      * @brief CBufferHandler constructor that takes a pointer to the parent session.
      */
     //CCrclBufferHandler(RCS::CMessageQueue<std::string> &);
-    CCrclBufferHandler(TCallback );
+    CCrclBufferHandler(TCallback cb);
     /**
       * @brief CBufferHandler destructor.
      */
