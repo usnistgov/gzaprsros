@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(crcllib)
+project(crclclient)
 
 ## Compile as C++11, supported in ROS Kinetic and newer NOTE ONE DASH!!
 add_compile_options(-std=c++11)
@@ -115,7 +115,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 catkin_package(
 INCLUDE_DIRS include
 ${boost_INCLUDE_DIRS}
-#  LIBRARIES crcllib
+#  LIBRARIES crclclient
 #  CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
@@ -131,21 +131,25 @@ include_directories(
  include/${PROJECT_NAME}/CrclXsd
  ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
+  ../crcl_rosmsgs/include
   )
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-    src/crcl.cpp 
-    src/nistcrcl.cpp 
     src/CRCL/CRCLCommandInstance.cxx 
     src/CRCL/CRCLCommands.cxx 
     src/CRCL/CRCLProgramInstance.cxx 
     src/CRCL/CRCLStatus.cxx 
     src/CRCL/DataPrimitives.cxx 
+    src/crcl.cpp 
+    src/nistcrcl.cpp 
     src/Crcl2Rcs.cpp 
+    src/Rcs2Crcl.cpp 
     src/CrclServerInterface.cpp 
     src/CrclClientInterface.cpp 
-    src/crclserver.cpp 
+    src/CrclBufferHandler.cpp 
+    src/CrclSocketClient.cpp 
+    src/CrclSocketServer.cpp 
 )
 
 ## Add cmake target dependencies of the library

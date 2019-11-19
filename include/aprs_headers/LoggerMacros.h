@@ -26,6 +26,18 @@
 #undef LOG_THROTTLE
 #endif
 
+#include "boost/iostreams/stream.hpp"
+#include "boost/iostreams/device/null.hpp"
+#include <boost/iostreams/stream.hpp>
+
+#ifndef ONCE
+#define ONCE(X)  \
+{ boost::iostreams::stream< boost::iostreams::null_sink > nullOstream( ( boost::iostreams::null_sink() ) );\
+    static std::ostream* os;\
+    static int Y##__LINE__=-1;    if(++Y##__LINE__==0) os=&X;  else os=&nullOstream;}\
+    *os
+#endif
+
 #ifndef GLOGGER
 #define GLOGGER GLogger
 extern Logging::CLogger GLogger;

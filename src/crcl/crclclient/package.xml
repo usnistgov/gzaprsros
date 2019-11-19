@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>crcllib</name>
+  <name>crclclient</name>
   <version>1.2.0</version>
-  <description>The crcllib package</description>
+  <description>The crclclient package for handling client communiation to CRCL server</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

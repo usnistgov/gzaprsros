@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   eigen_conversions
   urdf
   gotraj
-  crcllib
+  crclclient
   aprs_headers
    )
 
@@ -146,14 +146,19 @@ include_directories(
   /usr/include/ignition/msgs1
   /usr/include/ignition/transport4
   /usr/include/sdformat-6.1
-
+  
+    ../crcl/crcl_rosmsgs/include
+  ../crcl/crclclient/include
+  ../gotraj/include
+  ../aprs_headers/include
 )
 
 
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/gz_crcl_server.cpp
+#  
+# src/${PROJECT_NAME}/gz_crcl_server.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -165,30 +170,16 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME} 
-     src/Controller.cpp 
+    src/assimp.cpp
+    src/commandlineinterface.cpp 
     src/CrclApi.cpp 
-    src/fanuclrmate200idkinematics.cpp 
-    src/Globals.cpp 
-    src/Kinematics.cpp 
-    src/RobotControlException.cpp 
-    src/motomansia20dkinematics.cpp 
-    src/nist_robotsnc.cpp 
-    src/RCSInterpreter.cpp 
-    src/Shape.cpp 
+    src/cros.cpp 
     src/Demo.cpp 
     src/gazebo.cpp 
-    src/commandlineinterface.cpp 
-    src/cros.cpp 
-    src/kinematicring.cpp 
-    src/gripper.cpp 
-    src/gokin/gokin.cpp 
-    src/gokin/genserkins.c 
-    src/gokin/gomath.c 
-    src/gokin/gotypes.c 
-    src/gokin/inifile.c
-    src/JointsComm.pb.cc
-    src/GripCommand.pb.cc
-    src/assimp.cpp
+    src/Globals.cpp 
+    src/nist_robotsnc.cpp 
+    src/RobotControlException.cpp 
+    src/Shape.cpp 
   )
 
 ## Rename C++ executable without prefix
@@ -241,7 +232,7 @@ target_link_libraries(${PROJECT_NAME}
   protobuf
   
   gotraj
-  crcllib
+  crclclient
   assimp
  )
 

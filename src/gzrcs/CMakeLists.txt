@@ -146,7 +146,10 @@ include_directories(
   /usr/include/ignition/msgs1
   /usr/include/ignition/transport4
   /usr/include/sdformat-6.1
-
+  ../crcl/crcl_rosmsgs/include
+  ../crcl/crcllib/include
+  ../gotraj/include
+  ../aprs_headers/include
 )
 
 
