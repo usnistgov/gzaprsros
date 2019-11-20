@@ -23,8 +23,9 @@
 #include <sensor_msgs/JointState.h>
 #include <unordered_set>
 
-#include "gzrcs/GripCommand.pb.h"
-#include "gzrcs/JointsComm.pb.h"
+// THese must be on include path
+#include "GripCommand.pb.h"
+#include "JointsComm.pb.h"
 
 
 typedef const boost::shared_ptr<message::GripCommand const> ConstGripperCmdPtr;

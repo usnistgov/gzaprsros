@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -27,6 +28,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 }  // namespace
 
 
+void protobuf_AssignDesc_JointsComm_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AssignDesc_JointsComm_2eproto() {
   protobuf_AddDesc_JointsComm_2eproto();
   const ::google::protobuf::FileDescriptor* file =
@@ -41,16 +43,16 @@ void protobuf_AssignDesc_JointsComm_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(JointsComm, effort_),
   };
   JointsComm_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
       JointsComm_descriptor_,
       JointsComm::default_instance_,
       JointsComm_offsets_,
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(JointsComm, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(JointsComm, _unknown_fields_),
       -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(JointsComm));
+      -1,
+      sizeof(JointsComm),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(JointsComm, _internal_metadata_),
+      -1);
 }
 
 namespace {
@@ -61,10 +63,11 @@ inline void protobuf_AssignDescriptorsOnce() {
                  &protobuf_AssignDesc_JointsComm_2eproto);
 }
 
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    JointsComm_descriptor_, &JointsComm::default_instance());
+      JointsComm_descriptor_, &JointsComm::default_instance());
 }
 
 }  // namespace
@@ -74,6 +77,7 @@ void protobuf_ShutdownFile_JointsComm_2eproto() {
   delete JointsComm_reflection_;
 }
 
+void protobuf_AddDesc_JointsComm_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AddDesc_JointsComm_2eproto() {
   static bool already_here = false;
   if (already_here) return;
@@ -100,15 +104,15 @@ struct StaticDescriptorInitializer_JointsComm_2eproto {
 
 // ===================================================================
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int JointsComm::kNameFieldNumber;
 const int JointsComm::kPositionFieldNumber;
 const int JointsComm::kVelocityFieldNumber;
 const int JointsComm::kEffortFieldNumber;
-#endif  // !_MSC_VER
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 JointsComm::JointsComm()
-  : ::google::protobuf::Message() {
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
   // @@protoc_insertion_point(constructor:message.JointsComm)
 }
@@ -117,7 +121,8 @@ void JointsComm::InitAsDefaultInstance() {
 }
 
 JointsComm::JointsComm(const JointsComm& from)
-  : ::google::protobuf::Message() {
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
   // @@protoc_insertion_point(copy_constructor:message.JointsComm)
@@ -156,22 +161,29 @@ const JointsComm& JointsComm::default_instance() {
 
 JointsComm* JointsComm::default_instance_ = NULL;
 
-JointsComm* JointsComm::New() const {
-  return new JointsComm;
+JointsComm* JointsComm::New(::google::protobuf::Arena* arena) const {
+  JointsComm* n = new JointsComm;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
 }
 
 void JointsComm::Clear() {
+// @@protoc_insertion_point(message_clear_start:message.JointsComm)
   name_.Clear();
   position_.Clear();
   velocity_.Clear();
   effort_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
+  if (_internal_metadata_.have_unknown_fields()) {
+    mutable_unknown_fields()->Clear();
+  }
 }
 
 bool JointsComm::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:message.JointsComm)
   for (;;) {
@@ -189,7 +201,7 @@ bool JointsComm::MergePartialFromCodedStream(
             this->name(this->name_size() - 1).data(),
             this->name(this->name_size() - 1).length(),
             ::google::protobuf::internal::WireFormat::PARSE,
-            "name");
+            "message.JointsComm.name");
         } else {
           goto handle_unusual;
         }
@@ -282,10 +294,10 @@ void JointsComm::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_start:message.JointsComm)
   // repeated string name = 1;
   for (int i = 0; i < this->name_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-    this->name(i).data(), this->name(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE,
-    "name");
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->name(i).data(), this->name(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "message.JointsComm.name");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       1, this->name(i), output);
   }
@@ -308,22 +320,22 @@ void JointsComm::SerializeWithCachedSizes(
       4, this->effort(i), output);
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
   // @@protoc_insertion_point(serialize_end:message.JointsComm)
 }
 
-::google::protobuf::uint8* JointsComm::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* JointsComm::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:message.JointsComm)
   // repeated string name = 1;
   for (int i = 0; i < this->name_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name(i).data(), this->name(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "name");
+      "message.JointsComm.name");
     target = ::google::protobuf::internal::WireFormatLite::
       WriteStringToArray(1, this->name(i), target);
   }
@@ -346,7 +358,7 @@ void JointsComm::SerializeWithCachedSizes(
       WriteDoubleToArray(4, this->effort(i), target);
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
@@ -355,6 +367,7 @@ void JointsComm::SerializeWithCachedSizes(
 }
 
 int JointsComm::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:message.JointsComm)
   int total_size = 0;
 
   // repeated string name = 1;
@@ -385,7 +398,7 @@ int JointsComm::ByteSize() const {
     total_size += 1 * this->effort_size() + data_size;
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         unknown_fields());
@@ -397,33 +410,45 @@ int JointsComm::ByteSize() const {
 }
 
 void JointsComm::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const JointsComm* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const JointsComm*>(
-      &from);
+// @@protoc_insertion_point(generalized_merge_from_start:message.JointsComm)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const JointsComm* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const JointsComm>(
+          &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:message.JointsComm)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:message.JointsComm)
     MergeFrom(*source);
   }
 }
 
 void JointsComm::MergeFrom(const JointsComm& from) {
-  GOOGLE_CHECK_NE(&from, this);
+// @@protoc_insertion_point(class_specific_merge_from_start:message.JointsComm)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   name_.MergeFrom(from.name_);
   position_.MergeFrom(from.position_);
   velocity_.MergeFrom(from.velocity_);
   effort_.MergeFrom(from.effort_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+  if (from._internal_metadata_.have_unknown_fields()) {
+    mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+  }
 }
 
 void JointsComm::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:message.JointsComm)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void JointsComm::CopyFrom(const JointsComm& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.JointsComm)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -435,15 +460,17 @@ bool JointsComm::IsInitialized() const {
 }
 
 void JointsComm::Swap(JointsComm* other) {
-  if (other != this) {
-    name_.Swap(&other->name_);
-    position_.Swap(&other->position_);
-    velocity_.Swap(&other->velocity_);
-    effort_.Swap(&other->effort_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
+  if (other == this) return;
+  InternalSwap(other);
+}
+void JointsComm::InternalSwap(JointsComm* other) {
+  name_.UnsafeArenaSwap(&other->name_);
+  position_.UnsafeArenaSwap(&other->position_);
+  velocity_.UnsafeArenaSwap(&other->velocity_);
+  effort_.UnsafeArenaSwap(&other->effort_);
+  std::swap(_has_bits_[0], other->_has_bits_[0]);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata JointsComm::GetMetadata() const {
@@ -454,6 +481,155 @@ void JointsComm::Swap(JointsComm* other) {
   return metadata;
 }
 
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// JointsComm
+
+// repeated string name = 1;
+int JointsComm::name_size() const {
+  return name_.size();
+}
+void JointsComm::clear_name() {
+  name_.Clear();
+}
+ const ::std::string& JointsComm::name(int index) const {
+  // @@protoc_insertion_point(field_get:message.JointsComm.name)
+  return name_.Get(index);
+}
+ ::std::string* JointsComm::mutable_name(int index) {
+  // @@protoc_insertion_point(field_mutable:message.JointsComm.name)
+  return name_.Mutable(index);
+}
+ void JointsComm::set_name(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:message.JointsComm.name)
+  name_.Mutable(index)->assign(value);
+}
+ void JointsComm::set_name(int index, const char* value) {
+  name_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:message.JointsComm.name)
+}
+ void JointsComm::set_name(int index, const char* value, size_t size) {
+  name_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:message.JointsComm.name)
+}
+ ::std::string* JointsComm::add_name() {
+  // @@protoc_insertion_point(field_add_mutable:message.JointsComm.name)
+  return name_.Add();
+}
+ void JointsComm::add_name(const ::std::string& value) {
+  name_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:message.JointsComm.name)
+}
+ void JointsComm::add_name(const char* value) {
+  name_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:message.JointsComm.name)
+}
+ void JointsComm::add_name(const char* value, size_t size) {
+  name_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:message.JointsComm.name)
+}
+ const ::google::protobuf::RepeatedPtrField< ::std::string>&
+JointsComm::name() const {
+  // @@protoc_insertion_point(field_list:message.JointsComm.name)
+  return name_;
+}
+ ::google::protobuf::RepeatedPtrField< ::std::string>*
+JointsComm::mutable_name() {
+  // @@protoc_insertion_point(field_mutable_list:message.JointsComm.name)
+  return &name_;
+}
+
+// repeated double position = 2;
+int JointsComm::position_size() const {
+  return position_.size();
+}
+void JointsComm::clear_position() {
+  position_.Clear();
+}
+ double JointsComm::position(int index) const {
+  // @@protoc_insertion_point(field_get:message.JointsComm.position)
+  return position_.Get(index);
+}
+ void JointsComm::set_position(int index, double value) {
+  position_.Set(index, value);
+  // @@protoc_insertion_point(field_set:message.JointsComm.position)
+}
+ void JointsComm::add_position(double value) {
+  position_.Add(value);
+  // @@protoc_insertion_point(field_add:message.JointsComm.position)
+}
+ const ::google::protobuf::RepeatedField< double >&
+JointsComm::position() const {
+  // @@protoc_insertion_point(field_list:message.JointsComm.position)
+  return position_;
+}
+ ::google::protobuf::RepeatedField< double >*
+JointsComm::mutable_position() {
+  // @@protoc_insertion_point(field_mutable_list:message.JointsComm.position)
+  return &position_;
+}
+
+// repeated double velocity = 3;
+int JointsComm::velocity_size() const {
+  return velocity_.size();
+}
+void JointsComm::clear_velocity() {
+  velocity_.Clear();
+}
+ double JointsComm::velocity(int index) const {
+  // @@protoc_insertion_point(field_get:message.JointsComm.velocity)
+  return velocity_.Get(index);
+}
+ void JointsComm::set_velocity(int index, double value) {
+  velocity_.Set(index, value);
+  // @@protoc_insertion_point(field_set:message.JointsComm.velocity)
+}
+ void JointsComm::add_velocity(double value) {
+  velocity_.Add(value);
+  // @@protoc_insertion_point(field_add:message.JointsComm.velocity)
+}
+ const ::google::protobuf::RepeatedField< double >&
+JointsComm::velocity() const {
+  // @@protoc_insertion_point(field_list:message.JointsComm.velocity)
+  return velocity_;
+}
+ ::google::protobuf::RepeatedField< double >*
+JointsComm::mutable_velocity() {
+  // @@protoc_insertion_point(field_mutable_list:message.JointsComm.velocity)
+  return &velocity_;
+}
+
+// repeated double effort = 4;
+int JointsComm::effort_size() const {
+  return effort_.size();
+}
+void JointsComm::clear_effort() {
+  effort_.Clear();
+}
+ double JointsComm::effort(int index) const {
+  // @@protoc_insertion_point(field_get:message.JointsComm.effort)
+  return effort_.Get(index);
+}
+ void JointsComm::set_effort(int index, double value) {
+  effort_.Set(index, value);
+  // @@protoc_insertion_point(field_set:message.JointsComm.effort)
+}
+ void JointsComm::add_effort(double value) {
+  effort_.Add(value);
+  // @@protoc_insertion_point(field_add:message.JointsComm.effort)
+}
+ const ::google::protobuf::RepeatedField< double >&
+JointsComm::effort() const {
+  // @@protoc_insertion_point(field_list:message.JointsComm.effort)
+  return effort_;
+}
+ ::google::protobuf::RepeatedField< double >*
+JointsComm::mutable_effort() {
+  // @@protoc_insertion_point(field_mutable_list:message.JointsComm.effort)
+  return &effort_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // @@protoc_insertion_point(namespace_scope)
 

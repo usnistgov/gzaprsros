@@ -23,14 +23,16 @@ catkin_package(
 #set(CMAKE_CXX_FLAGS "-DGZJNTCMDPLUGIN_LIBRARY=1 ${CMAKE_CXX_FLAGS}")
 
 include_directories(
-  include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS})
+  include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS}
+  ../../gz_custom_messages/include/gz_custom_messages
+  )
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 add_library(gzjointcmdplugin
     gzjntcommandplugin.cpp
-    JointsComm.pb.cc
+    ../../gz_custom_messages/include/gz_custom_messages/JointsComm.pb.cc
 )
 add_dependencies(gzjointcmdplugin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")

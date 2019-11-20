@@ -22,15 +22,17 @@ catkin_package(
 )
 
 include_directories(
-  include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS})
+  include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS}
+  ../../gz_custom_messages/include/gz_custom_messages
+  )
 link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 add_library(gzparallelgripperplugin
     gzparallelgripperplugin.cpp
-    JointsComm.pb.cc
-    GripCommand.pb.cc
+    ../../gz_custom_messages/include/gz_custom_messages/JointsComm.pb.cc
+    ../../gz_custom_messages/include/gz_custom_messages/GripCommand.pb.cc
 )
 add_dependencies(gzparallelgripperplugin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gzparallelgripperplugin

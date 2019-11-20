@@ -16,6 +16,17 @@ p=`pwd`
 q=`pwd`/launch
 r=`pwd`/gzrcs
 
+. /etc/lsb-release
+if [ $DISTRIB_RELEASE == "18.04" ]
+then
+rosv="melodic"
+elif [ $DISTRIB_RELEASE == "16.04" ]
+then
+rosv="kinetic"
+fi
+export rosv
+
+
 # Definition of environment variables for bash
 models=`pwd`/../gzdatabase/models
 export models
@@ -47,9 +58,9 @@ pkill rosmaster
  
 cmd=( gnome-terminal )
 
-cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;ROS\a\";source /opt/ros/kinetic/setup.bash;export myfolder=`pwd`;roslaunch roscore.launch ;exec bash"')
+cmd+=( --tab  --working-directory="$q" -e 'bash -c "printf \"\e]2;ROS\a\";source /opt/ros/$rosv/setup.bash;export myfolder=`pwd`;roslaunch roscore.launch ;exec bash"')
 
-cmd+=( --tab   --working-directory="$p"  -e 'bash -c "printf \"\e]2;gazebo\a\";source /opt/ros/kinetic/setup.bash; LD_LIBRARY_PATH=/opt/ros/kinetic/lib:/usr/lib/x86_64-linux-gnu/gazebo-$gzver/plugins:$LD_LIBRARY_PATH;export LD_LIBRARY_PATH ; GAZEBO_PLUGIN_PATH=$plugins:/opt/ros/kinetic/lib:$GAZEBO_PLUGIN_PATH; export GAZEBO_PLUGIN_PATH;GAZEBO_MODEL_PATH=$models;export GAZEBO_MODEL_PATH; cd `pwd`; gazebo $aprs --verbose ; exec bash"')
+cmd+=( --tab   --working-directory="$p"  -e 'bash -c "printf \"\e]2;gazebo\a\";source /opt/ros/$rosv/setup.bash; LD_LIBRARY_PATH=/opt/ros/$rosv/lib:/usr/lib/x86_64-linux-gnu/gazebo-$gzver/plugins:$LD_LIBRARY_PATH;export LD_LIBRARY_PATH ; GAZEBO_PLUGIN_PATH=$plugins:/opt/ros/$rosv/lib:$GAZEBO_PLUGIN_PATH; export GAZEBO_PLUGIN_PATH;GAZEBO_MODEL_PATH=$models;export GAZEBO_MODEL_PATH; cd `pwd`; gazebo $aprs --verbose ; exec bash"')
 
 
 

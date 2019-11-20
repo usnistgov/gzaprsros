@@ -1,17 +1,7 @@
 #!/bin/bash
 p=`pwd`
 
-source /opt/ros/melodic/setup.bash
 
-
-# fail if no ros melodic
-if ! test -d /opt/ros/melodic
-then
-    echo "error: ROS kinetic must be installed for this build to work."
-    echo "Remedy: sudo apt-get install ros-melodic-desktop-full"
-    echo "It is not recommeded to install two versions of ROS on the same machine - e.g., melodic and lunar"
-    exit 1
-fi
 
 # Check gazebo existence and version number 
 if which gazebo >/dev/null
@@ -121,4 +111,4 @@ cp $p/src/crcl/crcllib/include/crcllib/CrclMaxProfileMsg.h $p/include/crcl_rosms
 
 exit 0
 
-
+ubuntuv=`cat /etc/os-release | grep VERSION_ID =`

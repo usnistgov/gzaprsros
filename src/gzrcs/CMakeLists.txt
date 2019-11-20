@@ -150,6 +150,7 @@ include_directories(
   ../crcl/crcllib/include
   ../gotraj/include
   ../aprs_headers/include
+  ../gz_custom_messages/include/gz_custom_messages
 )
 
 
@@ -189,10 +190,10 @@ add_executable(${PROJECT_NAME}
     src/gokin/gomath.c 
     src/gokin/gotypes.c 
     src/gokin/inifile.c
-    src/JointsComm.pb.cc
-    src/GripCommand.pb.cc
-    src/assimp.cpp
-  )
+     src/assimp.cpp
+    ../gz_custom_messages/include/gz_custom_messages/JointsComm.pb.cc
+    ../gz_custom_messages/include/gz_custom_messages/GripCommand.pb.cc
+ )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

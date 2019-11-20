@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -27,6 +28,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 }  // namespace
 
 
+void protobuf_AssignDesc_GripCommand_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AssignDesc_GripCommand_2eproto() {
   protobuf_AddDesc_GripCommand_2eproto();
   const ::google::protobuf::FileDescriptor* file =
@@ -40,16 +42,16 @@ void protobuf_AssignDesc_GripCommand_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GripCommand, force_),
   };
   GripCommand_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
       GripCommand_descriptor_,
       GripCommand::default_instance_,
       GripCommand_offsets_,
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GripCommand, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GripCommand, _unknown_fields_),
       -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(GripCommand));
+      -1,
+      sizeof(GripCommand),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GripCommand, _internal_metadata_),
+      -1);
 }
 
 namespace {
@@ -60,10 +62,11 @@ inline void protobuf_AssignDescriptorsOnce() {
                  &protobuf_AssignDesc_GripCommand_2eproto);
 }
 
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    GripCommand_descriptor_, &GripCommand::default_instance());
+      GripCommand_descriptor_, &GripCommand::default_instance());
 }
 
 }  // namespace
@@ -73,6 +76,7 @@ void protobuf_ShutdownFile_GripCommand_2eproto() {
   delete GripCommand_reflection_;
 }
 
+void protobuf_AddDesc_GripCommand_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AddDesc_GripCommand_2eproto() {
   static bool already_here = false;
   if (already_here) return;
@@ -99,14 +103,14 @@ struct StaticDescriptorInitializer_GripCommand_2eproto {
 
 // ===================================================================
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int GripCommand::kEnableFieldNumber;
 const int GripCommand::kStateFieldNumber;
 const int GripCommand::kForceFieldNumber;
-#endif  // !_MSC_VER
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 GripCommand::GripCommand()
-  : ::google::protobuf::Message() {
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
   // @@protoc_insertion_point(constructor:message.GripCommand)
 }
@@ -115,7 +119,8 @@ void GripCommand::InitAsDefaultInstance() {
 }
 
 GripCommand::GripCommand(const GripCommand& from)
-  : ::google::protobuf::Message() {
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
   // @@protoc_insertion_point(copy_constructor:message.GripCommand)
@@ -155,34 +160,47 @@ const GripCommand& GripCommand::default_instance() {
 
 GripCommand* GripCommand::default_instance_ = NULL;
 
-GripCommand* GripCommand::New() const {
-  return new GripCommand;
+GripCommand* GripCommand::New(::google::protobuf::Arena* arena) const {
+  GripCommand* n = new GripCommand;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
 }
 
 void GripCommand::Clear() {
-#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<GripCommand*>(16)->f) - \
-   reinterpret_cast<char*>(16))
+// @@protoc_insertion_point(message_clear_start:message.GripCommand)
+#if defined(__clang__)
+#define ZR_HELPER_(f) \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
+  __builtin_offsetof(GripCommand, f) \
+  _Pragma("clang diagnostic pop")
+#else
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<GripCommand*>(16)->f)
+#endif
 
-#define ZR_(first, last) do {                              \
-    size_t f = OFFSET_OF_FIELD_(first);                    \
-    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
-    ::memset(&first, 0, n);                                \
-  } while (0)
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
 
   ZR_(enable_, state_);
 
-#undef OFFSET_OF_FIELD_
+#undef ZR_HELPER_
 #undef ZR_
 
   force_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
+  if (_internal_metadata_.have_unknown_fields()) {
+    mutable_unknown_fields()->Clear();
+  }
 }
 
 bool GripCommand::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:message.GripCommand)
   for (;;) {
@@ -279,15 +297,15 @@ void GripCommand::SerializeWithCachedSizes(
       3, this->force(i), output);
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
   // @@protoc_insertion_point(serialize_end:message.GripCommand)
 }
 
-::google::protobuf::uint8* GripCommand::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* GripCommand::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:message.GripCommand)
   // required int32 enable = 1;
   if (has_enable()) {
@@ -305,7 +323,7 @@ void GripCommand::SerializeWithCachedSizes(
       WriteDoubleToArray(3, this->force(i), target);
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
@@ -314,24 +332,22 @@ void GripCommand::SerializeWithCachedSizes(
 }
 
 int GripCommand::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:message.GripCommand)
   int total_size = 0;
 
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 enable = 1;
-    if (has_enable()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->enable());
-    }
-
-    // optional int32 state = 2;
-    if (has_state()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->state());
-    }
-
+  // required int32 enable = 1;
+  if (has_enable()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->enable());
   }
+  // optional int32 state = 2;
+  if (has_state()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->state());
+  }
+
   // repeated double force = 3;
   {
     int data_size = 0;
@@ -339,7 +355,7 @@ int GripCommand::ByteSize() const {
     total_size += 1 * this->force_size() + data_size;
   }
 
-  if (!unknown_fields().empty()) {
+  if (_internal_metadata_.have_unknown_fields()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         unknown_fields());
@@ -351,19 +367,27 @@ int GripCommand::ByteSize() const {
 }
 
 void GripCommand::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const GripCommand* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const GripCommand*>(
-      &from);
+// @@protoc_insertion_point(generalized_merge_from_start:message.GripCommand)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const GripCommand* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const GripCommand>(
+          &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:message.GripCommand)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:message.GripCommand)
     MergeFrom(*source);
   }
 }
 
 void GripCommand::MergeFrom(const GripCommand& from) {
-  GOOGLE_CHECK_NE(&from, this);
+// @@protoc_insertion_point(class_specific_merge_from_start:message.GripCommand)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   force_.MergeFrom(from.force_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_enable()) {
@@ -373,16 +397,20 @@ void GripCommand::MergeFrom(const GripCommand& from) {
       set_state(from.state());
     }
   }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+  if (from._internal_metadata_.have_unknown_fields()) {
+    mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+  }
 }
 
 void GripCommand::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:message.GripCommand)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void GripCommand::CopyFrom(const GripCommand& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:message.GripCommand)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -395,14 +423,16 @@ bool GripCommand::IsInitialized() const {
 }
 
 void GripCommand::Swap(GripCommand* other) {
-  if (other != this) {
-    std::swap(enable_, other->enable_);
-    std::swap(state_, other->state_);
-    force_.Swap(&other->force_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
+  if (other == this) return;
+  InternalSwap(other);
+}
+void GripCommand::InternalSwap(GripCommand* other) {
+  std::swap(enable_, other->enable_);
+  std::swap(state_, other->state_);
+  force_.UnsafeArenaSwap(&other->force_);
+  std::swap(_has_bits_[0], other->_has_bits_[0]);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata GripCommand::GetMetadata() const {
@@ -413,6 +443,88 @@ void GripCommand::Swap(GripCommand* other) {
   return metadata;
 }
 
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// GripCommand
+
+// required int32 enable = 1;
+bool GripCommand::has_enable() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+void GripCommand::set_has_enable() {
+  _has_bits_[0] |= 0x00000001u;
+}
+void GripCommand::clear_has_enable() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+void GripCommand::clear_enable() {
+  enable_ = 0;
+  clear_has_enable();
+}
+ ::google::protobuf::int32 GripCommand::enable() const {
+  // @@protoc_insertion_point(field_get:message.GripCommand.enable)
+  return enable_;
+}
+ void GripCommand::set_enable(::google::protobuf::int32 value) {
+  set_has_enable();
+  enable_ = value;
+  // @@protoc_insertion_point(field_set:message.GripCommand.enable)
+}
+
+// optional int32 state = 2;
+bool GripCommand::has_state() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+void GripCommand::set_has_state() {
+  _has_bits_[0] |= 0x00000002u;
+}
+void GripCommand::clear_has_state() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+void GripCommand::clear_state() {
+  state_ = 0;
+  clear_has_state();
+}
+ ::google::protobuf::int32 GripCommand::state() const {
+  // @@protoc_insertion_point(field_get:message.GripCommand.state)
+  return state_;
+}
+ void GripCommand::set_state(::google::protobuf::int32 value) {
+  set_has_state();
+  state_ = value;
+  // @@protoc_insertion_point(field_set:message.GripCommand.state)
+}
+
+// repeated double force = 3;
+int GripCommand::force_size() const {
+  return force_.size();
+}
+void GripCommand::clear_force() {
+  force_.Clear();
+}
+ double GripCommand::force(int index) const {
+  // @@protoc_insertion_point(field_get:message.GripCommand.force)
+  return force_.Get(index);
+}
+ void GripCommand::set_force(int index, double value) {
+  force_.Set(index, value);
+  // @@protoc_insertion_point(field_set:message.GripCommand.force)
+}
+ void GripCommand::add_force(double value) {
+  force_.Add(value);
+  // @@protoc_insertion_point(field_add:message.GripCommand.force)
+}
+ const ::google::protobuf::RepeatedField< double >&
+GripCommand::force() const {
+  // @@protoc_insertion_point(field_list:message.GripCommand.force)
+  return force_;
+}
+ ::google::protobuf::RepeatedField< double >*
+GripCommand::mutable_force() {
+  // @@protoc_insertion_point(field_mutable_list:message.GripCommand.force)
+  return &force_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // @@protoc_insertion_point(namespace_scope)
 

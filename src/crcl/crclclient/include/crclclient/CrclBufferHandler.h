@@ -1,6 +1,7 @@
 #ifndef CRCLBUFFERHANDLER_H
 #define CRCLBUFFERHANDLER_H
 
+#include <functional>
 #include "aprs_headers/RCSMsgQueue.h"
 
 typedef std::function<void (std::string)> TCallback;
@@ -16,7 +17,7 @@ public:
      * @brief CBufferHandler constructor that takes a pointer to the parent session.
      */
     //CCrclBufferHandler(RCS::CMessageQueue<std::string> &);
-    CCrclBufferHandler(TCallback cb);
+    CCrclBufferHandler(TCallback );
     /**
       * @brief CBufferHandler destructor.
      */
