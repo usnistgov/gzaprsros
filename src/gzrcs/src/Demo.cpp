@@ -24,6 +24,61 @@ See NIST Administration Manual 4.09.07 b and Appendix I.
 
 using namespace RCS;
 
+// polled wait on function with timeout
+
+#include <chrono>
+#include <functional>
+typedef std::function<bool ()> TPollFcn;
+
+/**
+ * @brief The timer struct
+ *  while( gripper.state() != 0 && t.seconds_elapsed() > 1 )
+        { ::sleep(50) ; }
+
+    if(gripper.state() == 0)
+        return error;
+ */
+
+//http://www.cplusplus.com/forum/beginner/91449/
+struct timer
+{
+    typedef std::chrono::steady_clock clock ;
+    typedef std::chrono::seconds seconds ;
+
+    timer(TPollFcn fcn) : savefcn(fcn)
+    {
+    }
+
+    int poll(int equality)
+    {
+        while( savefcn() != equality && seconds_elapsed() > 1 )
+        {
+            ::sleep(50) ;
+        }
+
+        if(savefcn() == equality)
+            return 0;
+
+        return 1;
+
+    }
+
+    void reset()
+    {
+        start = clock::now() ;
+    }
+
+    unsigned long long seconds_elapsed() const
+    { return std::chrono::duration_cast<seconds>( clock::now() - start ).count() ; }
+
+    private: clock::time_point start = clock::now() ;
+    TPollFcn savefcn;
+};
+
+
+
+// Log once
+
 #include "boost/iostreams/stream.hpp"
 #include "boost/iostreams/device/null.hpp"
 #include <boost/iostreams/stream.hpp>
@@ -82,13 +137,13 @@ void CGearDemo::stop()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CGearDemo::CGearDemo()
+CGearDemo::CGearDemo(std::shared_ptr<CCrclApi>  crclApi) : r(crclApi)
 {
     ShapeModel::CShapes::initDefinitions();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
+int CGearDemo::issueRobotCommands(int & state)
 {
 
     // Finish queuing commands before handling them....
@@ -108,7 +163,8 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
 
     if( ShapeModel::instances.size()==0)
     {
-        ONCE(  std::cout) << "Error: No gear instances read - restart Gazebo!\n";
+        ONCE(  std::cout) << "Error: No gear instances can be read from Gazebo model- restart Gazebo!\n";
+        return -1;
     }
 
     switch(state)
@@ -116,7 +172,7 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
     case 0:
     {
         // Find a free gear
-        if ((_instance = ShapeModel::instances.findFreeGear(r.cnc()->part_list(), r.cnc()->currentPose())) == NULL)
+        if ((_instance = ShapeModel::instances.findFreeGear(r->cnc()->part_list(), r->cnc()->currentPose())) == NULL)
         {
             ONCE( std::cout) << "Error: No Free Gear in tray to move\n";
             return -1;
@@ -131,14 +187,14 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
         _instance->_properties["state"] = "stored";
 
         affpose =  _instance->_location ;
-        affpose = r.cnc()->basePose().inverse() * affpose ;
+        affpose = r->cnc()->basePose().inverse() * affpose ;
 
         // The object gripper offset is where on the object it is to be gripped
-        // e.g., offset.gripper.largegear = 0.0,0.0, -0.030, 0.0, 0.0.,0.0
-        gripperoffset = r.cnc()->gripperoffset()[_instance->_type];
+        // e.g., offset.gripper->largegear = 0.0,0.0, -0.030, 0.0, 0.0.,0.0
+        gripperoffset = r->cnc()->gripperoffset()[_instance->_type];
        // gripperoffset = tf::Pose(tf::QIdentity(),tf::Vector3(0.0,0.0, - _instance->_height * .8));
 
-        bend=r.cnc()->QBend();
+        bend=r->cnc()->QBend();
 
         // The gripperoffset is the robot gripper offset back to the 0T6 equivalent
         pickpose =  tf::Pose(bend, affpose.getOrigin()) * gripperoffset ;
@@ -146,26 +202,26 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
         offset = pickpose.getOrigin();
 
         // Retract
-        r.moveTo(r.cnc()->Retract() * tf::Pose(bend, offset));
-        r.doDwell(r._mydwell);
+        r->moveTo(r->cnc()->Retract() * tf::Pose(bend, offset));
+        r->doDwell(r->_mydwell);
         return state++;
     }
     case 2:
     {
-        r.moveTo(tf::Pose(bend, offset) );
-        r.doDwell(r._mydwell);
+        r->moveTo(tf::Pose(bend, offset) );
+        r->doDwell(r->_mydwell);
         return state++;
     }
     case 3:
     {
-        r.closeGripper();
-        r.doDwell(r._mygraspdwell);
+        r->closeGripper();
+        r->doDwell(r->_mygraspdwell);
         return state++;
     }
     case 4:
     {
-        r.moveTo(r.cnc()->Retract() * tf::Pose(bend, offset));
-        r.doDwell(r._mydwell);
+        r->moveTo(r->cnc()->Retract() * tf::Pose(bend, offset));
+        r->doDwell(r->_mydwell);
         return state++;
     }
 
@@ -177,7 +233,7 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
         ShapeModel::CShape * slot=NULL;
         if(!ShapeModel::instances.findFreeGearKitSlot(_instance,
                                                       slotpose,
-                                                      r.cnc()->part_list()))
+                                                      r->cnc()->part_list()))
         {
             static int bThrottle=1;
             if(bThrottle>0)
@@ -186,46 +242,47 @@ int CGearDemo::issueRobotCommands(int & state, CCrclApi & r)
             return -1;
         }
 
-        slotpose = r.cnc()->basePose().inverse() * slotpose;
-        slotoffset = r.cnc()->slotoffset()["vessel"];
+        slotpose = r->cnc()->basePose().inverse() * slotpose;
+        slotoffset = r->cnc()->slotoffset()["vessel"];
         placepose = tf::Pose(bend, slotpose.getOrigin())* slotoffset; // fixme: what if gear rotated
         offset = placepose.getOrigin();
 
         // Approach
-        r.moveTo(r.cnc()->Retract()* tf::Pose(bend, offset));
-        r.doDwell(r._mydwell);
+        r->moveTo(r->cnc()->Retract()* tf::Pose(bend, offset));
+        r->doDwell(r->_mydwell);
         return state++;
     }
     case 6:
     {
         // Place the grasped object
-        r.moveTo(tf::Pose(bend, offset));
-        r.doDwell(r._mydwell);
+        r->moveTo(tf::Pose(bend, offset));
+        r->doDwell(r->_mydwell);
         return state++;
     }
     case 7:
     {
         // open gripper and wait
-        r.openGripper();
-        r.doDwell(r._mygraspdwell);
+        r->openGripper();
+        r->doDwell(r->_mygraspdwell);
         return state++;
     }
     case 8:
     {
         // Retract from placed object
-        //r.Retract(0.04);
-        r.moveTo(r.cnc()->Retract() * tf::Pose(bend, offset));
-        r.doDwell(r._mydwell);
+        //r->Retract(0.04);
+        r->moveTo(r->cnc()->Retract() * tf::Pose(bend, offset));
+        r->doDwell(r->_mydwell);
         return state++;
     }
     }
-    return -1;
+    state=0;
+    return state;
 
 }
 
-int CGearDemo::isDone(int & state, CCrclApi & r)
+int CGearDemo::isDone(int & state)
 {
-    return (state==9 && !r.cnc()->isBusy());
+    return (state==9 && !r->cnc()->isBusy());
 }
 
 

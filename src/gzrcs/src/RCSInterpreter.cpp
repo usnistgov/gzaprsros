@@ -94,15 +94,43 @@ static bool joint_compare(std::vector<double> j1, std::vector<double> max_j2)
 }
 
 
+/**
+  * @brief UpdateJointState convert from crcl number based joint spec to ros  name based,
+  * Crcl joint indexes should already be adjusted to zero-based, NOT one-based counting
+  * @param jointnums vector of joint numbers
+  * @param oldjoints vector containing old joint position
+  * @param njoints new joints
+  * @return sensor_msgs::JointState new joint state with update
+  */
+sensor_msgs::JointState CGoInterpreter::updateJointState(std::vector<uint64_t> jointnums,
+                                                         sensor_msgs::JointState oldjoints,
+                                                         sensor_msgs::JointState newjoints) {
+    sensor_msgs::JointState joints = oldjoints;
+    if (joints.velocity.size() != joints.position.size())
+        joints.velocity.resize(joints.position.size(), 0.0);
+    if (joints.effort.size() != joints.position.size())
+        joints.effort.resize(joints.position.size(), 0.0);
+
+    // Check each joint, to see if joint is being actuated, if so, change goal position
+    for (size_t i = 0; i < jointnums.size(); i++) {
+        size_t n = jointnums[i]; // should already have indexes -1;
+        joints.position[n] = newjoints.position[i]; // joint numbers already adjusted from CRCL to rcs model
+        if(newjoints.velocity.size() > i)
+            joints.velocity[n] = newjoints.velocity[i];
+        if(newjoints.effort.size() > i)
+            joints.effort[n] = newjoints.effort[i];
+    }
+    return joints;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ///  GoInterpreter
 /////////////////////////////////////////////////////////////////////////////
 CGoInterpreter::CGoInterpreter(std::shared_ptr<RCS::CController> nc,
-                             IKinematicsSharedPtr k)
+                               boost::shared_ptr<RCS::IKinematic> k)
     :  _nc(nc)
     , _kinematics(k)
-    , _lastcmdid(-1)
+    , _lastcmdnum(-1)
 {
 
     _goRobot = std::shared_ptr<GoTraj> (new GoTraj());
@@ -115,7 +143,7 @@ void CGoInterpreter::init(std::vector<double> initjts)
 {
     sensor_msgs::JointState jts = RCS::emptyJointState(initjts.size());
     jts.position = initjts;
-    jts.name = this->_nc->robotKinematics()->jointNames();
+    jts.name = this->_nc->robotKinematics()->jointNames;
     if(0!=_goRobot->Init(jts, this->_nc->cycleTime()))
     {
         logFatal( "Go robot init failed\n") ;
@@ -129,44 +157,47 @@ void CGoInterpreter::init(std::vector<double> initjts)
 }
 ///////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                     RCS::CCanonCmd &outcmd,
-                                     RCS::CCanonWorldModel instatus)
+                                      RCS::CCanonCmd &outcmd,
+                                      RCS::CCanonWorldModel instatus)
 {
 
     outcmd.Set( incmd );
 
     // Copy current joint rates suitable for gotraj
-     std::vector<gomotion::GoTrajParams> jparams = _nc->robotJointRateParams();
+    std::vector<gomotion::GoTrajParams> jparams = _nc->robotJointRateParams();
 
     // establish the goal joint positions for all joints
     sensor_msgs::JointState finaljoints;
-    finaljoints = _kinematics->updateJointState(incmd.jointnum, instatus.robotjoints, incmd.joints);
-    if (incmd.crclcommandnum != _lastcmdid)
+    finaljoints = updateJointState(incmd.jointnum, instatus.robotjoints, incmd.joints);
+    if (incmd.crclcommandnum != _lastcmdnum)
     {
-        _lastcmdid = incmd.crclcommandnum;
+        _lastcmdnum = incmd.crclcommandnum;
 
         // setup speed joint speed parameters if any
         _nc->updateJointRates(incmd.jointnum,incmd.joints);
 
         // prime gotraj trajectory generator
         _goRobot->InitJoints(instatus.robotjoints,  // now
-                        finaljoints,  // goal
-                        jparams);
+                             finaljoints,  // goal
+                             jparams);
     }
 
     outcmd.joints = _goRobot->NextJoints();
 
     // check if go is done
     if (_goRobot->IsDone())
+    {
+        _lastcmdnum=-1;
         return CanonStatusType::CANON_DONE;
+    }
     else
         return CanonStatusType::CANON_WORKING;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                     RCS::CCanonCmd &outcmd,
-                                     RCS::CCanonWorldModel instatus)
+                                         RCS::CCanonCmd &outcmd,
+                                         RCS::CCanonWorldModel instatus)
 {
 
     bool bNewCmd=false;
@@ -180,16 +211,17 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
     // There is no base, assumes robot centered at (0,0,0)
     // FK does not include gripper.
-    tf::Pose r_lastpose=_kinematics->FK(_nc->_status.robotjoints.position);
+    tf::Pose r_lastpose;
+    _kinematics->FK(_nc->_status.robotjoints.position, r_lastpose);
 
     // Kinematic ring calcuation:
     // prerobotxform[i] * finalpose *  postrobotxform[i]
     // base * finalpose * gripper
     tf::Pose w_curpose=_nc->worldCoord(r_lastpose);
 
-     if (incmd.crclcommandnum != _lastcmdid)
-     {
-        _lastcmdid = incmd.crclcommandnum;
+    if (incmd.crclcommandnum != _lastcmdnum)
+    {
+        _lastcmdnum = incmd.crclcommandnum;
 
         std::vector<tf::Pose> waypoints ;
 
@@ -220,23 +252,23 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         }
 
         if(0!=_goRobot->InitPose(r_lastpose,
-                       r_next_waypoint,
-                       _nc->linearParams(),
-                       _nc->rotationalParams()))
-         {
-             logFatal("Go init pose failed\n");
-         }
+                                 r_next_waypoint,
+                                 _nc->linearParams(),
+                                 _nc->rotationalParams()))
+        {
+            logFatal("Go init pose failed\n");
+        }
 
-         for(size_t i=1; i<  waypoints.size(); i++)
-         {
-             _goRobot->AppendPose(waypoints[i]);
-         }
+        for(size_t i=1; i<  waypoints.size(); i++)
+        {
+            _goRobot->AppendPose(waypoints[i]);
+        }
 
 
-         bNewCmd=true;
+        bNewCmd=true;
     }
-     tf::Pose r_nextpose ;
-     r_nextpose = _goRobot->NextPose();
+    tf::Pose r_nextpose ;
+    r_nextpose = _goRobot->NextPose();
 
     // ikfast solution based on 0,0,0 origin not base offset origin
     //incmd.joints.position = Cnc.robotKinematics()->IK(goalpose, incmd.ConfigMin(), incmd.ConfigMax());
@@ -249,10 +281,11 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
     std::vector<double> hint = subset(_nc->_status.robotjoints.position, _nc->robotKinematics()->numJoints());
 
-    _kinematics->IK(r_nextpose, hint, outcmd.joints.position);
-    outcmd.joints.name = _kinematics->jointNames();
+    outcmd.joints.position=hint; // use hint as seed
+    _kinematics->IK(r_nextpose, outcmd.joints.position);
+    outcmd.joints.name = _kinematics->jointNames;
     outcmd.crclcommand = CanonCmdType::CANON_MOVE_JOINT;
- #if 1
+#if 1
     // Log trajectory details.
     std::string message;
 
@@ -277,6 +310,7 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
     if (_goRobot->IsDone())
     {
+        _lastcmdnum=-1;
         return CanonStatusType::CANON_DONE;
     }
     else
@@ -287,8 +321,8 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 }
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                     RCS::CCanonCmd &outcmd,
-                                     RCS::CCanonWorldModel instatus)
+                                       RCS::CCanonCmd &outcmd,
+                                       RCS::CCanonWorldModel instatus)
 {
     bool bNewCmd=false;
     tf::Pose r_goalpose;
@@ -308,12 +342,13 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
     // There is no base, assumes robot centered at (0,0,0)
     // FK does not include gripper.
-    tf::Pose r_lastpose=_kinematics->FK(_nc->_status.robotjoints.position);
+    tf::Pose r_lastpose;
+    _kinematics->FK(_nc->_status.robotjoints.position, r_lastpose);
 
 
-    if (incmd.crclcommandnum != _lastcmdid)
+    if (incmd.crclcommandnum != _lastcmdnum)
     {
-        _lastcmdid = incmd.crclcommandnum;
+        _lastcmdnum = incmd.crclcommandnum;
 
 
 
@@ -327,9 +362,9 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
         // prim gotraj trajectory generator
         if(0!=_goRobot->InitPose(r_lastpose,
-                      r_goalpose,
-                      _nc->linearParams(),
-                      _nc->rotationalParams()))
+                                 r_goalpose,
+                                 _nc->linearParams(),
+                                 _nc->rotationalParams()))
         {
             logFatal("go init pose failed goal pose= %s\n", dumpPoseSimple(r_goalpose).c_str());
         }
@@ -346,19 +381,20 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     // Set joints to zero (home) for error or unreachable or singularity if not solved
     r_goaljoints.position.resize(_nc->robotKinematics()->numJoints(), 0.0);
     outcmd.joints.position.resize(_nc->robotKinematics()->numJoints(), 0.0);
-    outcmd.joints.name = _kinematics->jointNames();
+    outcmd.joints.name = _kinematics->jointNames;
     outcmd.crclcommand = CanonCmdType::CANON_MOVE_JOINT;
 
     std::vector<double> hint = subset(_nc->_status.robotjoints.position, _nc->robotKinematics()->numJoints());
 
     // Compute next joints to move to using next pose.
-    if(_kinematics->IK(r_nextpose, hint, outcmd.joints.position))
+    outcmd.joints.position=hint; // use hint as seed
+    if(_kinematics->IK(r_nextpose, outcmd.joints.position))
     {
         logStatus("IK failed next pose= %s\n", dumpPoseSimple(r_nextpose).c_str());
         return CanonStatusType::CANON_ERROR;
     }
 
- #if 1
+#if 1
     // Log trajectory details.
     std::string message;
 
@@ -383,6 +419,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
     if (_goRobot->IsDone())
     {
+        _lastcmdnum=-1;
         return CanonStatusType::CANON_DONE;
     }
     else
@@ -403,7 +440,7 @@ int  CGoInterpreter::setGripperVelFmax(RCS::CCanonCmd &outcmd, double vel, doubl
     outcmd.nextGripperGoalJoints.effort.resize(n, fmax);
     outcmd.nextGripperGoalJoints.velocity.clear();
 
- //   outcmd.nextGripperGoalJoints.velocity.resize(n, vel);
+    //   outcmd.nextGripperGoalJoints.velocity.resize(n, vel);
 
     for(size_t j=0; j< n; j++)
     {
@@ -433,16 +470,16 @@ int   CGoInterpreter::setGripperFoce(RCS::CCanonCmd &outcmd, double force )
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                            RCS::CCanonCmd &outcmd,
-                                            RCS::CCanonWorldModel instatus)
+                                               RCS::CCanonCmd &outcmd,
+                                               RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
 
-    if (incmd.crclcommandnum != _lastcmdid)
+    if (incmd.crclcommandnum != _lastcmdnum)
     {
         // save command id for identification of new command
-        _lastcmdid = incmd.crclcommandnum;
+        _lastcmdnum = incmd.crclcommandnum;
 
         // Determine action - position and percentage change gripper control
         // action - vel/fmax set gripper parameters
@@ -494,6 +531,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
             {
                 outcmd.nextGripperGoalJoints.velocity.push_back( _nc->cncGripper().multipler(outcmd.nextGripperGoalJoints.name[j])*vel);
             }
+            _lastcmdnum=-1;
             return CanonStatusType::CANON_DONE;
 
         }
@@ -502,7 +540,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
             logFatal("Unknown gripper action paramter setting\n");
         }
     }
-
+    _lastcmdnum=-1;
     return CanonStatusType::CANON_DONE;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -534,8 +572,8 @@ int CGoInterpreter::gripperSpeed(crcl_rosmsgs::CrclCommandMsg &incmd)
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                       RCS::CCanonCmd &outcmd,
-                                       RCS::CCanonWorldModel instatus)
+                                        RCS::CCanonCmd &outcmd,
+                                        RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
@@ -543,10 +581,10 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     // Copy current joint rates suitable for gotraj
     std::vector<gomotion::GoTrajParams> jparams = _nc->gripperJointRateParams();
 
-    if (incmd.crclcommandnum != _lastcmdid)
+    if (incmd.crclcommandnum != _lastcmdnum)
     {
         // save command id for identification of new command
-        _lastcmdid = incmd.crclcommandnum;
+        _lastcmdnum = incmd.crclcommandnum;
 
         if (incmd.eepercent == 0.0)
         {
@@ -562,8 +600,8 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
             // prime gotraj trajectory generator
             _goGripper->InitJoints(_nc->cncGripperJoints(),  // now
-                            _nc->gripper_goal_joints(),
-                            jparams);
+                                   _nc->gripper_goal_joints(),
+                                   jparams);
         }
         else if (incmd.eepercent == 1.0)
         {
@@ -577,9 +615,9 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
             _nc->gripper_goal_joints()=_nc->cncGripper().open();
             _goGripper->InitJoints(_nc->cncGripperJoints(),  // now
-                            _nc->gripper_goal_joints(),
-                            jparams);
-       }
+                                   _nc->gripper_goal_joints(),
+                                   jparams);
+        }
         else
         {
             // fixme: should interpolate between gripper positions
@@ -587,15 +625,15 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
             {
                 _nc->gripper_goal_joints()=_nc->cncGripper().set_position(incmd.eepercent);
                 _goGripper->InitJoints(_nc->cncGripperJoints(),  // now
-                                _nc->gripper_goal_joints(),
-                                jparams);
+                                       _nc->gripper_goal_joints(),
+                                       jparams);
             }
             else
             {
                 _nc->gripper_goal_joints()=_nc->cncGripper().set_abs_position(incmd.eepercent);
                 _goGripper->InitJoints(_nc->cncGripperJoints(),  // now
-                                _nc->gripper_goal_joints(),
-                                jparams);
+                                       _nc->gripper_goal_joints(),
+                                       jparams);
             }
         }
     }
@@ -606,6 +644,7 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     // check if go is done
     if (_goGripper->IsDone())
     {
+        _lastcmdnum=-1;
         ret= CanonStatusType::CANON_DONE;
         outcmd.nextGripperGoalJoints=_nc->gripper_goal_joints();
         outcmd.nextGripperGoalJoints.name= _nc->cncGripperJoints().name;
@@ -623,12 +662,12 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                    RCS::CCanonCmd &outcmd,
-                                    RCS::CCanonWorldModel instatus) {
+                                     RCS::CCanonCmd &outcmd,
+                                     RCS::CCanonWorldModel instatus) {
 
     // FIXME: save last command type, then do until done
-    if (incmd.crclcommandnum != _lastcmdid) {
-        _lastcmdid = incmd.crclcommandnum;
+    if (incmd.crclcommandnum != _lastcmdnum) {
+        _lastcmdnum = incmd.crclcommandnum;
         _goRobot->InitStop();
     }
     // FIXME: should update robot motion until go motion queue is empty
@@ -638,8 +677,8 @@ int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                RCS::CCanonCmd &outcmd,
-                                RCS::CCanonWorldModel instatus)
+                                 RCS::CCanonCmd &outcmd,
+                                 RCS::CCanonWorldModel instatus)
 {
     try
     {
@@ -648,10 +687,12 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         {
             // Fixme: reset any other items?
             // Should we move home too?
+            _lastcmdnum=-1;
             return CanonStatusType::CANON_DONE;
         }
         else if (incmd.crclcommand == CanonCmdType::CANON_END_CANON)
         {
+            _lastcmdnum=-1;
             return CanonStatusType::CANON_DONE;
         }
 
@@ -665,6 +706,7 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         }
         else if (incmd.crclcommand == CanonCmdType::CANON_STOP_MOTION)
         {
+            _lastcmdnum=-1;
             return CanonStatusType::CANON_DONE;
             // FIXME: test whether this actually works. Most "stops"
             // are just commands to 0 vel in aprs
@@ -675,7 +717,8 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
             return parseMoveThruCommand(incmd, outcmd, instatus);
         }
 
-        else if (incmd.crclcommand == CanonCmdType::CANON_PAVEL_GRIPPER)
+        else if (incmd.crclcommand == CanonCmdType::CANON_PAVEL_GRIPPER
+                 || incmd.crclcommand == CanonCmdType::CANON_SET_GRIPPER)
         {
             return parsePavelGripperCommand(incmd, outcmd, instatus);
         }
@@ -683,12 +726,16 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         {
             incmd.dwell_seconds -= ((double) _nc->cycleTime());
             if(incmd.dwell_seconds<=0.0)
-                 return CanonStatusType::CANON_DONE;
+            {
+                _lastcmdnum=-1;
+                return CanonStatusType::CANON_DONE;
+            }
             return CanonStatusType::CANON_WORKING;
         }
         else if (incmd.crclcommand == CanonCmdType::CANON_SET_GRIPPER)
         {
-            return parseGripperCommand(incmd, outcmd, instatus);
+            return parsePavelGripperCommand(incmd, outcmd, instatus);
+            // return parseGripperCommand(incmd, outcmd, instatus);
         }
         else if (incmd.crclcommand == CanonCmdType::CANON_SET_EE_PARAMETERS)
         {
@@ -700,6 +747,7 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         {
             // This causes a cycle between every CRCL command even if not motion.
             // not seeming to catch all - such as STOP  so catch all for now
+            _lastcmdnum=-1;
             return CanonStatusType::CANON_DONE;
         }
 
@@ -720,16 +768,16 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                                   RCS::CCanonCmd &outcmd,
-                                                   RCS::CCanonWorldModel instatus)
+                                             RCS::CCanonCmd &outcmd,
+                                             RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
 
-    if (incmd.crclcommandnum != _lastcmdid)
+    if (incmd.crclcommandnum != _lastcmdnum)
     {
         // save command id for identification of new command
-        _lastcmdid = incmd.crclcommandnum;
+        _lastcmdnum = incmd.crclcommandnum;
 
         if (incmd.eepercent == 0.0)
         {
@@ -743,8 +791,8 @@ int CGoInterpreter::parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd
             _nc->bGrasping()=false;
             outcmd.eepercent=incmd.eepercent;
             _nc->gripper_goal_joints()=_nc->cncGripper().open();
-       }
-     }
+        }
+    }
 
     // Does prismatic matter in gotraj
     int ret=  CanonStatusType::CANON_DONE;
@@ -752,10 +800,16 @@ int CGoInterpreter::parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd
     outcmd.nextGripperGoalJoints.name= _nc->cncGripperJoints().name;
 
     if(_nc->cncGripper().isGrasping()==_nc->bGrasping())
+    {
+        _lastcmdnum=-1;
         ret = CanonStatusType::CANON_DONE;
+    }
     else
         ret = CanonStatusType::CANON_WORKING;
 
-    return ret;
+    // FIXME: hack for now - as closing on nothing will be in continuous loop....
+    _lastcmdnum=-1;
+    return CanonStatusType::CANON_DONE;
+    // return ret;
 
 }

@@ -230,6 +230,7 @@ struct CanonCmdType {
     static const int  CANON_RELEASE_OBJECT=23;
     static const int  CANON_MOVE_ROBOT=24;
     static const int  CANON_SET_EE_PARAMETERS=25;
+    static const int  CANON_GET_STATUS=26;
 
     static const int CANON_UNKNOWN = -1;
 #if 0
@@ -564,7 +565,7 @@ struct CCanonWorldModel {
     }
 
     CCanonCmd echocmd; /**<  copy of current command */
-    int echoCmd; /**<  copy of current command type */
+    int echoCmdId; /**<  copy of current command type */
     int crclCommandStatus;
     int echoStatus; /**<  copy of current status type */
 

@@ -23,19 +23,23 @@
 #include "aprs_headers/Config.h"
 #define GLOGGER GLogger
 #include "aprs_headers/LoggerMacros.h"
+#include "aprs_headers/env.h"
 
 
 #include "gzrcs/Globals.h"
-#include "gzrcs/Kinematics.h"
+//#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 #include "gzrcs/RCSInterpreter.h"
 #include "gzrcs/Demo.h"
 #include "gzrcs/RobotControlException.h"
 #include "gzrcs/Shape.h"
 #include "gzrcs/commandlineinterface.h"
+
 // Gazebo and Ros global interfaces
 #include "gzrcs/gazebo.h"
 #include "gzrcs/cros.h"
+
+
 
 #ifdef GOKIN
 #include "gzrcs/Fanuc/fanuc_lrmate200id.h"
@@ -53,13 +57,28 @@
 #endif
 
 
-#include "gzrcs/assimp.h"
-
+//#include "gzrcs/assimp.h"
 using namespace RCS;
 
+//#define BOOST_DLL_USE_STD_FS
+#define BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#define BOOST_NO_CXX11_TRAILING_RESULT_TYPES
+#include <boost/dll/import.hpp>
+#include <aprs_headers/IKinematic.h>
+
 // Globals
-CGearDemo geardemo;
+std::shared_ptr<CGearDemo> geardemo;
 Logging::CLogger GLogger;
+static     std::string get_env(  std::string  var )
+{
+    const char * val = ::getenv( var.c_str() );
+    if ( val == 0 ) {
+        return "";
+    }
+    else {
+        return val;
+    }
+}
 
 int main(int argc, char** argv)
 {
@@ -90,6 +109,7 @@ int main(int argc, char** argv)
         Globals.appProperties["version"] = std::string("")+std::to_string(MAJOR) +":"+std::to_string(MINOR) +":"+std::to_string(BUILD) ;
         std::cout << Globals.appProperties["appName"] << " Version " << Globals.appProperties["version"] <<" Compiled " << __DATE__ << " " << __TIME__ << "\n" << std::flush;
 
+
         //RobotControlException::Load();
         try {
 
@@ -102,6 +122,8 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             RCS::robotconfig.throwExceptions()=true;
 #endif
+            RCS::robotconfig.throwExceptions()=false; // use defaults
+
             if(!RCS::robotconfig.loadFile(inifile))
                 throw "ini file  " + inifile + "did not open";
 
@@ -122,7 +144,10 @@ int main(int argc, char** argv)
             Globals.bGazebo=RCS::robotconfig.getSymbolValue<int>("system.gazebo","0");
             Globals.bCannedDemo=RCS::robotconfig.getSymbolValue<int>("system.CannedDemo","0");
             Globals.bWorldCRCLCoordinates=RCS::robotconfig.getSymbolValue<int>("system.WorldCRCLCoordinates","0");
-            Globals.bPavelGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.PavelGripperPlugin","0");;
+            Globals.bGzGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.GzGripperPlugin","1");;
+            Globals.bDebug=RCS::robotconfig.getSymbolValue<int>("system.debug","1");;
+
+
 
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
@@ -170,7 +195,6 @@ int main(int argc, char** argv)
 #endif
             // Configuration options
             Globals.bGearLocations = RCS::robotconfig.getSymbolValue<int>("system.GzGearLocations","0");
-            Globals.bGzEnableForce = RCS::robotconfig.getSymbolValue<int>("system.GzEnableForce","0");
             Globals.bFlywheel=RCS::robotconfig.getSymbolValue<double>("CRCL.flywheel", "0");
 
 
@@ -187,7 +211,7 @@ int main(int argc, char** argv)
                 ncs[i]->robotBaselink() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.baselink", "ERROR");
 
                 ncs[i]->crclPublishStatusRate()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.PublishStatusPeriod", "0.05");
-                ncs[i]->crclIp()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.Ip", "127.0.0.1");
+                ncs[i]->crclIp()=RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".crcl.Ip", "127.0.0.1");
                 ncs[i]->crclPort()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.Port", "64444");
 
                 // Part offsets
@@ -276,56 +300,65 @@ int main(int argc, char** argv)
                     ncs[i]->namedCommand()[macronames[j]] = commands;
                 }
 
+
+                // get kinematic plugin configuration information
+                std::string kin_plugin_dll = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.plugin", "");
+                std::string kin_plugin_name = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.name", "");
+
+                std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
+                std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
+
+                if(ld_library_path.empty())
+                {
+                    ld_library_path="/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib";
+                }
+
                 // Choose kinematic solver
-                std::string kinsolver = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver", "");
-                std::shared_ptr<IKinematics> kin;
-                if (kinsolver == "FanucLRMate200idFastKinematics")
-                    kin = std::shared_ptr<IKinematics>(new FanucLRMate200idFastKinematics(ncs[i]));
-                else if (kinsolver == "MotomanSia20dFastKinematics") {
-                    kin = std::shared_ptr<IKinematics>(new MotomanSia20dFastKinematics(ncs[i]));
-                }
-                else if (kinsolver == "GoMotoKin") {
-                    kin = std::shared_ptr<IKinematics>(new MotomanSia20dGoKin(ncs[i]));
-                }
+                boost::filesystem::path lib_path(ld_library_path);
+                boost::shared_ptr<IKinematic> plugin;
 
-#ifdef Trac_IK
-                else if (kinsolver == "FanucTracIk") {
-                    kin = std::shared_ptr<IKinematics>(new Fanuc200idTrac_IK(ncs[i]));
-                }
-#endif
                 try {
-                    kin->init(std::string("manipulator"),
-                              ncs[i]->robotEelink(),
-                              ncs[i]->robotBaselink());
-                    ncs[i]->robotKinematics() = kin;
+                    ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
+                                                                                lib_path/kin_plugin_dll,
+                                                                                kin_plugin_name,
+                                                                                boost::dll::load_mode::default_mode);
+                    if(ncs[i]->robotKinematics()==NULL)
+                        throw std::runtime_error("Null kinematic plugin");
 
-                    // FIXME: if ros read param robot_description
-                    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/"+ robotname + ".urdf";
+                    // load in urdf
                     std::string urdf;
+                    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/MotomanSia20d.urdf";
                     Globals.readFile(urdffile, urdf);
-                    kin->initUrdf(urdf);
+                    ncs[i]->robotKinematics()->init(urdf, ncs[i]->robotBaselink(), ncs[i]->robotEelink());
 
-                } catch (std::exception & ex) {
-                    std::cout << "robotKinematics error: " << ex.what() << "\n";
                 }
-                std::cout << "robotKinematics " << ncs[i]->name().c_str() << ncs[i]->robotKinematics()->kinName << "\n" << std::flush;
+                catch (const std::exception& e) {
+                    std::cerr << "boost plugin exception : " << e.what();
+                }
+                catch (boost::exception &e)
+                {
+                    std::cerr << boost::diagnostic_information(e);
+                }
+                catch (...) {
+                    std::cerr << "boost plugin exception : \n" ;
+                }
+
 
                 // Choose trajectory interpreter
-
                 std::string traj = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.traj", "Go");
                 if(traj=="Go")
                 {
-                    ncs[i]->robotInterpreter() = std::shared_ptr<IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], kin));
+                    ncs[i]->robotInterpreter() = std::shared_ptr<IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], ncs[i]->robotKinematics()));
                 }
                 else
                 {
                     throw RobotControlException(Interpreter_not_specified, "Not specified in ini file");
                 }
                 std::cout << "Trajectory generator " <<  ncs[i]->robotInterpreter()->_name << "\n" << std::flush;
-                std::string algorithm = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".fingerContactAlgorithm", "force");
+                //std::string algorithm = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".fingerContactAlgorithm", "force");
                 // fixme: should check that enum string exists
-                ncs[i]->robotInterpreter()->fingerContactAlgorithm =  ncs[i]->robotInterpreter()->s2eFingerContactAlgorithm[algorithm];
-                std::cout << "Trajectory finger contact algorithm " <<  ncs[i]->robotInterpreter()->fingerContactAlgorithm << "="<< algorithm << "\n" << std::flush;
+                //ncs[i]->robotInterpreter()->fingerContactAlgorithm =  ncs[i]->robotInterpreter()->s2eFingerContactAlgorithm[algorithm];
+                //std::cout << "Trajectory finger contact algorithm " <<  ncs[i]->robotInterpreter()->fingerContactAlgorithm << "="<< algorithm << "\n" << std::flush;
 
 
                 // Setup up robot controller - assign gripper
@@ -335,17 +368,10 @@ int main(int argc, char** argv)
                 // should read robot joints, but moving to home ok too
                 ncs[i]->robotInterpreter()->init(ncs[i]->namedJointMove()["joints.home"]);
 
-//                double dDwellTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".dwell.time", "1000.0");
-//                double dGraspingDwellTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".dwell.grasping", "1000.0");
-
                 // Crcl api command interface to robot
                 crclApi= std::shared_ptr<CCrclApi>(new CCrclApi(ncs[i]));
-//                crclApi->setDwell(dDwellTime);
-//                crclApi->setGraspingDwell(dGraspingDwellTime);
-//                crclApi->medium();
 
                 ncs[i]->part_list() = RCS::robotconfig.getTokens<std::string>( robots[i] + ".parts", ",");
-                geardemo.init(ncs[i]->robotPrefix());
 
                 if(Globals.DEBUG_Log_Robot_Config())
                     RCS::CController::dumpRobotNC(ncs[i]);
@@ -357,9 +383,13 @@ int main(int argc, char** argv)
             throw;
         }
 
+        geardemo=std::shared_ptr<CGearDemo>(new CGearDemo(crclApi));
 
         if(Globals.bGearLocations)
-            geardemo.start();
+        {
+            geardemo->start();
+            geardemo->init(ncs[0]->robotPrefix());
+        }
 
         // Setup command line interface
         CComandLineInterface cli;
@@ -383,13 +413,6 @@ int main(int argc, char** argv)
         cli.interpretMacro("macro_homing");
 
 
-#if 0
-        // slow it downfor gazebo
-        if(Globals.bCannedDemo)
-            for (size_t j = 0; j < ncs.size(); j++)
-                ncs[j]->slow_speeds();
-#endif
-
         CGlobals::bPaused=false;
         cli.state=CController::NORMAL;
         int state=0;
@@ -398,7 +421,7 @@ int main(int argc, char** argv)
             {
                 cli.state = cli.inputLoop();
 
-               if(geardemo.isDone(state,*(crclApi.get())))
+               if(geardemo->isDone(state))
                    state=0;
 
                if(cli.state==CController::EXITING)
@@ -422,11 +445,27 @@ int main(int argc, char** argv)
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
+                if(cli.state==CController::REPEAT)
+                {
+                    CGlobals::bPaused=false;
+                    Globals.bCannedDemo=true;
+                    Globals.bRepeatCannedDemo=true;
+                }
+
 
                 // If canned demo AND finished last commands
                 if(!CGlobals::bPaused && Globals.bCannedDemo && ! ncs[i]->isBusy())
                 {
-                    geardemo.issueRobotCommands(state, *(crclApi.get()));
+                    if(geardemo->issueRobotCommands(state)<0)
+                    {
+                        if(Globals.bRepeatCannedDemo)
+                        {
+                            geardemo->gzInstances.reset();
+                            ::sleep(2.0);
+                        }
+                        else
+                            Globals.bCannedDemo=false;
+                    }
                 }
 
                 if(cli.state==CController::ONCE)
@@ -446,7 +485,7 @@ int main(int argc, char** argv)
 
         // Stop demo (i.e. testing) related activies
         if(Globals.bGearLocations)
-            geardemo.stop();
+            geardemo->stop();
 
         // ^C pressed - stop all threads or will hang
         RCS::Thread::stopAll(); // includes thread for Controller, robotstatus

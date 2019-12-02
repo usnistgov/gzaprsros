@@ -28,12 +28,13 @@
 #include "aprs_headers/RCSThreadTemplate.h"
 #include "aprs_headers/RCSMsgQueue.h"
 #include "aprs_headers/Config.h"
+#include "aprs_headers/IKinematic.h"
 
 // Nist nc headers
 #include "gzrcs/RCSInterpreter.h" // now included in RCS.h
-#include "gzrcs/Kinematics.h"
 #include "gzrcs/Gripper.h"
 #include "gzrcs/kinematicring.h"
+
 #ifdef GAZEBO
 #include "gzrcs/gazebo.h"
 #endif
@@ -77,6 +78,8 @@ struct CController : public RCS::Thread,
     static const int ONCE = 4;
     static const int NOOP = 5;
     static const int AUTO = 6;
+    static const int REVERSE=7;
+    static const int REPEAT=7;
     int state;
 
     /**
@@ -145,7 +148,7 @@ struct CController : public RCS::Thread,
      * @brief setKinematics Routine to set the kinematics reference pointer. Uses the interface class IKinematics, but can have any implementation instance.
      * @param k
      */
-    void setKinematics(std::shared_ptr<IKinematics> k)
+    void setKinematics(boost::shared_ptr<RCS::IKinematic> k)
     {
         robotKinematics() = k;
     }
@@ -214,7 +217,7 @@ struct CController : public RCS::Thread,
      * @brief setRotationalSpeeds set angular motion rates
      * for velocity, acceleration and jerk. Default, is
      * vel=speed, acc=accelerationMultipler()*speed,
-     * jerk=accelerationMultipler()*10*speed.
+     * jerk=accelerationMultstd::vector<unsigned long> CController::allJointNumbers() ipler()*10*speed.
      *
      * @param speed new speed in m/sec
      * @return old rotational speed
@@ -234,6 +237,14 @@ struct CController : public RCS::Thread,
      */
     static void dumpRobotNC(std::shared_ptr<CController> nc);
 
+    /**
+     * @brief allJointNumbers produce a CRCL list of joint numbers
+     * corresponding to joints name size
+     * @return
+     */
+
+    std::vector<unsigned long> allJointNumbers() ;
+
     ////////////////////////////////////////////////
 
     // Robot variables
@@ -249,7 +260,7 @@ struct CController : public RCS::Thread,
 
 
     VAR(std::shared_ptr<IRCSInterpreter>, robotInterpreter);
-    VAR(std::shared_ptr<IKinematics>, robotKinematics);
+    VAR(boost::shared_ptr<RCS::IKinematic>, robotKinematics);
     VAR(bool, bGrasping); /**< robot currently grasping object */
 
 

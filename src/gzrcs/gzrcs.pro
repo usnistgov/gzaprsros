@@ -107,7 +107,15 @@ LIBS += -lgazebo_math
 QMAKE_CXXFLAGS +=-std=c++11
 # Local includes
 message(Current folder $$PWD)
-INCLUDEPATH += $$PWD/../../include
+#INCLUDEPATH += $$PWD/../../include
+
+INCLUDEPATH += "../crcl/crcl_rosmsgs/include"
+INCLUDEPATH += "../crcl/crcllib/include"
+INCLUDEPATH += "../aprs_headers/include"
+INCLUDEPATH += "../gotraj/include"
+INCLUDEPATH += "../gz_custom_messages/include/gz_custom_messages"
+
+
 INCLUDEPATH += $$PWD/include
 INCLUDEPATH += $$PWD/src
 
@@ -123,6 +131,8 @@ INCLUDEPATH += "/opt/ros/kinetic/include"
 
 # Be careful the order of the libraries is important
 # Boost - much could be and is replaced by C11 std
+INCLUDEPATH += $$PWD/../../include/dll/include
+
 LIBS += -lboost_system
 LIBS += -lboost_chrono
 LIBS += -lboost_thread
@@ -137,6 +147,7 @@ LIBS += -lassimp
 LIBS += -L$$PWD/../../lib
 LIBS +=  -lgotraj
 LIBS +=  -lcrcllib
+LIBS +=  -ldl
 
 LIBS += -L$$PWD/../../install/lib
 
@@ -166,11 +177,8 @@ LIBS += $$(HOME)/src/gomotion/lib/libgo.a
 SOURCES += \
     src/Controller.cpp \
     src/CrclApi.cpp \
-    src/fanuclrmate200idkinematics.cpp \
     src/Globals.cpp \
-    src/Kinematics.cpp \
     src/RobotControlException.cpp \
-    src/motomansia20dkinematics.cpp \
     src/nist_robotsnc.cpp \
     src/RCSInterpreter.cpp \
     src/Shape.cpp \
@@ -180,14 +188,9 @@ SOURCES += \
     src/cros.cpp \
     src/kinematicring.cpp \
     src/gripper.cpp \
-    src/gokin/gokin.cpp \
-    src/gokin/genserkins.c \
-    src/gokin/gomath.c \
-    src/gokin/gotypes.c \
-    src/gokin/inifile.c \
     src/assimp.cpp \
-    src/GripCommand.pb.cc \
-    src/JointsComm.pb.cc
+    ../gz_custom_messages/include/gz_custom_messages/GripCommand.pb.cc \
+    ../gz_custom_messages/include/gz_custom_messages/JointsComm.pb.cc
 
 HEADERS += \
     include/gzrcs/Controller.h \
@@ -195,7 +198,6 @@ HEADERS += \
     include/gzrcs/Demo.h \
     include/gzrcs/Globals.h \
     include/gzrcs/Gripper.h \
-    include/gzrcs/Kinematics.h \
     include/gzrcs/RobotControlException.h \
     include/gzrcs/RCSInterpreter.h \
     include/gzrcs/Shape.h \
@@ -212,37 +214,30 @@ HEADERS += \
     include/gzrcs/Globals.h \
     include/gzrcs/Gripper.h \
     include/gzrcs/kinematicring.h \
-    include/gzrcs/Kinematics.h \
-    include/gzrcs/MotionControl.h \
-    include/gzrcs/MotionException.h \
     include/gzrcs/nist_robotsnc.h \
     include/gzrcs/RCSInterpreter.h \
     include/gzrcs/RobotControlException.h \
     include/gzrcs/Shape.h \
-    ../../include/aprs_headers/Config.h \
-    ../../include/aprs_headers/Conversions.h \
-    ../../include/aprs_headers/Core.h \
-    ../../include/aprs_headers/Debug.h \
-    ../../include/aprs_headers/IRcs.h \
-    ../../include/aprs_headers/Logger.h \
-    ../../include/aprs_headers/LoggerMacros.h \
-    ../../include/aprs_headers/RCSMsgQueue.h \
-    ../../include/aprs_headers/RCSTimer.h \
-    ../../include/aprs_headers/Config.h \
-    ../../include/aprs_headers/Conversions.h \
-    ../../include/aprs_headers/Core.h \
-    ../../include/aprs_headers/Debug.h \
-    ../../include/aprs_headers/File.h \
-    ../../include/aprs_headers/IRcs.h \
-    ../../include/aprs_headers/Logger.h \
-    ../../include/aprs_headers/LoggerMacros.h \
-    ../../include/aprs_headers/RCSMsgQueue.h \
-    ../../include/aprs_headers/RCSPriorityQueue.h \
-    ../../include/aprs_headers/RCSTimer.h \
     include/gzrcs/assimp.h \
-    ../../include/aprs_headers/env.h \
-    include/gzrcs/GripCommand.pb.h \
-    include/gzrcs/JointsComm.pb.h
+    ../aprs_headers/include/aprs_headers/Timing.h \
+    ../aprs_headers/include/aprs_headers/seriallinkrobot.h \
+    ../aprs_headers/include/aprs_headers/RCSTimer.h \
+    ../aprs_headers/include/aprs_headers/RCSThreadTemplate.h \
+    ../aprs_headers/include/aprs_headers/RCSPriorityQueue.h \
+    ../aprs_headers/include/aprs_headers/RCSMsgQueueThread.h \
+    ../aprs_headers/include/aprs_headers/RCSMsgQueue.h \
+    ../aprs_headers/include/aprs_headers/LoggerMacros.h \
+    ../aprs_headers/include/aprs_headers/Logger.h \
+    ../aprs_headers/include/aprs_headers/IRcs.h \
+    ../aprs_headers/include/aprs_headers/IKinematic.h \
+    ../aprs_headers/include/aprs_headers/hexdump.h \
+    ../aprs_headers/include/aprs_headers/File.h \
+    ../aprs_headers/include/aprs_headers/env.h \
+    ../aprs_headers/include/aprs_headers/Debug.h \
+    ../aprs_headers/include/aprs_headers/Core.h \
+    ../aprs_headers/include/aprs_headers/Conversions.h \
+    ../aprs_headers/include/aprs_headers/Config.h
+
 DISTFILES += \
     Notes.txt \
     Todo \
@@ -262,6 +257,14 @@ config_features.files     =    $$PWD/config/Config.ini \
 message("gzrcs install $$config_features.path")
 message("gzrcs instal files $$config_features.files")
 INSTALLS  += config_features
+
+# Hard to make distinction between general build and command line qmake build
+build_features.path     = "$$OUT_PWD/$$DESTDIR/config"
+build_features.files     =    $$PWD/config/Config.ini \
+   $$PWD/config/MotomanSia20d.urdf\
+   $$PWD/config/FanucLRMate200iD.urdf\
+   $$PWD/config/motoman_sia20d.ini
+INSTALLS  += build_features
 
 target.path = ../../install/lib/$$TARGET/
 INSTALLS += target

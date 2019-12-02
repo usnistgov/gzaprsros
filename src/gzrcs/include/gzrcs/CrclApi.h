@@ -21,7 +21,7 @@
 #include "aprs_headers/IRcs.h"
 #include "aprs_headers/Conversions.h"
 
-#include "gzrcs/Kinematics.h"
+//#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 
 /**
@@ -208,9 +208,12 @@ public:
     double _mygraspdwell; /**<  global dwell time after grasp and after release */
     double _mydwell; /**<  global dwell time between motions in seconds */
 
+    std::deque<crcl_rosmsgs::CrclCommandMsg> & undoQ() { return _undo; }
 protected:
     std::shared_ptr<RCS::CController>_nc; /**<  cnc to queue motion commands */
     static int _crclcommandnum; /**<  crcl command number for the robots -i.e., this one */
+
+    std::deque<crcl_rosmsgs::CrclCommandMsg> _undo;
 
 };
 

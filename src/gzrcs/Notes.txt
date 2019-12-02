@@ -1,4 +1,131 @@
 
+
+boost dll requires later version than 1.58 default on xenial....
+https://www.osetc.com/en/how-to-install-boost-on-ubuntu-16-04-18-04-linux.html
+
+
+// get kinematic plugin configuration information
+std::string kin_plugin_dll = "libgokin_plugin.so";
+std::string kin_plugin_name = "goserkin";
+
+std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
+std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
+
+if(ld_library_path.empty())
+{
+    ld_library_path="/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib";
+}
+
+// Choose kinematic solver
+boost::filesystem::path lib_path(ld_library_path);
+boost::shared_ptr<IKinematic> plugin;
+
+try {
+   plugin = boost::dll::import<IKinematic> (//using namespace RCS;
+                                                                lib_path/kin_plugin_dll,
+                                                                kin_plugin_name,
+                                                                boost::dll::load_mode::default_mode);
+    if(plugin==NULL)
+        throw std::runtime_error("Null kinematic plugin");
+
+    // load in urdf
+    std::string urdf;
+    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/MotomanSia20d.urdf";
+    Globals.readFile(urdffile, urdf);
+
+    std::string baselink="motoman_base_link";
+    std::string eelink="motoman_link_t";
+
+    plugin->init(urdf, baselink, eelink);
+
+}
+catch (const std::exception& e) {
+    std::cerr << "boost plugin exception : " << e.what();
+}            // get kinematic plugin configuration information
+std::string kin_plugin_dll = "libgokin_plugin.so";
+std::string kin_plugin_name = "goserkin";
+
+std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
+std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
+
+if(ld_library_path.empty())
+{
+    ld_library_path="/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib";
+}
+
+// Choose kinematic solver
+boost::filesystem::path lib_path(ld_library_path);
+boost::shared_ptr<IKinematic> plugin;
+
+try {
+   plugin = boost::dll::import<IKinematic> (//using namespace RCS;
+                                                                lib_path/kin_plugin_dll,
+                                                                kin_plugin_name,
+                                                                boost::dll::load_mode::default_mode);
+    if(plugin==NULL)
+        throw std::runtime_error("Null kinematic plugin");
+
+    // load in urdf
+    std::string urdf;
+    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/MotomanSia20d.urdf";
+    Globals.readFile(urdffile, urdf);
+
+    std::string baselink="motoman_base_link";
+    std::string eelink="motoman_link_t";
+
+    plugin->init(urdf, baselink, eelink);
+
+}
+catch (const std::exception& e) {
+    std::cerr << "boost plugin exception : " << e.what();
+}
+catch (boost::exception &e)
+{
+    std::cerr << boost::diagnostic_information(e);
+}
+catch (...) {
+    std::cerr << "boost plugin exception : \n" ;
+}
+
+catch (boost::exception &e)
+{
+    std::cerr << boost::diagnostic_information(e);
+}
+catch (...) {
+    std::cerr << "boost plugin exception : \n" ;
+}
+
+
+// Choose kinematic solver
+std::string kinsolver = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver", "");
+std::shared_ptr<Kinematics> kin;
+if (kinsolver == "FanucLRMate200idFastKinematics")
+    kin = std::shared_ptr<Kinematics>(new FanucLRMate200idFastKinematics(ncs[i]));
+else if (kinsolver == "MotomanSia20dFastKinematics") {
+    kin = std::shared_ptr<Kinematics>(new MotomanSia20dFastKinematics(ncs[i]));
+}
+else if (kinsolver == "GoMotoKin") {
+    kin = std::shared_ptr<Kinematics>(new MotomanSia20dGoKin(ncs[i]));
+}
+try {
+    kin->InitROS(std::string("manipulator"),
+              ncs[i]->robotEelink(),
+              ncs[i]->robotBaselink());
+    ncs[i]->robotKinematics() = kin;
+
+    // FIXME: if ros read param robot_description
+    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/"+ robotname + ".urdf";
+    std::string urdf;
+    Globals.readFile(urdffile, urdf);
+    kin->initUrdf(urdf);
+
+} catch (std::exception & ex) {
+    std::cout << "robotKinematics error: " << ex.what() << "\n";
+}
+std::cout << "robotKinematics " << ncs[i]->name().c_str() << ncs[i]->robotKinematics()->kinName << "\n" << std::flush;
+
+
+
 Reset error connection on done.
 
 Build in this directory:

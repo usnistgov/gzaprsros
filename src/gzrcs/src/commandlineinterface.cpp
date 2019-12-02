@@ -20,7 +20,7 @@
 #define NB_ENABLE 1
 #define NB_DISABLE 2
 
-extern     CGearDemo geardemo;
+extern     std::shared_ptr<CGearDemo> geardemo;
 
 ////////////////////////////////////////////////////////////////////////////////
 static std::string shell(const char* cmd) {
@@ -153,12 +153,13 @@ bool CComandLineInterface::jog(char c,double amt, int &jnt, int &axis)
     {
         nextpos=curpos;
         nextpos.position[jnt]+=incr;
-        crclApi->moveJoints(ncs[_ncindex]->robotKinematics()->allJointNumbers(), nextpos.position);
+        crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), nextpos.position);
     }
     if(axis>=0)
     {
         nextpos=curpos;
-        tf::Pose r_curpose = ncs[_ncindex]->robotKinematics()->FK(curpos.position);
+        tf::Pose r_curpose;
+        ncs[_ncindex]->robotKinematics()->FK(curpos.position, r_curpose);
         tf::Matrix3x3  m3x3, newm3x3;
         //tf::Vector3 v = r_curpose.getOrigin();
         if(axis==0)
@@ -188,10 +189,10 @@ bool CComandLineInterface::jog(char c,double amt, int &jnt, int &axis)
 
         sensor_msgs::JointState joints;
         try{
-            ncs[_ncindex]->robotKinematics()->IK(r_curpose,
-                                           subset(curpos.position, ncs[_ncindex]->robotKinematics()->numJoints()),
-                                           joints.position);
-            crclApi->moveJoints(ncs[_ncindex]->robotKinematics()->allJointNumbers(), joints.position);
+            // seed joints
+            joints.position=subset(curpos.position, ncs[_ncindex]->robotKinematics()->numJoints());
+            ncs[_ncindex]->robotKinematics()->IK(r_curpose, joints.position);
+            crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), joints.position);
         }
         catch(...)
         {
@@ -289,6 +290,11 @@ int CComandLineInterface::interpretLine(std::string line)
 
         Globals.bCannedDemo = true;
         return CController::AUTO;
+    }
+    else if (msg.compare("repeat") == 0)
+    {
+        Globals.bRepeatCannedDemo = true;
+        return CController::REPEAT;
     }
     else if (msg.compare("radian") == 0)
     {
@@ -424,6 +430,7 @@ int CComandLineInterface::interpretLine(std::string line)
         ncs[_ncindex]->setGripperJointSpeeds(1.);
         ncs[_ncindex]->setLinearSpeeds(ncs[_ncindex]->base_linearmax()[0]);
         ncs[_ncindex]->setRotationalSpeeds(ncs[_ncindex]->base_rotationmax()[0]);
+        geardemo->gzInstances.reset();
 
     }
     else if (msg.compare( 0, strlen("goto "), "goto ") == 0)
@@ -469,7 +476,7 @@ int CComandLineInterface::interpretLine(std::string line)
         // see if existing joint move name
         else if(ncs[_ncindex]->namedJointMove().find(msg)!= ncs[_ncindex]->namedJointMove().end())
         {
-            crclApi->moveJoints(ncs[_ncindex]->robotKinematics()->allJointNumbers(), ncs[_ncindex]->namedJointMove()[msg]);
+            crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), ncs[_ncindex]->namedJointMove()[msg]);
         }
         else
         {
@@ -480,7 +487,7 @@ int CComandLineInterface::interpretLine(std::string line)
 
     else if (msg.compare("home") == 0)
     {
-        crclApi->moveJoints(ncs[_ncindex]->robotKinematics()->allJointNumbers(), ncs[_ncindex]->namedJointMove()["home"]);
+        crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), ncs[_ncindex]->namedJointMove()["home"]);
     }
 //    else if (msg.compare("safe") == 0)
 //    {
@@ -496,7 +503,7 @@ int CComandLineInterface::interpretLine(std::string line)
         std::vector<double> positions = ConvertV(dbls);
         if (_bDegrees)
             positions = ScaleVector<double>(positions, M_PI / 180.0); //
-        crclApi->moveJoints(ncs[_ncindex]->robotKinematics()->allJointNumbers(), positions);
+        crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), positions);
     }
     else if (msg.compare( 0, strlen("jog "), "jog ") == 0 )
     {
@@ -666,9 +673,9 @@ int CComandLineInterface::interpretLine(std::string line)
 
         JointState joints;
         try{
-            if(0>ncs[_ncindex]->robotKinematics()->IK(r_goalpose,
-                                           ncs[_ncindex]->namedJointMove()["joints.safe"],
-                                           joints.position))
+            // seed
+            joints.position=ncs[_ncindex]->namedJointMove()["joints.safe"];
+            if(0>ncs[_ncindex]->robotKinematics()->IK(r_goalpose, joints.position))
                 throw;
             std::cout << "IK Position             " << RCS::dumpPose(r_goalpose) << "\n";
             std::cout << "IK Joints               " << vectorDump<double>(joints.position).c_str()<< "\n" << std::flush;
@@ -727,7 +734,8 @@ int CComandLineInterface::interpretLine(std::string line)
             recordFile << ncs[_ncindex]->robotPrefix() <<  msg << "\n";
             std::vector<double> joints = ncs[_ncindex]->_status.robotjoints.position;
             recordFile << "\tJoints   =" << vectorDump(joints, ",", "%6.3f") << "\n" ;
-            tf::Pose r_curpose = ncs[_ncindex]->robotKinematics()->FK(joints);
+            tf::Pose r_curpose;
+            ncs[_ncindex]->robotKinematics()->FK(joints, r_curpose);
             recordFile << "\tPose   =" << RCS::dumpPoseSimple(r_curpose) << "\n";
             recordFile.close();
         }
@@ -736,16 +744,17 @@ int CComandLineInterface::interpretLine(std::string line)
     {
         std::vector<double> joints = ncs[_ncindex]->_status.robotjoints.position;
         std::cout << "Status Joints   =" << vectorDump(joints, ",", "%6.3f") << "\n" ;
-        tf::Pose r_curpose = ncs[_ncindex]->robotKinematics()->FK(joints);
+        tf::Pose r_curpose;
+        ncs[_ncindex]->robotKinematics()->FK(joints, r_curpose);
         std::cout << "FK Robot Pose   =" << RCS::dumpPoseSimple(r_curpose) << "\n";
         tf::Pose w_curpose = ncs[_ncindex]->worldCoord(r_curpose);
         std::cout << "FK World Pose   =" << RCS::dumpPoseSimple(w_curpose) << "\n";
         tf::Pose w_basepose = ncs[_ncindex]->addBaseTransform(r_curpose);
         std::cout << "FK World Base   =" << RCS::dumpPoseSimple(w_basepose) << "\n";
 
-        ncs[_ncindex]->robotKinematics()->IK(r_curpose,
-                                       subset(ncs[_ncindex]->_status.robotjoints.position, ncs[_ncindex]->robotKinematics()->numJoints()),
-                                       joints);
+        // seed joints
+        joints=subset(ncs[_ncindex]->_status.robotjoints.position, ncs[_ncindex]->robotKinematics()->numJoints());
+        ncs[_ncindex]->robotKinematics()->IK(r_curpose, joints);
         std::cout << "IK Robot Joints =" << vectorDump(joints, ",", "%6.3f") << "\n"<< std::flush;
 
     }

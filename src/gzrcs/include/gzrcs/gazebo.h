@@ -23,8 +23,9 @@
 #include <sensor_msgs/JointState.h>
 #include <unordered_set>
 
-#include "gzrcs/GripCommand.pb.h"
-#include "gzrcs/JointsComm.pb.h"
+// THese must be on include path
+#include "GripCommand.pb.h"
+#include "JointsComm.pb.h"
 
 
 typedef const boost::shared_ptr<message::GripCommand const> ConstGripperCmdPtr;
@@ -105,6 +106,11 @@ public:
      * @brief stop cleanly detaches gazebo update of model callback.
      */
     void stop();
+
+    /**
+     * @brief reset the gear model poses to their original positions
+     */
+    void reset();
     /**
      * @brief onUpdate save model instance name and pose. Convert from
      * ignition::math to tf::Pose.
@@ -112,15 +118,20 @@ public:
      * @param msg model communication message from gazebo.
      */
     void onUpdate(ConstModelPtr & msg);
+    void onModelUpdate(ConstModelPtr &_msg);
 
     static std::map<std::string, long> gzModelName2Id;
     static std::map<std::string, long> gzLinkName2Id;
     static std::map<std::string, ignition::math::Vector3d> gzModelBoundingBox;
 
 private:
+    gazebo::transport::SubscriberPtr _modelsub; /**< subscriber to topic /gazebo/default/ariac/model */
     gazebo::transport::SubscriberPtr _sub; /**< subscriber to topic /gazebo/default/ariac/model */
     std::mutex _mymutex;
     std::string _modeltopicname;
+    gazebo::transport::PublisherPtr modelPub; // = this->node->Advertise<msgs::Model>("~/model/modify");
+    std::map<std::string, ignition::math::Pose3d> _gearStartingPoses;
+
 };
 
 

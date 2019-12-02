@@ -144,6 +144,19 @@ inline std::string dumpEVector(const T & v) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
+* \brief dumpEVector generates a debug string for an Eigen Vector.
+* Can be used as std::cout << DumpEPosition(v);
+*/
+template<typename T>
+inline std::string dumpstdVector(const T & v) {
+    std::stringstream s;
+    for (int i = 0; i < v.size(); i++)
+        s << boost::format("%8.5f:") % v[i];
+    return s.str();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/**
 * \brief DumpPose takes a urdf pose  and generates a string describing pose.
 * Can be used as std::cout << DumpPose(pose);
 */

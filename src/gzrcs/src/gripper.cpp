@@ -187,7 +187,7 @@ sensor_msgs::JointState GripperInterface::set_abs_position(double position)
 
 void GripperInterface::update(double eepercent)
 {
-    if(Globals.bPavelGripperPlugin )
+    if(Globals.bGzGripperPlugin )
     {
         //if (eepercent>=0.0)
             //_writer.updateGripper(ms.count(), eepercent);

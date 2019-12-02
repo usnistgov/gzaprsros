@@ -1,0 +1,7 @@
+package message;
+
+message GripCommand {
+    required int32 enable = 1;
+    optional int32 state = 2;
+    repeated double force = 3;
+}

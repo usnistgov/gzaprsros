@@ -11,7 +11,6 @@ See NIST Administration Manual 4.09.07 b and Appendix I.
 
 
 #include "gzrcs/CrclApi.h"
-#include "gzrcs/Controller.h"
 #include "gzrcs/Globals.h"
 #include "gzrcs/Shape.h"
 #include "gzrcs/RobotControlException.h"
@@ -41,20 +40,17 @@ void CCrclApi::slow()
 {
     rates.CurrentTransSpeed() = rates.CurrentTransSpeed()/2.;
     rates.MaxJointVelocity() = rates.MaxJointVelocity() / 2.0;
-    _nc->slowSpeeds();
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::medium()
 {
     setVelocity(1.0);
-    _nc->mediumSpeeds();
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::fast()
 {
     rates.CurrentTransSpeed()= rates.CurrentTransSpeed()*2.;
     rates.MaxJointVelocity() = rates.MaxJointVelocity() * 2.0;
-    _nc->fastSpeeds();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +80,8 @@ void CCrclApi::setVelocity(double speed)
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::setGripper(double ee)
 {
+    if(Globals.bDebug)
+        std::cout << "setGripper=" <<  ee << std::endl;
     // FIXME: set gripper to 0..1
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
@@ -91,6 +89,9 @@ void CCrclApi::setGripper(double ee)
     cmd.crclcommandnum = _crclcommandnum++;
     cmd.eepercent = ee;
     _nc->crclcmds.addMsgQueue(cmd);
+
+    cmd.eepercent = 1.0 - ee;
+    _undo.push_front(cmd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +120,7 @@ void CCrclApi::setContactGripper(double ee)
     cmd.crclcommandnum = _crclcommandnum++;
     cmd.eepercent = ee;
     _nc->crclcmds.addMsgQueue(cmd);
+    _undo.push_front(cmd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +133,7 @@ void CCrclApi::setVelGripper(double vel, double fmax)
     cmd.parameter_names = { "action", "vel", "fmax"};
     cmd.parameter_values = { "Vel/Fmax", Globals.strConvert(vel), Globals.strConvert(fmax)};;
     _nc->crclcmds.addMsgQueue(cmd);
+    _undo.push_front(cmd);
 
 }
 
@@ -154,6 +157,8 @@ void CCrclApi::openGripper()
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::doDwell(double dwelltime) {
 
+    if(Globals.bDebug)
+        std::cout << "doDwell=" <<  dwelltime << std::endl;
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
     cmd.crclcommand = CanonCmdType::CANON_DWELL;
@@ -161,11 +166,14 @@ void CCrclApi::doDwell(double dwelltime) {
     cmd.dwell_seconds = dwelltime;
     cmd.eepercent=-1.0; // keep as is
     _nc->crclcmds.addMsgQueue(cmd);
+    _undo.push_front(cmd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::moveTo(tf::Pose pose)
 {
+    if(Globals.bDebug)
+        std::cout << "moveTo=" << RCS::dumpPoseSimple(pose)  << std::endl;
 
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
@@ -175,32 +183,18 @@ void CCrclApi::moveTo(tf::Pose pose)
     cmd.finalpose = Convert<tf::Pose, geometry_msgs::Pose> (pose);
     cmd.eepercent=-1.0; // keep as is
     _nc->crclcmds.addMsgQueue(cmd);
+    _undo.push_front(cmd);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-void  CCrclApi::pick(tf::Pose pose )
-{
-
-    tf::Vector3 offset = pose.getOrigin();
-
-    openGripper(); // make sure griper is open
-
-    // Approach object
-    moveTo(_nc->Retract() * tf::Pose(_nc->QBend(), offset));
-    doDwell(_mydwell);
-    moveTo(tf::Pose(_nc->QBend(), offset));
-    doDwell(_mydwell);
-    closeGripper();
-    doDwell(_mygraspdwell);
-    moveTo(_nc->Retract() * tf::Pose(_nc->QBend(), offset));
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void CCrclApi::moveJoints(std::vector<long unsigned int> jointnum,
                          std::vector<double> positions,
                          double vel)
 {
+    if(Globals.bDebug)
+        std::cout << "moveTo=" << RCS::dumpstdVector(positions)  << std::endl;
+
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
     cmd.crclcommandnum = _crclcommandnum++;
@@ -220,6 +214,26 @@ void CCrclApi::moveJoints(std::vector<long unsigned int> jointnum,
 
     _nc->crclcmds.addMsgQueue(cmd);
 
+    _undo.push_front(cmd);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void  CCrclApi::pick(tf::Pose pose )
+{
+
+    tf::Vector3 offset = pose.getOrigin();
+
+    openGripper(); // make sure griper is open
+
+    // Approach object
+    moveTo(_nc->Retract() * tf::Pose(_nc->QBend(), offset));
+    doDwell(_mydwell);
+    moveTo(tf::Pose(_nc->QBend(), offset));
+    doDwell(_mydwell);
+    closeGripper();
+    doDwell(_mygraspdwell);
+    moveTo(_nc->Retract() * tf::Pose(_nc->QBend(), offset));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -277,8 +291,8 @@ int CCrclApi::retract(double amt)
 {
     sensor_msgs::JointState curjoints, nextjoints;
     curjoints.position = _nc->_status.robotjoints.position;
-
-    tf::Pose r_curpose = _nc->robotKinematics()->FK(curjoints.position);
+    tf::Pose r_curpose;
+    _nc->robotKinematics()->FK(curjoints.position, r_curpose);
 #if 0
     //FIXME!!!!!!!!
     // instead just move up in z direction
@@ -337,15 +351,7 @@ int CCrclApi::grasp(std::string objname)
     // Grasp
     moveTo(tf::Pose(_nc->QBend(), offset) * gripperoffset);
     doDwell(_mydwell);
-    if(Globals.bGzEnableForce)
-    {
-        setVelGripper(.5, graspforce);
-    }
-    else
-    {
-        closeGripper();
-
-    }
+    closeGripper();
     doDwell(_mygraspdwell);
     return 0;
 

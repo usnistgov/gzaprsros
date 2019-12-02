@@ -11,7 +11,7 @@
 #include <sys/poll.h>
 
 #include "gzrcs/Globals.h"
-#include "gzrcs/Kinematics.h"
+//#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 #include "gzrcs/RCSInterpreter.h"
 #include "gzrcs/Demo.h"

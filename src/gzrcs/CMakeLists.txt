@@ -146,7 +146,12 @@ include_directories(
   /usr/include/ignition/msgs1
   /usr/include/ignition/transport4
   /usr/include/sdformat-6.1
-
+  ../crcl/crcl_rosmsgs/include
+  ../crcl/crcllib/include
+  ../gotraj/include
+  ../aprs_headers/include
+  ../gz_custom_messages/include/gz_custom_messages
+  ../../include/dll/include
 )
 
 
@@ -167,11 +172,8 @@ include_directories(
 add_executable(${PROJECT_NAME} 
      src/Controller.cpp 
     src/CrclApi.cpp 
-    src/fanuclrmate200idkinematics.cpp 
     src/Globals.cpp 
-    src/Kinematics.cpp 
     src/RobotControlException.cpp 
-    src/motomansia20dkinematics.cpp 
     src/nist_robotsnc.cpp 
     src/RCSInterpreter.cpp 
     src/Shape.cpp 
@@ -181,15 +183,10 @@ add_executable(${PROJECT_NAME}
     src/cros.cpp 
     src/kinematicring.cpp 
     src/gripper.cpp 
-    src/gokin/gokin.cpp 
-    src/gokin/genserkins.c 
-    src/gokin/gomath.c 
-    src/gokin/gotypes.c 
-    src/gokin/inifile.c
-    src/JointsComm.pb.cc
-    src/GripCommand.pb.cc
     src/assimp.cpp
-  )
+    ../gz_custom_messages/include/gz_custom_messages/JointsComm.pb.cc
+    ../gz_custom_messages/include/gz_custom_messages/GripCommand.pb.cc
+ )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -243,6 +240,7 @@ target_link_libraries(${PROJECT_NAME}
   gotraj
   crcllib
   assimp
+  dl
  )
 
 #############

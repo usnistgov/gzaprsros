@@ -34,9 +34,9 @@ void CRosCrclRobotHandler::cmdCallback(const crcl_rosmsgs::CrclCommandMsg::Const
     cmd.jointnum.clear();
 
     size_t j=0;
-    for(size_t i=0; i< _cnc->robotKinematics()->jointNames().size(); i++)
+    for(size_t i=0; i< _cnc->robotKinematics()->jointNames.size(); i++)
     {
-        if(cmd.joints.name[j] == _cnc->robotKinematics()->jointNames()[i])
+        if(cmd.joints.name[j] == _cnc->robotKinematics()->jointNames[i])
         {
             cmd.jointnum.push_back(i);
             j++;

@@ -25,10 +25,11 @@
 #include "aprs_headers/Core.h"
 #include "aprs_headers/IRcs.h"
 #include "aprs_headers/Debug.h"
+#include "aprs_headers/IKinematic.h"
+
 #include "gotraj/gotraj.h"
 
 
-#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 
 
@@ -55,7 +56,7 @@ public:
      * @param k pointer to robot kinematics handler
      */
     CGoInterpreter(std::shared_ptr<RCS::CController> nc,
-                  IKinematicsSharedPtr k);
+                  boost::shared_ptr<RCS::IKinematic> k);
     /**
      * @brief init intialize gotraj for robot and gripper with cycle time and initial joint values.
      * @param jnts supplied robot joints values. FIXME: Uses nc gripper joint values to initialize gotraj.
@@ -180,10 +181,14 @@ public:
      */
     int gripperSpeed(crcl_rosmsgs::CrclCommandMsg &incmd);
 
+    virtual sensor_msgs::JointState updateJointState(std::vector<uint64_t> jointnums,
+                                        sensor_msgs::JointState oldjoints,
+                                        sensor_msgs::JointState newjoints) ;
+
 protected:
-    IKinematicsSharedPtr _kinematics; /**<  kinematics pointer */
+    boost::shared_ptr<RCS::IKinematic> _kinematics; /**<  kinematics pointer */
     std::shared_ptr<RCS::CController>_nc; /**<  robot controller pointer */
-    uint64_t _lastcmdid; /**<  last command num to check for new command */
+    uint64_t _lastcmdnum; /**<  last command num to check for new command */
     std::shared_ptr<GoTraj> _goRobot; /**<  gotraj dll  motion planning for robot Cartesian and joint motion */
     std::shared_ptr<GoTraj> _goGripper; /**<  gotraj dll for gripper joint motion */
 

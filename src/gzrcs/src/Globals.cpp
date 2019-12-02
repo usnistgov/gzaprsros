@@ -108,6 +108,7 @@ CGlobals::CGlobals()
     bWorldCRCLCoordinates=false;
     bGearLocations=0;
     bGripperSpeed=0;
+    bRepeatCannedDemo=0;
 
     // Global debugging files
     DEBUG_World_Command()=0; // Log controller action loop for robot servo of world cartesian move

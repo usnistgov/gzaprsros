@@ -65,6 +65,8 @@ std::string CGazebo::init(std::string robotname, std::string inifile)
 ////////////////////////////////////////////////////////////////////////////////
 void CGazebo::stop()
 {
+    _node=nullptr;
+
     // Make sure to shut everything down.
 #if GAZEBO_MAJOR_VERSION < 6
     gazebo::shutdown();
@@ -93,22 +95,49 @@ std::string CGzModelReader::init()
    _modeltopicname = gzconfig.getSymbolValue<std::string>("gazebo.modeltopicname","ERROR");
     if(_modeltopicname=="ERROR")
         return "Bad model topic name";
+
+
     return "";
 
 }
 
+/////////////////////////////////////////////////////////////////////////////
+void CGzModelReader::reset()
+{
+    std::lock_guard<std::mutex> guard(_mymutex);
+    gazebo::msgs::Model msg;
+    std::map<std::string, ignition::math::Pose3d>::iterator it;
+    for(it= _gearStartingPoses.begin(); it!=_gearStartingPoses.end(); ++it)
+    {
+        msg.set_name((*it).first);
+        gazebo::msgs::Set(msg.mutable_pose(), (*it).second);
+        modelPub->Publish(msg);
+    }
+}
+void CGzModelReader::onModelUpdate(ConstModelPtr &_msg)
+{
+    std::string name = _msg->name();
+    std::cout << name << std::endl;
 
+}
 /////////////////////////////////////////////////////////////////////////////
 void CGzModelReader::start()
 {
     _sub = CGazebo::_node->Subscribe<gazebo::msgs::Model>(_modeltopicname, &CGzModelReader::onUpdate,this);
+    modelPub = CGazebo::_node->Advertise<gazebo::msgs::Model>("~/model/modify");
+
+    // This only seems to report non-static models
+//    _modelsub = CGazebo::_node->Subscribe<gazebo::msgs::Model>("/gazebo/default/model/info", &CGzModelReader::onModelUpdate,this);
     Globals.sleep(1000);
     std::cout << "Gazebo model reader subscriber"  << _sub << "started\n";
 }
+
+
 /////////////////////////////////////////////////////////////////////////////
 void CGzModelReader::stop()
 {
     _sub->Unsubscribe();
+    modelPub->Fini();
     // want to kill gazebo update of model callback
     _sub.reset();
     std::cout << "Gazebo model reader subscriber stopped\n";
@@ -141,7 +170,6 @@ void CGzModelReader::onUpdate(ConstModelPtr &_msg)
 
 
 
-
 #if 0
     //"model://gear_support/meshes/new_big_gear_Rotatex_Centered_ZeroZmin.stl"
     std::string meshfile;
@@ -164,6 +192,9 @@ void CGzModelReader::onUpdate(ConstModelPtr &_msg)
     // Lock updates of instance and model link to id
     std::lock_guard<std::mutex> guard(_mymutex);
     ShapeModel::instances.storeInstance(name, tfpose, meshfile, scale);
+    if(Globals.bReadAllInstances!=true)
+        if(name.find("part")!=std::string::npos)
+            _gearStartingPoses[name]=pose;
 
 
 //    const google::protobuf::Message *prototype =
@@ -417,12 +448,12 @@ std::string CGzParallelGripper::init(std::string robotName)
 void CGzParallelGripper::start()
 {
     _bRunning=true;
-    if(Globals.bPavelGripperPlugin && !_mGzGripperCmdTopicName.empty())
+    if(Globals.bGzGripperPlugin && !_mGzGripperCmdTopicName.empty())
     {
         _gripperpub = CGazebo::_node->Advertise<message::GripCommand>(_mGzGripperCmdTopicName);
     }
 
-    if(Globals.bPavelGripperPlugin && !_mGzGripperStatusTopicName.empty())
+    if(Globals.bGzGripperPlugin && !_mGzGripperStatusTopicName.empty())
     {
         _grippersub=CGazebo::_node->Subscribe<message::GripCommand>(_mGzGripperStatusTopicName.c_str(), &CGzParallelGripper::OnStatusUpdate,this);;
     }
@@ -450,7 +481,7 @@ int CGzParallelGripper::isGrasping()
 /////////////////////////////////////////////////////////////////////////////
 bool CGzParallelGripper::updateGripper(double time, double eepercent)
 {
-    if(!Globals.bPavelGripperPlugin)
+    if(!Globals.bGzGripperPlugin)
     {
         std::cerr << "updating Pavel gripper plugin but not enabled\n";
         return false;

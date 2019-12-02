@@ -20,7 +20,7 @@
 #include "aprs_headers/Conversions.h"
 #include "gzrcs/CrclApi.h"
 
-#include "gzrcs/Kinematics.h"
+//#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 #include "gzrcs/Shape.h"
 #include "gzrcs/gazebo.h"
@@ -29,14 +29,16 @@
 // Gear Demo 
 struct CGearDemo
 {
-    CGearDemo();
+    CGearDemo(std::shared_ptr<CCrclApi>  crclApi);
     int init(std::string robotName);
-    int issueRobotCommands(int & state, CCrclApi & r);
-    int isDone(int & state, CCrclApi & r);
+    int issueRobotCommands(int & state);
+    int isDone(int & state );
     void start();
     void stop();
     CGzModelReader gzInstances;        // reads positions of gears and other instances from gazebo
+    std::deque<crcl_rosmsgs::CrclCommandMsg> & undoQ() { return r->undoQ(); }
 protected:
+    std::shared_ptr<CCrclApi>  r;
     ShapeModel::CShape * _instance;
     ShapeModel::CShapes _shapes;
     std::string _path;

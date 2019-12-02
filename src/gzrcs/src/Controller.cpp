@@ -65,10 +65,21 @@ CController::CController(std::string name, double cycletime) :
 
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 CController::~CController(void)
 {
 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<unsigned long> CController::allJointNumbers()
+{
+
+    std::vector<unsigned long> jointnum(robotKinematics()->numJoints());
+    std::iota(jointnum.begin(), jointnum.end(), 0); // adjusted already to 0..n-1
+    return jointnum;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,21 +121,10 @@ void CController::setup()
     /// Gazebo connections to model reader and joint updates
     ////////////////////////////////////////////////////////////////////////////////
 #ifdef GAZEBO
-    // Set up and start parts reading from gazebo world model
-    // setup and start joint updater publishing to gazebo
-    // @fixme only one instance of gz instance model is required.
+    // Set up and start joint updater publishing to gazebo
     if(Globals.bGazebo)
     {
         std::string errmsg;
-
-//        if(Globals.bGearLocations)
-//        {
-//            errmsg=gzInstances().init();
-//            if(!errmsg.empty())
-//                std::cout << "Error configuring Gazebo Model plugin" << errmsg << "\n";
-
-//            gzInstances().start();
-//        }
 
         errmsg = _writer.init(this->robotPrefix());
         if(!errmsg.empty())
@@ -157,6 +157,7 @@ void CController::setup()
     // Create ros topic communication handler - read commands, report status
     // Method Start() initiates communication. If any.
     // Possibly make topic names part of ini file.
+    // This was removed at was assumed 2 communication cycles were too large an overhead
     {
         pRosCrcl()= std::shared_ptr<CRosCrclRobotHandler>(new CRosCrclRobotHandler() );
         pRosCrcl()->Init(std::shared_ptr<RCS::CController>(this), prefix);
@@ -173,14 +174,15 @@ void CController::setup()
                                                             crclIp(),
                                                             crclPort(),
                                                             0.1, // dummy - no longer thread
-                                                            robotKinematics()->urdfXml(),
-                                                            robotKinematics()->baseLink(),
-                                                            robotKinematics()->endLink() ));
+                                                            robotKinematics()->urdf_Xml,
+                                                            robotKinematics()->base_link,
+                                                            robotKinematics()->end_link ));
 
         pCrclServer()->setCmdQueue(&crclcmds);
         if(Globals.DEBUG_LogRobotCrcl())
             pCrclServer()->setDebugStream(&ofsRobotCrcl);
         pCrclServer()->start();
+        std::cout << "Crcl server connected port=" << crclPort() << "\n";
     }
 #endif
 
@@ -272,9 +274,9 @@ void CController::publishStatus()
                     system_clock::now().time_since_epoch()
                     );
         _writer.updateRobot(ms.count(), robotJoints);
-        if(Globals.bPavelGripperPlugin )
+        if(Globals.bGzGripperPlugin )
         {
-            if (_status._eepercent>=0.0)
+            if (_status._eepercent>=0.0)  // well duh, gripper ee is  0..1
                 _cncGripper.updateGripper(ms.count(),  _status._eepercent);
         }
         else
@@ -300,7 +302,7 @@ void CController::publishStatus()
     statusmsg->crclcommandstatus = _status.crclCommandStatus;
     statusmsg->crclcommandnum = _status.echocmd.crclcommandnum;
     statusmsg->crclstatusnum = _status.echocmd.crclcommandnum;
-    _status.currentpose = robotKinematics()->FK(_status.robotjoints.position); /**<  current robot pose */
+    robotKinematics()->FK(_status.robotjoints.position,_status.currentpose); /**<  current robot pose */
     // add in gripper to get real location in robot space
     _status.currentpose = robotAddGripperCoord(_status.currentpose);
     statusmsg->statuspose = Convert<tf::Pose, geometry_msgs::Pose>(_status.currentpose);
@@ -326,7 +328,10 @@ bool CController::isBusy()
 
 tf::Pose CController::currentPose()
 {
-    return robotKinematics()->FK(_status.robotjoints.position); /**<  current robot pose */
+    tf::Pose pose;
+    // fixme: check that it worked.
+    robotKinematics()->FK(_status.robotjoints.position,pose); /**<  current robot pose */
+    return pose;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +379,7 @@ bool CController::updateRobot()
         _status.robotjoints = _nextcc.joints;   // <<< THIS IS WHERE POSITION UPDATE HAPPENS - should do position or velocity
     }
     // make sure joints have names
-    _status.robotjoints.name = robotKinematics()->jointNames();
+    _status.robotjoints.name = robotKinematics()->jointNames;
 
 
 
@@ -394,7 +399,7 @@ bool CController::updateRobot()
     // Give pose of robot no gripper or base offsets included
     tf::Pose & lastpose(_laststatus.currentpose);
     lastpose = _status.currentpose;
-    _status.currentpose = robotKinematics()->FK(_status.robotjoints.position); /**<  current robot pose */
+     robotKinematics()->FK(_status.robotjoints.position, _status.currentpose); /**<  current robot pose */
 
 #if 0
     // Fixme: this does not work
@@ -407,9 +412,7 @@ bool CController::updateRobot()
 
     // Update gripper position based on output from RCSInterpreter
     // Note crcl command may have not update of gripper.
-    //if(_nextcc.next_gripper_goal_joints.position.size() > 0 )
- //   if(RCS::hasMotion(_nextcc.nextGripperGoalJoints))
-    if(_nextcc.crclcommand == CanonCmdType::CANON_PAVEL_GRIPPER ||
+     if(_nextcc.crclcommand == CanonCmdType::CANON_PAVEL_GRIPPER ||
        _nextcc.crclcommand == CanonCmdType::CANON_SET_GRIPPER     )
     {
         cncGripperJoints()=_nextcc.nextGripperGoalJoints;
@@ -479,7 +482,7 @@ nextposition:
 
 
             // Change: Preprocess gripper to pavel gripping plugin
-            if(Globals.bPavelGripperPlugin && msg.crclcommand ==CanonCmdType::CANON_SET_GRIPPER)
+            if(Globals.bGzGripperPlugin && msg.crclcommand ==CanonCmdType::CANON_SET_GRIPPER)
             {
                 std::unique_lock<std::mutex> lock(cncmutex);
                 msg.crclcommand = CanonCmdType::CANON_PAVEL_GRIPPER;
@@ -579,12 +582,12 @@ void CController::dumpRobotNC(std::shared_ptr<CController> nc)
 
     ofsRobotURDF << "============================================================\n";
     ofsRobotURDF << "NC " << nc->name().c_str() << "\n";
-    ofsRobotURDF << "base link " << nc->robotKinematics()->baseLink().c_str() << "\n";
-    ofsRobotURDF << "ee link " << nc->robotKinematics()->endLink().c_str() << "\n";
+    ofsRobotURDF << "base link " << nc->robotKinematics()->base_link.c_str() << "\n";
+    ofsRobotURDF << "ee link " << nc->robotKinematics()->end_link.c_str() << "\n";
     ofsRobotURDF << "num joints " << nc->robotKinematics()->numJoints() << "\n";
     ofsRobotURDF << "baseoffset " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
     ofsRobotURDF << "tooloffset " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
-    ofsRobotURDF << "Joint names " << vectorDump<std::string>(nc->robotKinematics()->jointNames()).c_str() << "\n" << std::flush;
+    ofsRobotURDF << "Joint names " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
 
     for (std::map<std::string, std::vector<double>>::iterator it = nc->namedJointMove().begin(); it != nc->namedJointMove().end(); it++)
         ofsRobotURDF << (*it).first << "=" << vectorDump<double>(nc->namedJointMove()[(*it).first]).c_str() << "\n";

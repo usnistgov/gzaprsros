@@ -1,16 +1,71 @@
 #ifndef ENV_H
 #define ENV_H
+#include <vector>
+#include <stdlib.h>     /* getenv */
 
 class Env
 {
 public:
 #ifdef WIN32
-    constexpr char const*  separator = ";";
-    //const char separator=';';
+    constexpr static char  separator = ';';
 #else
-    constexpr char const*  separator = ":";
-    //const char separator=':';
+    constexpr static  char  separator = ':';
 #endif
+
+    static std::vector<std::string> searchPath(std::vector<std::string> envs)
+    {
+        std::vector<std::string> paths;
+
+        for(size_t i=0; i< envs.size(); i++)
+        {
+            std::string ldpath = get_env(envs[i]);
+            std::istringstream f(ldpath);
+            std::string s;
+            while (getline(f, s, separator)) {
+                if(!s.empty())
+                    paths.push_back(s);
+            }
+        }
+        paths.push_back("/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib");
+        return paths;
+    }
+
+    /**
+     * @brief findPath
+     * @param envs
+     * @param filename
+     * @return
+     *     std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
+     *     std::string path = findPath(v,"libgokin_plugin.so");
+     */
+
+    static std::string findPath(std::vector<std::string> envs, std::string filename)
+    {
+
+        std::vector<std::string> paths = searchPath(envs);
+        for(size_t i=0; i< paths.size(); i++)
+        {
+            struct stat buffer;
+            std::string filepath=paths[i]+"/"+filename;
+            if (stat (filepath.c_str(), &buffer) == 0)
+            {
+                return paths[i];
+            }
+
+        }
+        return "";
+    }
+
+    static std::string get_env(std::string  var )
+    {
+        const char * val = ::getenv( var.c_str() );
+        if ( val == 0 ) {
+            return "";
+        }
+        else {
+            return val;
+        }
+    }
 
     std::string get_environment()
     {
@@ -60,7 +115,7 @@ public:
 
             if( v == NULL )
                 continue;
-            std::vector<std::string> dirs=TrimmedTokenize(std::string(v), separator);
+            std::vector<std::string> dirs=trimmedTokenize(std::string(v), std::string(1,separator));
             for(size_t j=0; j< dirs.size(); j++)
             {
                 file = dirs[j]+"/"+path;
@@ -109,7 +164,7 @@ private:
      * @return  std vector of tokens from parsed string
      */
     std::vector<std::string> tokenize (const std::string & str,
-                                              const std::string & delimiters)
+                                       const std::string & delimiters)
     {
         std::vector<std::string> tokens;
         std::string::size_type   delimPos = 0, tokenPos = 0, pos = 0;
@@ -170,7 +225,7 @@ private:
                     *  tokens of leading and trailing spaces
                     */
     std::vector<std::string> trimmedTokenize (std::string value,
-                                                     std::string delimiter)
+                                              std::string delimiter)
     {
         std::vector<std::string> tokens = tokenize(value, delimiter);
 
@@ -187,5 +242,5 @@ private:
         return tokens;
     }
 
-}
+};
 #endif // ENV_H

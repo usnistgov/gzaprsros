@@ -358,14 +358,15 @@ public:
     int bHandleExceptions;
     int bReadAllInstances;
     int bCannedDemo;
+    int bRepeatCannedDemo;
     int bWorldCRCLCoordinates;
     int bGearLocations;
-    int bGzEnableForce;
     int bGripperSpeed;
     int bClosestFree;
     int bClosestOpenSlot;
     int bFlywheel;
-    int bPavelGripperPlugin;
+    int bGzGripperPlugin;
+    int bDebug;
 
     std::string sRosMasterUrl;
     std::string sRosPackageName;
