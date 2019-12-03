@@ -2,9 +2,11 @@
 *.pyc
 .catkin_workspace
 *build*
-devel
+*devel*
 *.log
 Log_*
 install
 Todo.txt
 debug
+*.so*
+
