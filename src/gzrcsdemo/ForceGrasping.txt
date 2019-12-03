@@ -1,0 +1,183 @@
+
+This file provides some code snippets from force based grasping. Actual use is spotty.
+
+=========================================================
+RCSInterpreter.cpp
+int   CGoInterpreter::setGripperFoce(RCS::CCanonCmd &outcmd, double force )
+{
+    // set gazebo gripper vel/fmax
+    outcmd.gripperControlAlgorithm=CanonControlType::VELOCITY_CONTROL;
+    outcmd.nextGripperGoalJoints=_nc->cncGripperJoints();
+    outcmd.nextGripperGoalJoints.position.clear();
+    outcmd.nextGripperGoalJoints.velocity.clear();
+    outcmd.nextGripperGoalJoints.effort.clear();
+
+    size_t n = outcmd.nextGripperGoalJoints.name.size();
+    //outcmd.nextGripperGoalJoints.effort.resize(n, force); /// this did not work right finger went to max position
+    for(size_t j=0; j< n; j++)
+    {
+        outcmd.nextGripperGoalJoints.effort.push_back( -1.0 * _nc->cncGripper().multipler(outcmd.nextGripperGoalJoints.name[j])*force);
+    }
+
+    return 0;
+}
+
+
+
+        else if(this->fingerContactAlgorithm==2)
+        {
+            // Fixme: this should be parameterized differently
+            double force = _nc->graspforce()["sku_part_large_gear"];
+            std::cout << "Force amount="<< force << "\n";
+            this->setGripperFoce(outcmd,force);
+        }
+
+
+================================================================================
+gazebo.cpp
+bool CGzJointCmdWriter::updateGripper(double dTime, sensor_msgs::JointState joints)
+{
+    if(joints.position.size()>0)
+    {
+        _gripperJoints.velocity.clear(); // allow change of velocity
+        if(_gripperJoints.position==joints.position)
+            return false;
+        _gripperJoints.position=joints.position;
+        _gripperJoints.name=joints.name;
+
+        for(size_t i=0; i< _gripperJoints.name.size(); i++)
+        {
+            // Convert to a pose message
+            gazebo::msgs::JointCmd  msg;
+
+            msg.set_name(_mGzRobotJointPrefix+ _gripperJoints.name[i].c_str());
+            double val=joints.position[i];
+            ::gazebo::msgs::PID * position = new ::gazebo::msgs::PID();
+
+            position->set_target(val);
+            // Be careful:   delete position_;
+            // minor leak.
+            msg.set_allocated_position(position);
+
+            _pub->Publish(msg);
+        }
+    }
+    else if(joints.velocity.size()>0)
+    {
+        _gripperJoints.position.clear(); // allow change of position
+        if(_gripperJoints.velocity==joints.velocity)
+            return false;
+        _gripperJoints.velocity=joints.velocity;
+        _gripperJoints.effort=joints.effort;
+        _gripperJoints.name=joints.name;
+
+        for(size_t i=0; i< _gripperJoints.name.size(); i++)
+        {
+            // Convert to a pose message
+            gazebo::msgs::JointCmd  msg;
+
+            msg.set_name(_mGzRobotJointPrefix+ _gripperJoints.name[i].c_str());
+            double val=joints.velocity[i];
+            ::gazebo::msgs::PID * velocity = new ::gazebo::msgs::PID();
+
+            velocity->set_target(val);
+            // Be careful:   delete velocity;
+            // minor leak.
+            msg.set_allocated_velocity(velocity);
+            msg.set_force(_gripperJoints.effort[i]);  // max force
+
+            _pub->Publish(msg);
+        }
+    }
+
+// FIX: add force/effort detection
+    return true;
+}
+
+
+
+motoman_aprs.sdf
+        <joint name="motoman_left_finger_joint" type="prismatic">
+            <child>motoman_left_finger</child>
+            <parent>motoman_link_t</parent>
+            <axis>
+                <xyz>1 7e-06 -0</xyz>
+                <limit>
+                    <lower>-0.05</lower>
+                    <upper>0.01</upper>
+                    <effort>10000</effort>
+                    <velocity>10000</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+                <use_parent_model_frame>1</use_parent_model_frame>
+            </axis>
+            
+            
+            
+            
+#####################################################################
+        <joint name="motoman_left_finger_joint" type="prismatic">
+
+[pmoto]
+gripperJoints=left_finger_joint,right_finger_joint
+            
+                for(size_t k=0; k<ncs[i]->gripperJointNames().size(); k++)
+                    ncs[i]->gripperJointNames()[k]=ncs[i]->robotPrefix() + ncs[i]->gripperJointNames()[k];
+                    
+              
+This is actually unused:
+fingerjoints.motoman_left_finger=motoman_left_finger_joint
+fingerjoints.motoman_right_finger=motoman_right_finger_joint
+
+
+==================================================================
+/home/isd/michalos/src/robot-agility/gz/installs/rcs_pkgs/include/aprs_headers/IRcs.h
+class IRCSInterpreter {
+public:
+
+     IRCSInterpreter() :
+         s2eFingerContactAlgorithm{{"none", none}, {"velocity", velocity}, {"force", force},{"squeeze", squeeze}}
+     {
+
+     }
+    virtual int parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
+                             RCS::CCanonCmd &outcmd,
+                             RCS::CCanonWorldModel instatus)
+    {
+        return -1;
+    }
+
+    virtual void init(std::vector<double> jnts)
+    {
+    }
+    std::string _name;
+    typedef  enum {none=0, velocity=1, force=2,  squeeze=3} eFingerContactAlgorithm;
+    std::map<std::string, eFingerContactAlgorithm> s2eFingerContactAlgorithm;
+    eFingerContactAlgorithm fingerContactAlgorithm; /// squeeze=3, velocity=1, force=2
+};
+
+
+
+
+
+
+==================================================================
+[pmoto]
+gripperMax=0.0005, 0.05
+gripperMin=-0.05, -0.00005
+
+                ncs[i]->gripperJointsMin() = RCS::robotconfig.getTokens<double>( ncs[i]->gripperName()  + ".gripperMin", ",");
+                ncs[i]->gripperJointsMax() = RCS::robotconfig.getTokens<double>( ncs[i]->gripperName()  + ".gripperMax", ",");
+//if negative multiplier going in positive direction when closing - cannot exceed max
+//if positive multiplier going in negative direction when closing - cannot exceed min
+        if(_nc->gripperJointsMultiplier()[k] < 0 && gripperpotential >= _nc->gripperJointsMax()[k])
+        {
+            // at limit cannot close further, continue
+            continue;
+        }
+        if(_nc->gripperJointsMultiplier()[k] > 0 && gripperpotential <= _nc->gripperJointsMin()[k])
+
+

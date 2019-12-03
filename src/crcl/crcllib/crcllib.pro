@@ -38,7 +38,9 @@ QMAKE_CXXFLAGS +=-Wno-write-strings
 QMAKE_CXXFLAGS +=-Wno-missing-field-initializers
 QMAKE_CXXFLAGS +=-std=c++11
 
-INCLUDEPATH += "../../../include"
+#INCLUDEPATH += "../../../include"
+INCLUDEPATH += "../crcl_rosmsgs/include"
+INCLUDEPATH += "../../aprs_headers/include"
 
 INCLUDEPATH += "./include/crcllib/CrclXsd"
 INCLUDEPATH += "./include"

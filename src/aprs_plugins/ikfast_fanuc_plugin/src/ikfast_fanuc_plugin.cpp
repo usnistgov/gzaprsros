@@ -5,7 +5,7 @@
 
 using namespace RCS;
 
-IKFAST_FanucKin ikfast_fanuc_kin;
+//IKFAST_FanucKin ikfast_fanuc_kin;
 
 #define IKFAST_HAS_LIBRARY
 #define IKFAST_NO_MAIN

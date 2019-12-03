@@ -17,13 +17,10 @@
 #include "crcllib/crclserver.h"
 #include "crcllib/Crcl2Rcs.h"
 #include "crcllib/nistcrcl.h"
+#define GLOGGER CrclLogger
+#include <aprs_headers/LoggerMacros.h>
 
 bool CBufferHandler::_bTrace;
-
-static unsigned int MyErrorMessage(std::string errmsg) {
-    //logFatal(errmsg.c_str());
-    return -1;
-}
 
 static std::string trim (std::string source, std::string delims = " \t\r\n")
 {
@@ -68,19 +65,17 @@ void CBufferHandler::AppendBuffer(std::string read)
 void CBufferHandler::SaveMessage(std::string xmlmessage) {
     if (CBufferHandler::_bTrace)
     {
-        //        logStatus("===========================================================\n"
-        //        "%s:%d: [%s]\n",
-        //                RemoteIP().c_str(),
-        //                RemotePORT(),
-        //                xmlmessage.c_str());
+                logStatus("===========================================================\n"
+                "%s\n",
+                        xmlmessage.c_str());
         //        //Globals.AppendFile(Globals.ExeDirectory + "xmltrace.txt", xmlmessage);
     }
 
-    if(CCrclSession::bDebugXML  && xmlmessage.find("GetStatusType") == std::string::npos)
-    {
-        printf("Raw:%s\n",xmlmessage.c_str());
-        (*crcl::crclServer::debugstream) << xmlmessage <<"\n";
-    }
+//    if(CCrclSession::bDebugCrclXML  && xmlmessage.find("GetStatusType") == std::string::npos)
+//    {
+//        printf("Raw:%s\n",xmlmessage.c_str());
+//        (*crcl::crclServer::debugstream) << xmlmessage <<"\n";
+//    }
 
     CCrclSession::InMessages().addMsgQueue(boost::make_tuple(xmlmessage, pSession));
 
@@ -133,7 +128,7 @@ void CBufferHandler::BufferHandler(std::string & endtag)
 ////////////////////////////////////////////////////////////////////////////////
 ///  CCrclSession
 ////////////////////////////////////////////////////////////////////////////////
-int CCrclSession::bDebugXML;
+int CCrclSession::bDebugCrclXML;
 
 //CMessageQueueThread *  CCrclSession::_inmsgs= NULL;  // queue with thread notify
 CMessageQueue *  CCrclSession::_inmsgs= NULL;  // queue with thread notify

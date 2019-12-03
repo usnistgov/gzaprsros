@@ -13,6 +13,8 @@
 #include <aprs_headers/seriallinkrobot.h>
 
 #include <boost/config.hpp>
+#include <boost/dll/alias.hpp>
+
 namespace RCS
 {
 class IKFAST_FanucKin :  public IKinematic, public  CSerialLinkRobot
@@ -33,6 +35,15 @@ public:
     std::string set(std::string param,  std::string value);
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
+
+    /**
+     * @brief create boost dll factory method. Creates IKFAST_FanucKin instances.
+     * @return  wrapped shared pointer to new IKFAST_FanucKin instance.
+     */
+    static boost::shared_ptr<IKFAST_FanucKin> create()
+    {
+        return boost::shared_ptr<IKFAST_FanucKin>( new IKFAST_FanucKin());
+    }
 
 private:
     bool bDebug;
@@ -102,8 +113,10 @@ private:
 };
 
 
-extern "C" BOOST_SYMBOL_EXPORT  IKFAST_FanucKin ikfast_fanuc_kin;
-
+//extern "C" BOOST_SYMBOL_EXPORT  IKFAST_FanucKin ikfast_fanuc_kin;
+BOOST_DLL_ALIAS(
+            RCS::IKFAST_FanucKin::create, create_plugin
+        )
 
 }
 

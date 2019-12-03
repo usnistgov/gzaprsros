@@ -26,6 +26,7 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
   ../../gz_custom_messages/include/gz_custom_messages
   ../../aprs_headers/include
+  ../../../include/dll/include
 
   )
 

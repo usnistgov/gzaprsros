@@ -640,6 +640,8 @@ double CController::setRobotJointSpeeds(double speed)
     double now_speed = currentRobotJointSpeed();
     currentRobotJointSpeed()=speed;
 
+    std::cerr<<  robotKinematics()->numJoints() << "\n";
+
     // set speeds as multiple of baseline
     robotJointRateParams()= std::vector<gomotion::GoTrajParams>   (robotKinematics()->numJoints(),
                                                               gomotion::GoTrajParams(1.0 * speed,

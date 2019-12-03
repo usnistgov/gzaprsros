@@ -80,6 +80,11 @@ static     std::string get_env(  std::string  var )
     }
 }
 
+// Do not put creator where it can be destroyed or you will
+// get segmentation fault. It's here for now.
+typedef boost::shared_ptr<RCS::IKinematic> (pluginapi_create_t)();
+boost::function<pluginapi_create_t> creator;
+
 int main(int argc, char** argv)
 {
     std::vector<std::string> robots;
@@ -304,6 +309,7 @@ int main(int argc, char** argv)
                 // get kinematic plugin configuration information
                 std::string kin_plugin_dll = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.plugin", "");
                 std::string kin_plugin_name = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.name", "");
+                std::string urdffile = Globals.appProperties["PackageSrcPath"]+ RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".urdf", "");
 
                 std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
                 std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
@@ -318,29 +324,43 @@ int main(int argc, char** argv)
                 boost::shared_ptr<IKinematic> plugin;
 
                 try {
+
+                    creator = boost::dll::import_alias<pluginapi_create_t>(             // type of imported symbol must be explicitly specified
+                         lib_path/kin_plugin_dll,                                           // path to library
+                        "create_plugin",                                                // symbol to import
+                        boost::dll::load_mode::append_decorations                              // do append extensions and prefixes
+                    );
+
+                    ncs[i]->robotKinematics() = creator();
+
+        #if 0
                     ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
                                                                                 lib_path/kin_plugin_dll,
                                                                                 kin_plugin_name,
                                                                                 boost::dll::load_mode::default_mode);
+        #endif
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
                     // load in urdf
                     std::string urdf;
-                    std::string urdffile = Globals.appProperties["PackageSrcPath"] + "config/MotomanSia20d.urdf";
                     Globals.readFile(urdffile, urdf);
-                    ncs[i]->robotKinematics()->init(urdf, ncs[i]->robotBaselink(), ncs[i]->robotEelink());
+                    if(ncs[i]->robotKinematics()->init(urdf, ncs[i]->robotBaselink(), ncs[i]->robotEelink())<0)
+                    {
+                        throw std::runtime_error("robotKinematics() urdf parse failed");
+
+                    }
 
                 }
                 catch (const std::exception& e) {
-                    std::cerr << "boost plugin exception : " << e.what();
+                    throw std::runtime_error(std::string( "boost plugin exception : ")+ e.what());
                 }
                 catch (boost::exception &e)
                 {
-                    std::cerr << boost::diagnostic_information(e);
+                    throw std::runtime_error(std::string( "boost plugin exception : ")+ boost::diagnostic_information(e));
                 }
                 catch (...) {
-                    std::cerr << "boost plugin exception : \n" ;
+                    throw std::runtime_error("boost plugin exception : ");
                 }
 
 

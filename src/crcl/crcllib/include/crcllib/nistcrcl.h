@@ -40,8 +40,8 @@ struct crclServer //: public RCS::Thread
         debugstream=dstream;
     }
 
-    static bool bDebugStatusMsg;
-    static bool bDebugCommandMsg;
+    static bool bDebugCrclStatusMsg;
+    static bool bDebugCrclCommandMsg;
     static bool bCrclStopIgnore;
     static bool bFlywheel;
     static bool bProcessAllCrclMessages;

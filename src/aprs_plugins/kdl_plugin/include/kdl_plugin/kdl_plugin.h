@@ -77,7 +77,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  Ckdl_plugin kdl_plugin;
 BOOST_DLL_ALIAS(
-            RCS::Ckdl_plugin::create,_kdl_plugin
+            RCS::Ckdl_plugin::create, create_plugin
         )
 }
 

@@ -134,7 +134,7 @@ CrclReturn CrclServerDelegateInterface::DelegateCRCLCmd(std::string str) {
                 logDebug("GetStatus id=%d\n", stat->CommandID());                
                 return GetStatus();
             }
-            if(crcl::crclServer::bDebugCommandMsg)
+            if(crcl::crclServer::bDebugCrclCommandMsg)
             {
                 logDebug("===========================================================\n"
                           "[%s]\n",

@@ -25,6 +25,7 @@ include_directories(
   include
  ./include/ikfast_fanuc_plugin
  ${catkin_INCLUDE_DIRS}
+  ../../../include/dll/include
   ../../gz_custom_messages/include/gz_custom_messages
   ../../aprs_headers/include
  )

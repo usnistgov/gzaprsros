@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 using namespace RCS;
-GoKin goserkin;
+//GoKin goserkin;
 
 
 template<typename ... Args>

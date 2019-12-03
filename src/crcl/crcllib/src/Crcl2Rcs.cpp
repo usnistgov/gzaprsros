@@ -2,6 +2,7 @@
 #include <urdf/model.h>
 #include <CRCLStatus.hxx>
 #include "crcllib/Crcl2Rcs.h"
+#include <aprs_headers/IRcs.h>
 #include <aprs_headers/Debug.h>
 #include <crcllib/nistcrcl.h>
 
@@ -153,7 +154,7 @@ void CCrcl2RosMsg::init()
     // Controller instantiatio of shared objects - NOT dependent on ROS
     crclinterface = boost::shared_ptr<Crcl::CrclServerDelegateInterface>(
             new Crcl::CrclServerDelegateInterface());
-    crclinterface->SetAngleUnits("DEGREE");
+    //crclinterface->SetAngleUnits("DEGREE");
 
     // Couple code attempts at reading from robot_description parameter - see above
     crclinterface->crclwm.jointnames.clear();
@@ -193,11 +194,12 @@ int CCrcl2RosMsg::action()
                 _pSession = boost::get<1>(msg);
                 _pSession->SyncWrite(sStatus);
 
-                if(crcl::crclServer::bDebugStatusMsg)
+                if(crcl::crclServer::bDebugCrclStatusMsg)
                 {
                     logDebug("===========================================================\n"
-                              "[%s]\n",
-                              crclcmd.c_str());
+                              "Status:\n%s\n",
+                              sStatus.c_str());
+                    logDebug("===========================================================\n");
                 }
 
             }
@@ -216,25 +218,7 @@ int CCrcl2RosMsg::action()
             RCS::CCanonCmd cc = RCS::cmds.popFrontMsgQueue();
             crcl_rosmsgs::CrclCommandMsg rosmsg;
 
-            enum crclcommand {
-                noop = 0,
-                initCanon = 1,
-                endCanon = 2,
-                actuatejoints = 3,
-                moveto = 4,
-                dwell = 5,
-                message = 6,
-                moveThroughTo = 7,
-                setCoordinatedMotion = 8,
-                stopMotion = 9,
-                setEndEffector = 10,
-                openToolChange = 11,
-                closeToolChanger = 12,
-                setEEParameter = 25,
-                nocommand=26
-
-            };
-            rosmsg.crclcommand = nocommand;
+            rosmsg.crclcommand = CanonCmdType::CANON_NOOP; //nocommand;
             //rosmsg.crclcommandnum = cc.CommandID();
             rosmsg.crclcommandnum = (long unsigned int) cc.CrclCommandID();
             CCanonCmd::setRosMsgTimestamp(rosmsg.header);
@@ -243,22 +227,22 @@ int CCrcl2RosMsg::action()
 
             if(cc.crclcommand == CanonCmdType::CANON_INIT_CANON)
             {
-                rosmsg.crclcommand=initCanon;
+                rosmsg.crclcommand=CanonCmdType::CANON_INIT_CANON; // initCanon;
             }
             else if(cc.crclcommand == CanonCmdType::CANON_END_CANON)
             {
-                rosmsg.crclcommand=endCanon;
+                rosmsg.crclcommand=CanonCmdType::CANON_END_CANON; // endCanon;
             }
             else if (cc.crclcommand == CanonCmdType::CANON_MOVE_JOINT)
             {
-                rosmsg.crclcommand = actuatejoints;
+                rosmsg.crclcommand = CanonCmdType::CANON_MOVE_JOINT; // actuatejoints;
                 rosmsg.jointnum=cc.jointnum;
                 rosmsg.joints = cc.joints; // this passes pos, vel, accel/force/torque
                 rosmsg.bCoordinated = cc.bCoordinated;
             }
             else if (cc.crclcommand == CanonCmdType::CANON_MOVE_TO)
             {
-                rosmsg.crclcommand = moveto;
+                rosmsg.crclcommand = CanonCmdType::CANON_MOVE_TO; //moveto;
                 rosmsg.finalpose.position.x = cc.finalpose.position.x;
                 rosmsg.finalpose.position.y = cc.finalpose.position.y;
                 rosmsg.finalpose.position.z = cc.finalpose.position.z;
@@ -295,17 +279,17 @@ int CCrcl2RosMsg::action()
                 // Fixme: there are other parameters specifying stop
                 if(crcl::crclServer::bCrclStopIgnore)
                 {
-                    rosmsg.crclcommand = stopMotion;
+                    rosmsg.crclcommand = CanonCmdType::CANON_STOP_MOTION;
                     //cc.stoptype; // fixme: add stoptype to crcl messages
                 }            // publish ros message if found corresponding crcl command
-                if (rosmsg.crclcommand != noop) {
+                if (rosmsg.crclcommand != CanonCmdType::CANON_NOOP) {
                     logInform("ROS command: [%d] ", rosmsg.crclcommand);
                     crclcmdsq->addMsgQueue(rosmsg);
                 }
              }
             else if (cc.crclcommand == CanonCmdType::CANON_MOVE_THRU)
             {
-                rosmsg.crclcommand = moveThroughTo;
+                rosmsg.crclcommand = CanonCmdType::CANON_MOVE_THRU;
                 rosmsg.finalpose = cc.finalpose;
 
                 // now save waypoints
@@ -313,17 +297,22 @@ int CCrcl2RosMsg::action()
             }
             else if (cc.crclcommand == CanonCmdType::CANON_DWELL)
             {
-                rosmsg.crclcommand = dwell;
-                rosmsg.dwell_seconds = cc.dwell;
+                rosmsg.crclcommand = CanonCmdType::CANON_DWELL;
+                rosmsg.dwell_seconds = cc.dwell_seconds;
             }
             else if (cc.crclcommand == CanonCmdType::CANON_SET_GRIPPER)
             {
-                rosmsg.crclcommand = setEndEffector;
+                rosmsg.crclcommand = CanonCmdType::CANON_SET_GRIPPER;
+                rosmsg.eepercent = cc.eepercent;
+            }
+            else if (cc.crclcommand == CanonCmdType::CANON_PAVEL_GRIPPER)
+            {
+                rosmsg.crclcommand = CanonCmdType::CANON_PAVEL_GRIPPER;
                 rosmsg.eepercent = cc.eepercent;
             }
             else if (cc.crclcommand == CanonCmdType::CANON_SET_EE_PARAMETERS)
             {
-                rosmsg.crclcommand = setEEParameter;
+                rosmsg.crclcommand = CanonCmdType::CANON_SET_EE_PARAMETERS;
                 rosmsg.parameter_names = cc.parameterNames;
                 rosmsg.parameter_values = cc.parameterValues;
             }
@@ -331,18 +320,18 @@ int CCrcl2RosMsg::action()
             // actually no flywheel but processAllCrclMessages
             else if(!crcl::crclServer::bProcessAllCrclMessages)
             {
-                rosmsg.crclcommand=noop;
+                rosmsg.crclcommand=CanonCmdType::CANON_NOOP;
             }
 
             // publish ros message if found corresponding crcl command
-            if (rosmsg.crclcommand != nocommand) {
-                logInform("ROS command: [%d] ", rosmsg.crclcommand);
+            if (rosmsg.crclcommand != CanonCmdType::CANON_NOOP) {
+                logStatus("ROS command: [%d] ", rosmsg.crclcommand);
                 crclcmdsq->addMsgQueue(rosmsg);
             }
 
             // publish ros message if found corresponding crcl command
-            if (crcl::crclServer::bDebugCommandMsg) {
-                printf("ROS command: %s\n", CCanonCmd().Set(rosmsg).toString().c_str());
+            if (crcl::crclServer::bDebugCrclCommandMsg) {
+                logStatus("ROS command: %s\n", CCanonCmd().Set(rosmsg).toString().c_str());
             }
 
             if(crcl::crclServer::bFlywheel)

@@ -14,6 +14,8 @@
 #include <aprs_headers/seriallinkrobot.h>
 
 #include <boost/config.hpp>
+#include <boost/dll/alias.hpp>
+
 namespace RCS
 {
 
@@ -74,7 +76,11 @@ private:
     //    std::string tempstr;
 };
 
-extern "C" BOOST_SYMBOL_EXPORT  GoKin goserkin;
+//extern "C" BOOST_SYMBOL_EXPORT  GoKin goserkin;
+BOOST_DLL_ALIAS(
+            RCS::GoKin::create, create_plugin
+        )
+
 
 }
 #endif // GOKIN_H

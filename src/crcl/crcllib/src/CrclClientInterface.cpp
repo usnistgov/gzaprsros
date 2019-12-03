@@ -85,15 +85,15 @@ static bool ReadFile (std::string filename, std::string & contents)
 std::string CrclClientCmdInterface::GetStatusReply(CrclStatus *wm)
 {
     // Log status for now
-    static std::string last_status;
-    std::stringstream now_status;
-    //now_status << "GetStatusReply=" <<  wm->CommandID() << ":" << wm->CommandStatus()
-    now_status << "GetStatusReply=" <<  DumpStatusReply(wm)<< std::endl;
-    if(now_status.str() != last_status)
-    {
-        last_status=now_status.str();
-        logStatus(last_status.c_str());
-    }
+//    static std::string last_status;
+//    std::stringstream now_status;
+//    //now_status << "GetStatusReply=" <<  wm->CommandID() << ":" << wm->CommandStatus()
+//    now_status << "GetStatusReply=" <<  DumpStatusReply(wm)<< std::endl;
+//    if(now_status.str() != last_status)
+//    {
+//        last_status=now_status.str();
+//        logStatus(last_status.c_str());
+//    }
 
     CommandStatusType status(wm->CommandID(), wm->CommandID(),wm->CommandStatus());
     CRCLStatusType cmd(status);

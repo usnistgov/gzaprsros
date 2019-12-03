@@ -44,6 +44,7 @@ INCLUDEPATH += $$PWD/include
 INCLUDEPATH += $$PWD/../../install/include
 INCLUDEPATH += $$PWD/../../gzrcs/include
 INCLUDEPATH += $$PWD/../../aprs_headers/include
+INCLUDEPATH += $$PWD/../../../include/dll/include
 
 #ROS
 INCLUDEPATH += "/opt/ros/kinetic/include"

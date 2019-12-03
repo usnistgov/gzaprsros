@@ -158,7 +158,7 @@ public:
 //    static CCrclMessages _outmsgs; /**<  queue of outbound crcl xml messages to device */
 
     CCrcl2RosMsg * crcl2ros;
-    static int bDebugXML;
+    static int bDebugCrclXML;
 protected:
     int nMaxConnections;
     int nConnections;

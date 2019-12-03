@@ -131,7 +131,8 @@ include_directories(
  include/${PROJECT_NAME}/CrclXsd
  ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  )
+   ../crcl_rosmsgs/include
+ )
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
