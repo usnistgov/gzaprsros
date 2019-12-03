@@ -1,0 +1,12 @@
+
+
+
+https://medium.com/@sarvagya.vaish/forward-kinematics-using-orocos-kdl-da7035f9c8e
+
+
+## Installing ROS kdl components
+rosdep install kdl_parser
+
+# Eigen issues
+https://kezunlin.me/post/d97b21ee/
+

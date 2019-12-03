@@ -8,34 +8,52 @@
 #include <stdlib.h>
 
 using namespace RCS;
-GoMotoKin goserkin;
+GoKin goserkin;
+
+
+template<typename ... Args>
+//static std::string strformat( const std::string& format, Args ... args )
+static std::string strformat( const char * format, Args ... args )
+{
+    size_t size = snprintf( nullptr, 0, format, args ... ) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    snprintf( buf.get(), size, format, args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-GoMotoKin::GoMotoKin() : CSerialLinkRobot(this)
+GoKin::GoKin() : CSerialLinkRobot(this)
 {
     bDebug=false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-GoMotoKin::~GoMotoKin()
+GoKin::~GoKin()
 {
     // delete temp file...
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::init(std::string urdf, std::string baselink, std::string tiplink)
+int GoKin::init(std::string urdf, std::string baselink, std::string tiplink)
 {
+    errmsg.clear();
     debugStream(std::cout);
     kin_name[0]=0;
+    _urdf=urdf;
+    _baselink=baselink;
+    _tiplink=tiplink;
+
 
     if(! parseURDF(urdf, baselink, tiplink))
     {
         std::cerr<< "GoMotoKinBad URDF string\n";
+        errmsg="GoMotoKinBad URDF string\n";
         return -1;
     }
 
     // Now generate the ini file
-    std::string ini;
+    ini.clear();
     ini +="\n[GOMOTION]\n";
 
     ini +="NAME="+robot_name+"\n";
@@ -97,6 +115,8 @@ int GoMotoKin::init(std::string urdf, std::string baselink, std::string tiplink)
     char t[] = "/tmp/fileXXXXXX";
     int fd;
     fd = mkstemp(t);
+     _inifilename=t;
+
     write(fd,ini.c_str(),ini.size());
     close(fd);
     return Init(t);
@@ -104,15 +124,16 @@ int GoMotoKin::init(std::string urdf, std::string baselink, std::string tiplink)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::Init(std::string filename)
+int GoKin::Init(std::string filename)
 {
+    errmsg.clear();
     debugStream(std::cout);
     kin_name[0]=0;
     inifile_name = filename;
 
     if (GO_RESULT_OK != genser_kin_init(&kins))
     {
-      fprintf(stdout, "can't init GoMotoKin general serial kinematics\n");
+      errmsg="Can't init GoKin general serial kinematics\n";
       return Initialization_Failed;
     }
 
@@ -124,22 +145,22 @@ int GoMotoKin::Init(std::string filename)
                       (go_link*)  link_params,
                       home_joint,
                        kin_name)) {
-      fprintf(stdout, "can't load GoMotoKin ini file %s\n", inifile_name.c_str());
+      errmsg=strformat( "Can't load GoKin ini file %s\n", inifile_name.c_str());
       return Ini_File_Error;
     }
 
     print_params(link_params, link_number);
 
     if (GO_RESULT_OK != genser_kin_set_parameters(&kins, link_params, link_number)) {
-      fprintf(stdout, "can't set GoMotoKin kinematics parameters\n");
-      return Bad_Parameter;
+        errmsg=strformat( "can't set GoKin kinematics parameters\n");
+        return Bad_Parameter;
     }
 
     return GO_RESULT_OK;
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::debugStream(std::ostream& o)
+int GoKin::debugStream(std::ostream& o)
 {
     out.copyfmt(o); //1
     out.clear(o.rdstate()); //2
@@ -148,55 +169,44 @@ int GoMotoKin::debugStream(std::ostream& o)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::debug(bool flag)
+int GoKin::debug(bool flag)
 {
     bDebug=flag;
     return GO_RESULT_OK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::SetWristOffset(double offset)
+int GoKin::SetWristOffset(double offset)
 {
     return GO_RESULT_OK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::FK(std::vector<double> joints, tf::Pose &pose)
+int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
 {
 
+    errmsg.clear();
     go_pose gopose;
 
     //go_result genser_kin_fwd(void * kins, const go_real *joints,  go_pose * pos)
     if (GO_RESULT_OK != genser_kin_fwd(&kins, &joints[0], &gopose)) {
-        fprintf(stdout, "Can't run general serial forward kinematics\n");
-        return 1;
+        errmsg= "Can't run general serial forward kinematics\n";
+        return -1;
       }
 
     pose=tf::Pose(tf::Quaternion(gopose.rot.x,gopose.rot.y,gopose.rot.z,gopose.rot.s ),
                   tf::Vector3(gopose.tran.x, gopose.tran.y, gopose.tran.z) );
 
 
-//    if(bDebug)
-//    {
-//        out<< "GoMotoKin::FK\n";;
-//        out<< dumpJoints(joints);
-//    }
-
-#if 0
-    pose=basepose*pose;
-
-    if(bDebug)
-        out << "After base add in z:" << gomotion::DumpTfPose(pose);
-#endif
     return GO_RESULT_OK;
-
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-int GoMotoKin::IK(tf::Pose pose, std::vector<double>&  joints)
+int GoKin::IK(tf::Pose pose, std::vector<double>&  joints)
 {
 
+    errmsg.clear();
     size_t n=joints.size();
     // Last joints are an estimate for next joints
 //    joints.resize(7,0.0);
@@ -207,7 +217,7 @@ int GoMotoKin::IK(tf::Pose pose, std::vector<double>&  joints)
 
     if(bDebug)
     {
-        out<< "GoMotoKin::IK\n" << DumpTfPose(pose);
+        out<< "GoKin::IK\n" << DumpTfPose(pose);
     }
 
     go_pose gopose;
@@ -221,17 +231,85 @@ int GoMotoKin::IK(tf::Pose pose, std::vector<double>&  joints)
 
     int res =  genser_kin_inv(&kins, &gopose, &cpyjoints[0]);
     if (GO_RESULT_OK != res) {
-        fprintf(stdout, "Can't run general serial inverse kinematics %s\n", go_result_to_string(res));
-        fprintf(stdout, "tf:\n%s", DumpTfPose(pose).c_str());
-        fprintf(stdout, "go:\n%s", DumpGoPose(gopose).c_str());
+        std::string ss;
+        ss+= strformat( "Can't run general serial inverse kinematics %s\n", go_result_to_string(res));
+        ss+= strformat( "tf:\n%s", DumpTfPose(pose).c_str());
+        ss+= strformat( "go:\n%s", DumpGoPose(gopose).c_str());
+        errmsg=ss;
         return res;
     }
     if(bDebug)
     {
-        fprintf(stdout, "IK Joints:\n");
-        fprintf(stdout, "%s", DumpJoints(joints).c_str());
+        out<< "IK Joints:\n";
+        out<<  strformat("%s", DumpJoints(joints).c_str());
     }
     joints.clear();
     joints.insert(joints.begin(), cpyjoints.begin(), cpyjoints.begin()+n);
     return GO_RESULT_OK;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::string GoKin::get(std::string param)
+{
+    const char* ws = " \t\n\r";
+
+    param.erase(param.find_last_not_of(ws) + 1);
+    param.erase(0, param.find_first_not_of(ws));
+    std::transform(param.begin(), param.end(),param.begin(), ::toupper);
+    if(param == "ERROR")
+    {
+        return errmsg;
+    }
+    else if(param == "HELP")
+    {
+        std::stringstream ss;
+        ss << "GoKin kinematics solver using gomotion genserkins\n";
+        ss << "Parameters:\n";
+        ss << "\tini\n";
+        ss << "\tinifile\n";
+        ss << "\turdf\n";
+        ss << "\tbase\n";
+        ss << "\ttip\n";
+        return ss.str();
+    }
+    else if(param == "INI")
+    {
+        return ini;
+    }
+    else if(param == "INIFILE")
+    {
+        return _inifilename;
+    }
+    else if(param == "URDF")
+    {
+        return _urdf;
+    }
+    else if(param == "BASE")
+    {
+        return _baselink;
+    }
+    else if(param == "TIP")
+    {
+        return _tiplink;
+    }
+    return std::string("No get for parameter ") + param;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::string GoKin::set(std::string param,  std::string value)
+{
+    const char* ws = " \t\n\r";
+
+    param.erase(param.find_last_not_of(ws) + 1);
+    param.erase(0, param.find_first_not_of(ws));
+    std::transform(param.begin(), param.end(),param.begin(), ::toupper);
+    if(param == "DEBUG")
+    {
+        bDebug = std::stoi(value);
+        return "";
+    }
+    return std::string("No match for ") + param;
+
 }

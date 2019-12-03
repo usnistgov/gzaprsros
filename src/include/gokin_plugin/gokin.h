@@ -17,14 +17,14 @@
 namespace RCS
 {
 
-class GoMotoKin : public IKinematic, public  CSerialLinkRobot
+class GoKin : public IKinematic, public  CSerialLinkRobot
 {
 public:
 
 
 public:
-    GoMotoKin();
-   ~GoMotoKin();
+    GoKin();
+    ~GoKin();
     int init(std::string urdf, std::string baselink, std::string tiplink);
     const  std::string & getName(void){ return robot_name; }
 
@@ -34,6 +34,17 @@ public:
     int debugStream(std::ostream&);
     int SetWristOffset(double x);
     size_t numJoints() { return jointNames.size(); }
+
+    std::string set(std::string param,  std::string value);
+    std::string get(std::string param);
+    bool isError(){ return errmsg.empty(); }
+
+
+    static boost::shared_ptr<GoKin> create()
+    {
+        return boost::shared_ptr<GoKin>( new GoKin());
+    }
+
     // this is here for posterity - to be replace by URDF xtring read init
     int Init(std::string filename);
 private:
@@ -41,6 +52,7 @@ private:
     tf::Pose basepose;
     bool bDebug;
     std::ofstream out;
+    std::string errmsg;
 
     std::string inifile_name;
 
@@ -52,11 +64,17 @@ private:
     go_real home_joint[GENSER_MAX_JOINTS];
     char kin_name[GO_KIN_NAME_LEN] ;
     go_pose home_position;
-//    boost::filesystem::path temp ;
-//    std::string tempstr;
+    std::string _urdf;
+    std::string _baselink;
+    std::string  _tiplink;
+    std::string  _inifilename;
+    std::string ini;
+
+    //    boost::filesystem::path temp ;
+    //    std::string tempstr;
 };
 
-extern "C" BOOST_SYMBOL_EXPORT  GoMotoKin goserkin;
+extern "C" BOOST_SYMBOL_EXPORT  GoKin goserkin;
 
 }
 #endif // GOKIN_H

@@ -19,6 +19,7 @@ using namespace  ikfast;
 IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
 {
     bDebug=false;
+    bHandleExceptions=false;
     debugStream(std::cout);
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,9 +44,14 @@ int IKFAST_FanucKin::debug(bool flag)
 ////////////////////////////////////////////////////////////////////////////////
 int IKFAST_FanucKin::init(std::string urdf, std::string baselink, std::string tiplink)
 {
-
+    _urdf=urdf;
+    _baselink=baselink;
+    _tiplink=tiplink;
+    errmsg.clear();
     if(! parseURDF(urdf, baselink, tiplink))
     {
+        std::cerr<< "IKFAST_FanucKin failed to parse URDF string\n";
+        errmsg="IKFAST_FanucKin Failed parse URDF string\n";
         return -1;
     }
     return 0;
@@ -53,6 +59,7 @@ int IKFAST_FanucKin::init(std::string urdf, std::string baselink, std::string ti
 ////////////////////////////////////////////////////////////////////////////////
 int IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
 {
+    errmsg.clear();
     // DO NOT Handle gearing of joints
     double eetrans[4];
     double eerot[9];
@@ -105,13 +112,16 @@ int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &jo
 
     //TODO(Fix Singularity issue in FanucLRMate200idFastKinematics::AllPoseToJoints)
     if (!bSuccess) {
-        IKFAST_FanucKin::out <<"Failed to get ik solution:"<<RCS::dumpPoseSimple(pose)<<"\n"<< std::flush;
+        std::stringstream ss;
+        ss <<"Failed to get ik solution:"<<RCS::dumpPoseSimple(pose)<<"\n"<< std::flush;
+        IKFAST_FanucKin::out << ss.str();
+        errmsg=ss.str();
 
 #if 0
         if(this->bDebug)
              IKFAST_FanucKin::out <<"Failed to get ik solution:"<<RCS::dumpPoseSimple(pose)<<"\n"<< std::flush;
 
-        if(Globals.bHandleExceptions)
+        if(bHandleExceptions)
             throw RobotControlException(10, _nc->name().c_str());
 #endif
         return -1;
@@ -172,6 +182,9 @@ std::vector<double> IKFAST_FanucKin::nearestJoints(
 int IKFAST_FanucKin::IK(tf::Pose pose,
          std::vector<double>& newjoints)
 {
+    // Clear error message
+    errmsg.clear();
+
     // Copy seed
     std::vector<double> oldjoints;
     oldjoints=newjoints;
@@ -181,8 +194,75 @@ int IKFAST_FanucKin::IK(tf::Pose pose,
     int bFlag = allIK(pose, allsolutions);
 
     if(bFlag<0)
+    {
+        errmsg+="IKFAST_FanucKin::IK failed\n";
         return -1;
+    }
+
     // pick closet solution to seed ....
     newjoints= nearestJoints(oldjoints, allsolutions);
     return 0;
+}
+////////////////////////////////////////////////////////////////////////////////
+std::string IKFAST_FanucKin::get(std::string param)
+{
+    const char* ws = " \t\n\r";
+
+    param.erase(param.find_last_not_of(ws) + 1);
+    param.erase(0, param.find_first_not_of(ws));
+    std::transform(param.begin(), param.end(),param.begin(), ::toupper);
+    if(param == "ERROR")
+    {
+        return errmsg;
+    }
+    else if(param == "HELP")
+    {
+        std::stringstream ss;
+        ss << "IKFAST_FanucKin kinematics solver using ikfast kinematic solver for fanuc 200id\n";
+        ss << "Parameters Get:\n";
+        ss << "\turdf\n";
+        ss << "\turdf\n";
+        ss << "\tbase\n";
+        ss << "\ttip\n";
+        ss << "Parameters Set:\n";
+        ss << "\tdebug\n";
+        ss << "\tHandleExceptions\n";
+        return ss.str();
+    }
+    else if(param == "URDF")
+    {
+        return _urdf;
+    }
+    else if(param == "BASE")
+    {
+        return _baselink;
+    }
+    else if(param == "TIP")
+    {
+        return _tiplink;
+    }
+    return std::string("No get for parameter ") + param;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::string IKFAST_FanucKin::set(std::string param,  std::string value)
+{
+    const char* ws = " \t\n\r";
+
+    param.erase(param.find_last_not_of(ws) + 1);
+    param.erase(0, param.find_first_not_of(ws));
+    std::transform(param.begin(), param.end(),param.begin(), ::toupper);
+    if(param == "DEBUG")
+    {
+        bDebug = std::stoi(value);
+        return "";
+    }
+    else if(param == "HANDLEEXCEPTIONS")
+    {
+        bHandleExceptions = std::stoi(value);
+        return "";
+    }
+    return std::string("No match for ") + param;
+
 }

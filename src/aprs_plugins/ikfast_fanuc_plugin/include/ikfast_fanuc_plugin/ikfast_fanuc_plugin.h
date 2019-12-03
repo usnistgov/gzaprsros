@@ -30,9 +30,18 @@ public:
     int debug(bool flag);
     int debugStream(std::ostream&);
     size_t numJoints() ;
+    std::string set(std::string param,  std::string value);
+    std::string get(std::string param);
+    bool isError(){ return errmsg.empty(); }
+
 private:
     bool bDebug;
+    bool bHandleExceptions;
     std::ofstream out;
+    std::string errmsg;
+    std::string _urdf;
+    std::string _baselink;
+    std::string  _tiplink;
 
 
     int allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints);

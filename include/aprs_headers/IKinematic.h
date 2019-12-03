@@ -14,6 +14,7 @@ namespace RCS
 class IKinematic : public ISerialLinkRobot
 {
 public:
+    // Errors so far....
     static const int Parsing_Error = -2;
     static const int Bad_Parameter = -3;
     static const int Initialization_Failed = -4;
@@ -56,6 +57,11 @@ public:
 
     virtual int debug(bool flag)=0;
     virtual int debugStream(std::ostream&)=0;
+
+    virtual std::string set(std::string param,  std::string value)=0;
+
+    virtual std::string get(std::string param)=0;
+    virtual bool isError()=0;
 
     // Need to set configuration flags for solution: e.g., elbow up/down
 #if 0
