@@ -235,7 +235,7 @@ struct CController : public RCS::Thread,
      * @brief DumpRobotNC gives a string summary of controller
      * @param nc pointer to controller to display summary
      */
-    static void dumpRobotNC(std::shared_ptr<CController> nc);
+    static void dumpRobotNC(std::ostream & ofsRobotURDF, std::shared_ptr<CController> nc);
 
     /**
      * @brief allJointNumbers produce a CRCL list of joint numbers

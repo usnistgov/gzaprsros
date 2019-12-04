@@ -577,13 +577,14 @@ nextposition:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CController::dumpRobotNC(std::shared_ptr<CController> nc)
+void CController::dumpRobotNC(std::ostream & ofsRobotURDF, std::shared_ptr<CController> nc)
 {
 
     ofsRobotURDF << "============================================================\n";
     ofsRobotURDF << "NC " << nc->name().c_str() << "\n";
-    ofsRobotURDF << "base link " << nc->robotKinematics()->base_link.c_str() << "\n";
-    ofsRobotURDF << "ee link " << nc->robotKinematics()->end_link.c_str() << "\n";
+    ofsRobotURDF << "base link " << nc->robotKinematics()->get("help") << "\n";
+    ofsRobotURDF << "base link " << nc->robotKinematics()->get("base") << "\n";
+    ofsRobotURDF << "ee link " << nc->robotKinematics()->get("tip") << "\n";
     ofsRobotURDF << "num joints " << nc->robotKinematics()->numJoints() << "\n";
     ofsRobotURDF << "baseoffset " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
     ofsRobotURDF << "tooloffset " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";

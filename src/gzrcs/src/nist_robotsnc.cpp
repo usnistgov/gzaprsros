@@ -84,7 +84,7 @@ static     std::string get_env(  std::string  var )
 // get segmentation fault. It's here for now.
 typedef boost::shared_ptr<RCS::IKinematic> (pluginapi_create_t)();
 boost::function<pluginapi_create_t> creator;
-
+bool bSetupDebug=false;
 int main(int argc, char** argv)
 {
     std::vector<std::string> robots;
@@ -150,7 +150,8 @@ int main(int argc, char** argv)
             Globals.bCannedDemo=RCS::robotconfig.getSymbolValue<int>("system.CannedDemo","0");
             Globals.bWorldCRCLCoordinates=RCS::robotconfig.getSymbolValue<int>("system.WorldCRCLCoordinates","0");
             Globals.bGzGripperPlugin=RCS::robotconfig.getSymbolValue<int>("system.GzGripperPlugin","1");;
-            Globals.bDebug=RCS::robotconfig.getSymbolValue<int>("system.debug","1");;
+            Globals.bDebug=RCS::robotconfig.getSymbolValue<int>("system.debug","1");
+            bSetupDebug=RCS::robotconfig.getSymbolValue<int>("system.debug","0");
 
 
 
@@ -174,7 +175,7 @@ int main(int argc, char** argv)
             for(size_t k=0; k<debug_symbols.size(); k++)
                 add_breakpoint_var(debug_symbols[k]);
 
-            // Debug and logging setup of logging files
+            // Application setup of debug and logging setup of logging files
             Globals.debugSetup();
 
             logStatus( "gzrcs: Compiled %s %s\n" , __DATE__ , __TIME__ );
@@ -275,10 +276,6 @@ int main(int argc, char** argv)
                 // Finger gripping contact parameters
                 ncs[i]->fingerNames()= RCS::robotconfig.getTokens<std::string>( ncs[i]->gripperName()  + ".fingernames", ",");
 
-
-                // the increment to close the gripper - some positive some negative some little some big
-//                ncs[i]->fingerIncrement()= RCS::robotconfig.getTokens<double>( ncs[i]->gripperName()  + ".fingerIncrement", ",");
-
                 // Parse and record named joint moves - e.g., home safe
                 std::vector<std::string> jointmovenames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".joints.movenames", ",");
                 for (size_t j = 0; j < jointmovenames.size(); j++) {
@@ -334,6 +331,7 @@ int main(int argc, char** argv)
                     ncs[i]->robotKinematics() = creator();
 
         #if 0
+                    // This works for importing single instance of kin solver plugin
                     ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
                                                                                 lib_path/kin_plugin_dll,
                                                                                 kin_plugin_name,
@@ -350,6 +348,8 @@ int main(int argc, char** argv)
                         throw std::runtime_error("robotKinematics() urdf parse failed");
 
                     }
+                    if(bSetupDebug)
+                    std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
 
                 }
                 catch (const std::exception& e) {
@@ -393,8 +393,12 @@ int main(int argc, char** argv)
 
                 ncs[i]->part_list() = RCS::robotconfig.getTokens<std::string>( robots[i] + ".parts", ",");
 
-                if(Globals.DEBUG_Log_Robot_Config())
-                    RCS::CController::dumpRobotNC(ncs[i]);
+//                if(bSetupDebug)
+                {
+                    ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log", std::ofstream::app);
+                    RCS::CController::dumpRobotNC(ofsRobotURDF, ncs[i]);
+                    ofsRobotURDF.close();
+                }
 
             }
         } catch (std::exception &e) {
