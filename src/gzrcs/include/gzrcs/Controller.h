@@ -250,7 +250,7 @@ struct CController : public RCS::Thread,
     // Robot variables
     VAR(std::string, robotName);   /// robot's name
     VAR(std::string, robotPrefix);  // prefix to append to variables e.g., urdf joints/links
-    VAR(std::string, robotEelink);  // name of end effector link in robot
+    VAR(std::string, robotTiplink);  // name of end effector link in robot
     VAR(std::string, robotBaselink);  // name of base link in robot
 
     // Robot Status variables

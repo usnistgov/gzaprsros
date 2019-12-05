@@ -21,6 +21,19 @@ static std::string strformat( const char * format, Args ... args )
     return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
 }
 
+static bool readFile (std::string filename, std::string & contents)
+{
+    std::ifstream     in(filename.c_str( ), std::ifstream::in );
+    std::stringstream buffer;
+
+    if(!in.is_open())
+    {
+        return false;
+    }
+    buffer << in.rdbuf( );
+    contents = buffer.str( );
+    return true;
+}
 ////////////////////////////////////////////////////////////////////////////////
 GoKin::GoKin() : CSerialLinkRobot(this)
 {
@@ -40,86 +53,116 @@ int GoKin::init(std::string urdf, std::string baselink, std::string tiplink)
     errmsg.clear();
     debugStream(std::cout);
     kin_name[0]=0;
+
     _urdf=urdf;
     _baselink=baselink;
     _tiplink=tiplink;
+    return init();
 
+}
 
-    if(! parseURDF(urdf, baselink, tiplink))
+////////////////////////////////////////////////////////////////////////////////
+int GoKin::init()
+{
+    errmsg.clear();
+    int hr=0;
+    if(_urdf.empty() && _urdffile.empty())
     {
-        std::cerr<< "GoMotoKinBad URDF string\n";
+        errmsg=strformat( "GoKin missing urdf or urdffile parameters\n");
+        hr= Bad_Parameter;
+
+    }
+    else if(_urdffile.empty() )
+    {
+        errmsg=std::string("Urdffile parameter not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+    else if( !readFile(_urdffile,_urdf))
+    {
+        errmsg=std::string("Urdf file not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+
+
+    else if(! parseURDF(_urdf, _baselink, _tiplink))
+    {
         errmsg="GoMotoKinBad URDF string\n";
-        return -1;
+        hr= -1;
     }
 
-    // Now generate the ini file
-    ini.clear();
-    ini +="\n[GOMOTION]\n";
+    else {
+        // Now generate the ini file
+        ini.clear();
+        ini +="\n[GOMOTION]\n";
 
-    ini +="NAME="+robot_name+"\n";
-    ini +="VERSION=1.0\n";
-    ini +="EXT_INIT_STRING=\n";
-    ini +="LENGTH_UNITS_PER_M=1000\n";
-    ini +="ANGLE_UNITS_PER_RAD=57.2957795130823\n";
+        ini +="NAME="+robot_name+"\n";
+        ini +="VERSION=1.0\n";
+        ini +="EXT_INIT_STRING=\n";
+        ini +="LENGTH_UNITS_PER_M=1000\n";
+        ini +="ANGLE_UNITS_PER_RAD=57.2957795130823\n";
 
-    ini +="\n[TRAJ]\n";
+        ini +="\n[TRAJ]\n";
 
-    ini +="SHM_KEY=2201\n";
-    ini +="KINEMATICS=genserkins\n";
-    ini +="DEBUG=0x0\n";
-    ini +="CYCLE_TIME=0.100\n";
-
-    ini +="HOME=0 0 1500 0 0 0\n";  // fixme: dunny
-
-    ini +="\n[SERVO]\n";
-    ini +="HOWMANY=";
-    ini +=std::to_string(jointNames.size()) + "\n";
-
-
-    for(size_t i=0; i< jointNames.size(); i++)
-    {
-        ini +="\n[SERVO_"+std::to_string(i+1)+"]\n";
-
-        ini +="; QUANTITY refers to the quantity of motion effected by the joint,\n";
-        ini +="; in SI terms, Length or Angle.\n";
-        ini +="NAME=";
-        ini +=jointNames[i]+"\n";
-        ini +="QUANTITY=Angle\n";
-        ini +="URDF_PARAMETERS=";
-        for(size_t j=0; j< 3; j++)
-            ini +=std::to_string(xyzorigin[i][j]*1000)+" ";
-        for(size_t j=0; j< 3; j++)
-            ini +=std::to_string(rpyorigin[i][j]*1000)+" ";
-        for(size_t j=0; j< 3; j++)
-            ini +=std::to_string((double) axis[i][j])+" ";
-        ini+="\n";
+        ini +="SHM_KEY=2201\n";
+        ini +="KINEMATICS=genserkins\n";
         ini +="DEBUG=0x0\n";
-        ini +="CYCLE_TIME=0.010\n";
-        ini +="HOME=0\n";
+        ini +="CYCLE_TIME=0.100\n";
 
-        ini +="; INPUT_SCALE in user degrees per raw radians\n";
-        ini +="INPUT_SCALE=57.295779513082323\n";
-        ini +="; OUTPUT_ADJUST in raw radians per user degrees (per sec), space, rad/s offset\n";
-        ini +="OUTPUT_SCALE=0.017453292519943\n";
+        ini +="HOME=0 0 1500 0 0 0\n";  // fixme: dunny
+
+        ini +="\n[SERVO]\n";
+        ini +="HOWMANY=";
+        ini +=std::to_string(jointNames.size()) + "\n";
 
 
-        ini +="MIN_LIMIT="  + std::to_string(jointMin[i]) + "\n";
-        ini +="MAX_LIMIT=" + std::to_string(jointMax[i])+ "\n";
+        for(size_t i=0; i< jointNames.size(); i++)
+        {
+            ini +="\n[SERVO_"+std::to_string(i+1)+"]\n";
+
+            ini +="; QUANTITY refers to the quantity of motion effected by the joint,\n";
+            ini +="; in SI terms, Length or Angle.\n";
+            ini +="NAME=";
+            ini +=jointNames[i]+"\n";
+            ini +="QUANTITY=Angle\n";
+            ini +="URDF_PARAMETERS=";
+            for(size_t j=0; j< 3; j++)
+                ini +=std::to_string(xyzorigin[i][j]*1000)+" ";
+            for(size_t j=0; j< 3; j++)
+                ini +=std::to_string(rpyorigin[i][j]*1000)+" ";
+            for(size_t j=0; j< 3; j++)
+                ini +=std::to_string((double) axis[i][j])+" ";
+            ini+="\n";
+            ini +="DEBUG=0x0\n";
+            ini +="CYCLE_TIME=0.010\n";
+            ini +="HOME=0\n";
+
+            ini +="; INPUT_SCALE in user degrees per raw radians\n";
+            ini +="INPUT_SCALE=57.295779513082323\n";
+            ini +="; OUTPUT_ADJUST in raw radians per user degrees (per sec), space, rad/s offset\n";
+            ini +="OUTPUT_SCALE=0.017453292519943\n";
+
+
+            ini +="MIN_LIMIT="  + std::to_string(jointMin[i]) + "\n";
+            ini +="MAX_LIMIT=" + std::to_string(jointMax[i])+ "\n";
+        }
+        //const char* tf = std::tmpnam(nullptr);
+        //const char* tf ="/home/isd/michalos/build/gzrcs/debug/config/motoman_sia20d_new.ini";
+        //    return Init("/home/isd/michalos/build/gzrcs/debug/config/motoman_sia20d.ini");
+        //    std::ofstream ofs (tf, std::ofstream::out);
+        //    ofs << ini;
+        //    ofs.close();
+        char t[] = "/tmp/fileXXXXXX";
+        int fd;
+        fd = mkstemp(t);
+        _inifilename=t;
+
+        write(fd,ini.c_str(),ini.size());
+        close(fd);
+        hr=Init(t);
     }
-    //const char* tf = std::tmpnam(nullptr);
-    //const char* tf ="/home/isd/michalos/build/gzrcs/debug/config/motoman_sia20d_new.ini";
-//    return Init("/home/isd/michalos/build/gzrcs/debug/config/motoman_sia20d.ini");
-//    std::ofstream ofs (tf, std::ofstream::out);
-//    ofs << ini;
-//    ofs.close();
-    char t[] = "/tmp/fileXXXXXX";
-    int fd;
-    fd = mkstemp(t);
-     _inifilename=t;
-
-    write(fd,ini.c_str(),ini.size());
-    close(fd);
-    return Init(t);
+    if(!errmsg.empty())
+        std::cout << errmsg;
+    return hr;
 }
 
 
@@ -133,8 +176,8 @@ int GoKin::Init(std::string filename)
 
     if (GO_RESULT_OK != genser_kin_init(&kins))
     {
-      errmsg="Can't init GoKin general serial kinematics\n";
-      return Initialization_Failed;
+        errmsg="Can't init GoKin general serial kinematics\n";
+        return Initialization_Failed;
     }
 
     if (0 != ini_load((char *) inifile_name.c_str(),
@@ -144,9 +187,9 @@ int GoKin::Init(std::string filename)
                       (int*) &link_number,
                       (go_link*)  link_params,
                       home_joint,
-                       kin_name)) {
-      errmsg=strformat( "Can't load GoKin ini file %s\n", inifile_name.c_str());
-      return Ini_File_Error;
+                      kin_name)) {
+        errmsg=strformat( "Can't load GoKin ini file %s\n", inifile_name.c_str());
+        return Ini_File_Error;
     }
 
     print_params(link_params, link_number);
@@ -156,7 +199,7 @@ int GoKin::Init(std::string filename)
         return Bad_Parameter;
     }
 
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,20 +208,20 @@ int GoKin::debugStream(std::ostream& o)
     out.copyfmt(o); //1
     out.clear(o.rdstate()); //2
     out.basic_ios<char>::rdbuf(o.rdbuf());
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int GoKin::debug(bool flag)
 {
     bDebug=flag;
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int GoKin::SetWristOffset(double offset)
 {
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,13 +235,13 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     if (GO_RESULT_OK != genser_kin_fwd(&kins, &joints[0], &gopose)) {
         errmsg= "Can't run general serial forward kinematics\n";
         return -1;
-      }
+    }
 
     pose=tf::Pose(tf::Quaternion(gopose.rot.x,gopose.rot.y,gopose.rot.z,gopose.rot.s ),
                   tf::Vector3(gopose.tran.x, gopose.tran.y, gopose.tran.z) );
 
 
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 }
 
 
@@ -209,7 +252,7 @@ int GoKin::IK(tf::Pose pose, std::vector<double>&  joints)
     errmsg.clear();
     size_t n=joints.size();
     // Last joints are an estimate for next joints
-//    joints.resize(7,0.0);
+    //    joints.resize(7,0.0);
     std::vector<double> cpyjoints(joints);
     for(size_t i=n; i< GENSER_MAX_JOINTS; i++)
         cpyjoints.push_back(0.0);
@@ -245,7 +288,7 @@ int GoKin::IK(tf::Pose pose, std::vector<double>&  joints)
     }
     joints.clear();
     joints.insert(joints.begin(), cpyjoints.begin(), cpyjoints.begin()+n);
-    return GO_RESULT_OK;
+    return Kinematics_Ok;
 }
 
 
@@ -266,11 +309,14 @@ std::string GoKin::get(std::string param)
         std::stringstream ss;
         ss << "GoKin kinematics solver using gomotion genserkins\n";
         ss << "Parameters:\n";
+        ss << "\tihelp\n";
+        ss << "\terror\n";
         ss << "\tini\n";
         ss << "\tinifile\n";
         ss << "\turdf\n";
-        ss << "\tbase\n";
-        ss << "\ttip\n";
+        ss << "\turdf\n";
+        ss << "\tbaselink\n";
+        ss << "\ttiplink\n";
         return ss.str();
     }
     else if(param == "INI")
@@ -285,11 +331,15 @@ std::string GoKin::get(std::string param)
     {
         return _urdf;
     }
-    else if(param == "BASE")
+    else if(param == "URDFFILE")
+    {
+        return _urdffile;
+    }
+    else if(param == "BASELINK")
     {
         return _baselink;
     }
-    else if(param == "TIP")
+    else if(param == "TIPLINK")
     {
         return _tiplink;
     }
@@ -300,6 +350,7 @@ std::string GoKin::get(std::string param)
 ////////////////////////////////////////////////////////////////////////////////
 std::string GoKin::set(std::string param,  std::string value)
 {
+    errmsg.clear();
     const char* ws = " \t\n\r";
 
     param.erase(param.find_last_not_of(ws) + 1);
@@ -308,8 +359,33 @@ std::string GoKin::set(std::string param,  std::string value)
     if(param == "DEBUG")
     {
         bDebug = std::stoi(value);
-        return "";
     }
-    return std::string("No match for ") + param;
+    else if(param == "URDF")
+    {
+        _urdf=value;
+    }
+    else if(param == "URDFFILE")
+    {
+        _urdffile=value;
 
+    }
+    else if(param == "BASELINK")
+    {
+        _baselink=value;
+    }
+    else if(param == "TIPLINK")
+    {
+        _tiplink=value;
+    }
+    else
+    {
+        errmsg=std::string("No match for ") + param;
+    }
+    return errmsg;
+
+
+}
+std::string GoKin::set(std::string param,  void * value)
+{
+    return std::string("No match for ") + param;
 }

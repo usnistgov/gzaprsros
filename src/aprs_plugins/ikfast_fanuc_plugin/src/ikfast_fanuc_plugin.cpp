@@ -15,6 +15,21 @@ using namespace RCS;
 using namespace  ikfast;
 //using namespace FanucLRMate200d;
 
+
+static bool readFile (std::string filename, std::string & contents)
+{
+    std::ifstream     in(filename.c_str( ), std::ifstream::in );
+    std::stringstream buffer;
+
+    if(!in.is_open())
+    {
+        return false;
+    }
+    buffer << in.rdbuf( );
+    contents = buffer.str( );
+    return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
 {
@@ -42,19 +57,35 @@ int IKFAST_FanucKin::debug(bool flag)
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::init(std::string urdf, std::string baselink, std::string tiplink)
+int IKFAST_FanucKin::init()
 {
-    _urdf=urdf;
-    _baselink=baselink;
-    _tiplink=tiplink;
     errmsg.clear();
-    if(! parseURDF(urdf, baselink, tiplink))
+    int hr=0;
+    if(_urdf.empty() && _urdffile.empty())
     {
-        std::cerr<< "IKFAST_FanucKin failed to parse URDF string\n";
-        errmsg="IKFAST_FanucKin Failed parse URDF string\n";
-        return -1;
+        errmsg= "IKFAST_FanucKin missing urdf or urdffile parameters\n";
+        hr= Bad_Parameter;
+
     }
-    return 0;
+    else if(_urdffile.empty() )
+    {
+        errmsg=std::string("Urdffile parameter not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+    else if( !readFile(_urdffile,_urdf))
+    {
+        errmsg=std::string("Urdf file not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+
+
+    else if(! parseURDF(_urdf, _baselink, _tiplink))
+    {
+        errmsg="GoMotoKinBad URDF string\n";
+        hr= -1;
+    }
+
+    return hr;
 }
 ////////////////////////////////////////////////////////////////////////////////
 int IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
@@ -220,24 +251,34 @@ std::string IKFAST_FanucKin::get(std::string param)
         std::stringstream ss;
         ss << "IKFAST_FanucKin kinematics solver using ikfast kinematic solver for fanuc 200id\n";
         ss << "Parameters Get:\n";
+        ss << "\thelp\n";
+        ss << "\terror\n";
         ss << "\turdf\n";
-        ss << "\turdf\n";
-        ss << "\tbase\n";
-        ss << "\ttip\n";
+        ss << "\turdffile\n";
+        ss << "\tbaselink\n";
+        ss << "\ttiplink\n";
         ss << "Parameters Set:\n";
         ss << "\tdebug\n";
         ss << "\tHandleExceptions\n";
+        ss << "\turdf\n";
+        ss << "\turdffile\n";
+        ss << "\tbaselink\n";
+        ss << "\ttiplink\n";
         return ss.str();
     }
     else if(param == "URDF")
     {
         return _urdf;
     }
-    else if(param == "BASE")
+    else if(param == "URDFFILE")
+    {
+        return _urdffile;
+    }
+    else if(param == "BASELINK")
     {
         return _baselink;
     }
-    else if(param == "TIP")
+    else if(param == "TIPLINK")
     {
         return _tiplink;
     }
@@ -249,6 +290,7 @@ std::string IKFAST_FanucKin::get(std::string param)
 std::string IKFAST_FanucKin::set(std::string param,  std::string value)
 {
     const char* ws = " \t\n\r";
+    errmsg.clear();
 
     param.erase(param.find_last_not_of(ws) + 1);
     param.erase(0, param.find_first_not_of(ws));
@@ -256,13 +298,38 @@ std::string IKFAST_FanucKin::set(std::string param,  std::string value)
     if(param == "DEBUG")
     {
         bDebug = std::stoi(value);
-        return "";
     }
     else if(param == "HANDLEEXCEPTIONS")
     {
         bHandleExceptions = std::stoi(value);
-        return "";
     }
-    return std::string("No match for ") + param;
+    else if(param == "URDF")
+    {
+        _urdf=value;
+    }
+    else if(param == "URDFFILE")
+    {
+        _urdffile=value;
 
+    }
+    else if(param == "BASELINK")
+    {
+        _baselink=value;
+    }
+    else if(param == "TIPLINK")
+    {
+        _tiplink=value;
+    }
+    else
+    {
+        errmsg=std::string("No match for ") + param;
+    }
+    return errmsg;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::string IKFAST_FanucKin::set(std::string param,  void * value)
+{
+    return std::string("No match for ") + param;
 }

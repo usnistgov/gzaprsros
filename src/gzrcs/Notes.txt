@@ -109,7 +109,7 @@ else if (kinsolver == "GoMotoKin") {
 }
 try {
     kin->InitROS(std::string("manipulator"),
-              ncs[i]->robotEelink(),
+              ncs[i]->robotTiplink(),
               ncs[i]->robotBaselink());
     ncs[i]->robotKinematics() = kin;
 

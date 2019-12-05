@@ -213,7 +213,7 @@ int main(int argc, char** argv)
 
                 ncs[i]->cycleTime() = dCycleTime;
                 ncs[i]->robotPrefix() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.prefix", "ERROR");
-                ncs[i]->robotEelink() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.eelink", "ERROR");
+                ncs[i]->robotTiplink() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.tiplink", "ERROR");
                 ncs[i]->robotBaselink() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.baselink", "ERROR");
 
                 ncs[i]->crclPublishStatusRate()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".crcl.PublishStatusPeriod", "0.05");
@@ -306,7 +306,6 @@ int main(int argc, char** argv)
                 // get kinematic plugin configuration information
                 std::string kin_plugin_dll = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.plugin", "");
                 std::string kin_plugin_name = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.name", "");
-                std::string urdffile = Globals.appProperties["PackageSrcPath"]+ RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".urdf", "");
 
                 std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
                 std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
@@ -333,23 +332,43 @@ int main(int argc, char** argv)
         #if 0
                     // This works for importing single instance of kin solver plugin
                     ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
-                                                                                lib_path/kin_plugin_dll,
+                                                                               lib_path/kin_plugin_dll,
                                                                                 kin_plugin_name,
                                                                                 boost::dll::load_mode::default_mode);
-        #endif
+       #endif
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
-                    // load in urdf
-                    std::string urdf;
-                    Globals.readFile(urdffile, urdf);
-                    if(ncs[i]->robotKinematics()->init(urdf, ncs[i]->robotBaselink(), ncs[i]->robotEelink())<0)
+                    std::vector<std::string> paramnames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".nc.kinsolver.params", ",");
+                    for (size_t j = 0; j < paramnames.size(); j++)
+                    {
+                        std::string value;
+                        std::string param= paramnames[j];
+                        if(param.find("fileread ",0)==0)
+                        {
+                            param.erase(0, sizeof("fileread"));
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot." + param, "");
+                            value=Globals.appProperties["PackageSrcPath"]+ value;
+                         }
+                        else
+                        {
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot." + param, "");
+                        }
+
+                        ncs[i]->robotKinematics()->set(param,value);
+                        // load in urdf
+                        // std::string urdffile = Globals.appProperties["PackageSrcPath"]+ RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".urdf", "");
+                        // std::string urdf;
+                        // Globals.readFile(urdffile, urdf);
+                    }
+
+                    if(ncs[i]->robotKinematics()->init()) //urdf, ncs[i]->robotBaselink(), ncs[i]->robotTiplink())<0)
                     {
                         throw std::runtime_error("robotKinematics() urdf parse failed");
 
                     }
                     if(bSetupDebug)
-                    std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
+                        std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
 
                 }
                 catch (const std::exception& e) {
