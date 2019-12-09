@@ -9,6 +9,8 @@
 #include <string>
 #include <array>
 #include <fstream>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -100,8 +102,8 @@ CComandLineInterface::CComandLineInterface()
 void CComandLineInterface::addController(std::shared_ptr<CController>  nc)
 {
     this->_nc=nc;
-//    nccmds.push_back(CrclApi(nc));
-//    ncs.push_back(nc);
+    //    nccmds.push_back(CrclApi(nc));
+    //    ncs.push_back(nc);
 
     _robotNames.clear();
     for(size_t i=0; i< 1; i++)
@@ -202,29 +204,84 @@ bool CComandLineInterface::jog(char c,double amt, int &jnt, int &axis)
     return true;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
-int CComandLineInterface::inputLoop()
+void CComandLineInterface::loopCallback(char* line)
 {
 
-    struct pollfd fds;
-    int ret;
-    fds.fd = 0; /* this is STDIN */
-    fds.events = POLLIN;
-    ret = poll(&fds, 1, 0);
-    if(ret == 0)
+    //    Non-blocking polled read of std input
+    //    struct pollfd fds;
+    //    int ret;
+    //    fds.fd = 0; /* this is STDIN */
+    //    fds.events = POLLIN;
+    //    ret = poll(&fds, 1, 0);
+    //    if(ret == 0)
+    //    {
+    //        return CController::NOOP;
+    //    }
+
+#if 1
+    if(!line)
     {
-        return CController::NOOP;
+        lineq.addMsgQueue("quit");
     }
+    else
+    {
+        add_history(line);
+        lineq.addMsgQueue(line);
+        free(line);
+    }
+
+#else
     std::string line;
     if(!std::getline(std::cin, line))
         return CController::EXITING;
-
     ret =  interpretLine(line);
+
     if(ret >=0)
         std::cout << "> " << std::flush;
     return ret;
+#endif
 }
+namespace {
+boost::function<void(char *)> callback;
+extern "C" void wrapper(char * s) {
+    callback(s);
+}
+}
+
+int CComandLineInterface::inputLoop()
+{
+    // http://www.mcld.co.uk/blog/2009/simple-gnu-readline-callback-style-example.html
+    const char *prompt = "RCS> ";
+    // Install the handler
+//    rl_callback_handler_install(prompt, (rl_vcpfunc_t*) std::bind(&CComandLineInterface::loopCallback, this,_1));
+    callback=boost::bind(&CComandLineInterface::loopCallback, this,_1);
+    rl_callback_handler_install(prompt, (rl_vcpfunc_t*) wrapper);
+
+    // Enter the event loop (simple example, so it doesn't do much except wait)
+    bRunning = 1;
+    while(bRunning){
+        usleep(10000);
+        rl_callback_read_char();
+    };
+    return 0;
+}
+
+int CComandLineInterface::inputState()
+{
+    if(lineq.sizeMsgQueue()>0)
+    {
+        std::string line = lineq.popBackMsgQueue();
+        state =  interpretLine(line);
+        return state;
+    }
+    if(state==CController::EXITING)
+    {
+        bRunning=false;
+    }
+    return CController::NOOP;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 int CComandLineInterface::interpretMacro(std::string macro_name)
@@ -325,18 +382,18 @@ int CComandLineInterface::interpretLine(std::string line)
         bool bWorld;
         std::string world("world");
         auto it = std::search(
-            msg.begin(), msg.end(),
-            world.begin(),   world.end(),
-            [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
-          );
+                    msg.begin(), msg.end(),
+                    world.begin(),   world.end(),
+                    [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+        );
         bWorld= (it != msg.end() );
         bool bRobot;
         std::string robot("robot");
         it = std::search(
-            msg.begin(), msg.end(),
-            robot.begin(),   robot.end(),
-            [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
-          );
+                    msg.begin(), msg.end(),
+                    robot.begin(),   robot.end(),
+                    [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+        );
         bRobot=(it != msg.end() );
 
         if(bWorld)
@@ -459,7 +516,7 @@ int CComandLineInterface::interpretLine(std::string line)
             // joint moves
             std::map<std::string, std::vector<double>>::iterator it2;
             std:: cout << "JOINTS" << "\n";
-             for(it2=ncs[_ncindex]->namedJointMove().begin(); it2!= ncs[_ncindex]->namedJointMove().end(); it2++)
+            for(it2=ncs[_ncindex]->namedJointMove().begin(); it2!= ncs[_ncindex]->namedJointMove().end(); it2++)
             {
                 std:: cout << (*it2).first << "\n";
             }
@@ -489,10 +546,10 @@ int CComandLineInterface::interpretLine(std::string line)
     {
         crclApi->moveJoints(ncs[_ncindex]->allJointNumbers(), ncs[_ncindex]->namedJointMove()["home"]);
     }
-//    else if (msg.compare("safe") == 0)
-//    {
-//            crclApi->move_joints(ncs[ncindex]->robotKinematics()->allJointNumbers(), ncs[ncindex]->NamedJointMove["safe"]);
-//    }
+    //    else if (msg.compare("safe") == 0)
+    //    {
+    //            crclApi->move_joints(ncs[ncindex]->robotKinematics()->allJointNumbers(), ncs[ncindex]->NamedJointMove["safe"]);
+    //    }
 
     else if (msg.compare( 0, strlen("joints "), "joints ") == 0 )
     {
@@ -547,7 +604,7 @@ int CComandLineInterface::interpretLine(std::string line)
     }
     else if (msg.compare("close") == 0)
     {
-       crclApi->closeGripper();
+        crclApi->closeGripper();
     }
     else if (msg.compare("smartclose") == 0)
     {
@@ -559,13 +616,13 @@ int CComandLineInterface::interpretLine(std::string line)
         msg=Globals.trim(msg);
         double ee = FromStr<double>(msg);
         // End effector should be a percentage, instead use hard position for testing
-//        if(ee<0)
-//            ee=0;
-//        if(ee>1.)
-//            ee=1.;
+        //        if(ee<0)
+        //            ee=0;
+        //        if(ee>1.)
+        //            ee=1.;
         // ee is a value 0..1 as a percentage!
 
-       crclApi->setAbsPosGripper(ee);
+        crclApi->setAbsPosGripper(ee);
     }
     else if (msg.compare(0, strlen("force "),"force ") == 0)
     {
@@ -785,7 +842,7 @@ int CComandLineInterface::interpretLine(std::string line)
         std::cout << "> goto name\t name is a stored names in config.ini file describing a set of joint position which the robot will move to..\n" ;
         std::cout << "> move_to obj\t moves to the gear instance given as a full name with a little offset from centroid of object.\n" ;
         std::cout << "> move x,y,z,r,p,y\t moves robot to the given pose given as xyz and roll, pitch, yaw.\n" ;
-   }
+    }
     else
     {
         if(!msg.empty())

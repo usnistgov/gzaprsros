@@ -36,7 +36,7 @@ public:
 public:
     Ckdl_plugin();
    ~Ckdl_plugin();
-    int init(std::string urdf, std::string baselink, std::string tiplink);
+    int init();
     const  std::string & getName(void){ return robot_name; }
 
     int FK(std::vector<double> jv, tf::Pose &pose);
@@ -45,6 +45,7 @@ public:
     int debugStream(std::ostream&);
     size_t numJoints() ;
     std::string set(std::string param,  std::string value);
+    std::string set(std::string param,  void * value);
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
 
@@ -67,6 +68,7 @@ private:
     std::ofstream out;
     std::string errmsg;
     std::string _urdf;
+    std::string _urdffile;
     std::string _baselink;
     std::string  _tiplink;
 

@@ -15,6 +15,7 @@ class IKinematic : public ISerialLinkRobot
 {
 public:
     // Errors so far....
+    static const int Kinematics_Ok=0;
     static const int Parsing_Error = -2;
     static const int Bad_Parameter = -3;
     static const int Initialization_Failed = -4;
@@ -25,7 +26,8 @@ public:
     static const int Bad_Conversion = -9;
     static const int Robot_IK_Problem = -10;
 
-    virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;
+    virtual int init()=0;
+    //virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;
     /**
      * @brief get_name This function gets a descriptive and hopefully unique name so
      *    that the controller can adjust the meaning of the parameters passed
@@ -59,6 +61,7 @@ public:
     virtual int debugStream(std::ostream&)=0;
 
     virtual std::string set(std::string param,  std::string value)=0;
+    virtual std::string set(std::string param,  void * value)=0;
 
     virtual std::string get(std::string param)=0;
     virtual bool isError()=0;

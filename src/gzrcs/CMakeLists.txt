@@ -241,6 +241,7 @@ target_link_libraries(${PROJECT_NAME}
   crcllib
   assimp
   dl
+  readline
  )
 
 #############

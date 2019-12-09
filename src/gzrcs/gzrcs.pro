@@ -124,6 +124,8 @@ INCLUDEPATH += $$PWD/../../install/include
 
 # Eigen - header only
 INCLUDEPATH += "/usr/include/eigen3"
+# Gnu readline
+INCLUDEPATH += "/usr/local/include"
 
 
 #ROS
@@ -148,7 +150,7 @@ LIBS += -L$$PWD/../../lib
 LIBS +=  -lgotraj
 LIBS +=  -lcrcllib
 LIBS +=  -ldl
-
+LIBS += -lreadline
 LIBS += -L$$PWD/../../install/lib
 
 # Installed Ros libs

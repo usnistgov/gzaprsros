@@ -70,6 +70,7 @@ class CComandLineInterface
 public:
 
     int state;
+    bool bRunning;
 
     ///
     /// \brief CLI contrustor for command line interpreter
@@ -81,6 +82,9 @@ public:
     /// \return <0 to quit, 0 if ok and continue, >0 if error.
     ///
     int inputLoop();
+    int inputState();
+    void loopCallback(char* line);
+    CMessageQueue<std::string> lineq;
 
     /// \brief InterpretLine given an input line calls appropriate CrclAPI
     /// \param line command line to interpret

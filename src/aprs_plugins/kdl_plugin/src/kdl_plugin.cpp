@@ -5,8 +5,20 @@
 #include <kdl_plugin/kdl_plugin.h>
 
 using namespace RCS;
-Ckdl_plugin kdl_plugin;
+//Ckdl_plugin kdl_plugin;
+static bool readFile (std::string filename, std::string & contents)
+{
+    std::ifstream     in(filename.c_str( ), std::ifstream::in );
+    std::stringstream buffer;
 
+    if(!in.is_open())
+    {
+        return false;
+    }
+    buffer << in.rdbuf( );
+    contents = buffer.str( );
+    return true;
+}
 ////////////////////////////////////////////////////////////////////////////////
 static KDL::Frame tfPoseToKDLFrame(tf::Pose m)
 {
@@ -74,11 +86,10 @@ size_t Ckdl_plugin::numJoints()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int Ckdl_plugin::init(std::string urdf, std::string baselink, std::string tiplink)
+int Ckdl_plugin::init()
 {
-    _urdf=urdf;
-    _baselink=baselink;
-    _tiplink=tiplink;
+
+    int hr;
     errmsg.clear();
     maxIterations=1000;
     epsilon=0.001;
@@ -88,7 +99,27 @@ int Ckdl_plugin::init(std::string urdf, std::string baselink, std::string tiplin
     //kin_name[0]=0;
     std::string kin_name;
 
-    if(! parseURDF(urdf, baselink, tiplink))
+    if(_urdf.empty() && _urdffile.empty())
+    {
+        errmsg= "GoKin missing urdf or urdffile parameters\n";
+        hr= Bad_Parameter;
+
+    }
+    else if(_urdffile.empty() )
+    {
+        errmsg=std::string("Urdffile parameter not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+    else if( !readFile(_urdffile,_urdf))
+    {
+        errmsg=std::string("Urdf file not found ")+_urdffile;
+        hr= Bad_Parameter;
+    }
+
+    if(hr<0)
+        return hr;
+
+    if(! parseURDF(_urdf, _baselink, _tiplink))
     {
         std::cerr<< "Ckdl_plugin failed to parse URDF string\n";
         errmsg="Ckdl_plugin failed to parse URDF string\n";
@@ -96,16 +127,17 @@ int Ckdl_plugin::init(std::string urdf, std::string baselink, std::string tiplin
     }
 
     // reference https://wiki.ros.org/kdl_parser/Tutorials/Start%20using%20the%20KDL%20parser
-    if (!kdl_parser::treeFromString(urdf, tree)) {
+    if (!kdl_parser::treeFromString(_urdf, tree))
+    {
         std::cerr<<"Failed to construct kdl tree\n";
         errmsg="Failed to construct kdl tree\n";
         return -1;
     }
 
-    if (!tree.getChain(baselink, tiplink, chain))
+    if (!tree.getChain(_baselink, _tiplink, chain))
     {
         std::stringstream ss;
-        ss << "Couldn't find KDL chain from "<< baselink<<  " to " << tiplink << "\n";
+        ss << "Couldn't find KDL chain from "<< _baselink<<  " to " << _tiplink << "\n";
         std::cerr<< ss.str();
         errmsg= ss.str();
         return -1;
@@ -234,6 +266,28 @@ std::string Ckdl_plugin::set(std::string param,  std::string value)
         bHandleExceptions = std::stoi(value);
         return "";
     }
+    else if(param == "URDF")
+    {
+        _urdf=value;
+    }
+    else if(param == "URDFFILE")
+    {
+        _urdffile=value;
+
+    }
+    else if(param == "BASELINK")
+    {
+        _baselink=value;
+    }
+    else if(param == "TIPLINK")
+    {
+        _tiplink=value;
+    }
     return std::string("No match for ") + param;
 
+}
+////////////////////////////////////////////////////////////////////////////////
+std::string Ckdl_plugin::set(std::string param,  void * value)
+{
+    return std::string("No match for ") + param;
 }

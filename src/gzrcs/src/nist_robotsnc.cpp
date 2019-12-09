@@ -317,7 +317,6 @@ int main(int argc, char** argv)
 
                 // Choose kinematic solver
                 boost::filesystem::path lib_path(ld_library_path);
-                boost::shared_ptr<IKinematic> plugin;
 
                 try {
 
@@ -328,6 +327,8 @@ int main(int argc, char** argv)
                     );
 
                     ncs[i]->robotKinematics() = creator();
+                    std::cout << ncs[i]->robotKinematics() << "\n";
+                    std::cout << ncs[i]->robotKinematics()->get("help");
 
         #if 0
                     // This works for importing single instance of kin solver plugin
@@ -458,37 +459,47 @@ int main(int argc, char** argv)
 
         CGlobals::bPaused=false;
         cli.state=CController::NORMAL;
+
+        std::thread t1(&CComandLineInterface::inputLoop, &cli);
+
         int state=0;
         do {
             for (size_t i = 0; i < ncs.size(); i++)
             {
-                cli.state = cli.inputLoop();
+                int clistate= cli.inputState();
+
+                if(clistate==CController::NOOP)
+                {
+                    Globals.sleep(100);
+                    continue;
+                }
+
 
                if(geardemo->isDone(state))
                    state=0;
 
-               if(cli.state==CController::EXITING)
+               if(clistate==CController::EXITING)
                 {
                     CGlobals::bRunning=false;
                     break;
                 }
-                if(cli.state==CController::PAUSED)
+                if(clistate==CController::PAUSED)
                     CGlobals::bPaused=true;
 
-                if(cli.state==CController::NORMAL)
+                if(clistate==CController::NORMAL)
                     CGlobals::bPaused=false;
 
-                if(cli.state==CController::ONCE)
+                if(clistate==CController::ONCE)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(cli.state==CController::AUTO)
+                if(clistate==CController::AUTO)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(cli.state==CController::REPEAT)
+                if(clistate==CController::REPEAT)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
@@ -511,7 +522,7 @@ int main(int argc, char** argv)
                     }
                 }
 
-                if(cli.state==CController::ONCE)
+                if(clistate==CController::ONCE)
                 {
                     CGlobals::bPaused=true;
                 }
