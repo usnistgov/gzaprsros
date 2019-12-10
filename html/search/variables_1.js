@@ -1,26 +1,6 @@
 var searchData=
 [
-  ['a',['a',['../structgomotion_1_1coeff.html#ad555cca07d6795172dfc62716a5d5261',1,'gomotion::coeff::a()'],['../classgomotion_1_1go__interp.html#a9ae6dc82a4330b5cb02481ac87169e57',1,'gomotion::go_interp::a()'],['../structgomotion_1_1go__dh.html#a7c0eb988be1174d9e399e1d879289cde',1,'gomotion::go_dh::a()'],['../structgomotion_1_1go__quadratic.html#a6c7ae9e2f77e687015fc736848971e5c',1,'gomotion::go_quadratic::a()'],['../structgomotion_1_1go__cubic.html#a4cef7eaf3f4f6f61163bdd85125a1e18',1,'gomotion::go_cubic::a()'],['../structgomotion_1_1go__quartic.html#a160b6aab2661877f8027d8eaf0db0d32',1,'gomotion::go_quartic::a()'],['../structgomotion_1_1go__traj__interp__spec.html#ad568653832d5b2ebf12f4a1892fa7f98',1,'gomotion::go_traj_interp_spec::a()']]],
-  ['acc',['acc',['../structgomotion_1_1go__motion__params.html#a494815c0bc4016f78b82e2005ee6ad70',1,'gomotion::go_motion_params::acc()'],['../structgomotion_1_1GoTrajParams.html#afe840290681b06d8016e6b04e4c9a504',1,'gomotion::GoTrajParams::acc()']]],
-  ['advanced',['ADVANCED',['../CMakeCache_8txt.html#ae4ad08ef146a0ae7d849e16e5322f562',1,'CMakeCache.txt']]],
-  ['alpha',['alpha',['../structgomotion_1_1go__dh.html#a46264c283e1edf0b1195abf35f537e5c',1,'gomotion::go_dh']]],
+  ['acc',['acc',['../structgomotion_1_1GoTrajParams.html#afe840290681b06d8016e6b04e4c9a504',1,'gomotion::GoTrajParams']]],
   ['appproperties',['appProperties',['../classCGlobals.html#ad42e9f712b12fc7b00b9a4c2d744965b',1,'CGlobals']]],
-  ['asound',['asound',['../CMakeCache_8txt.html#a5666ba1299bee1428fff6e1714615097',1,'CMakeCache.txt']]],
-  ['ass',['ass',['../CMakeCache_8txt.html#a90ec46864daa32d55d823291a0b3c2b5',1,'CMakeCache.txt']]],
-  ['at0',['at0',['../structgomotion_1_1go__traj__ca__spec.html#a8f95c4b292ef47cd322a851145e0b3eb',1,'gomotion::go_traj_ca_spec']]],
-  ['at1',['at1',['../structgomotion_1_1go__traj__cj__spec.html#ae63aa2315ba83e5110d79408db7666a8',1,'gomotion::go_traj_cj_spec']]],
-  ['auto',['AUTO',['../structRCS_1_1CController.html#a3318ffbe7181e831049016f2e521f15d',1,'RCS::CController']]],
-  ['avc1394',['avc1394',['../CMakeCache_8txt.html#a7f3f09428f99e380026c0633d11d3cc5',1,'CMakeCache.txt']]],
-  ['avcodec_5fstatic_5fldflags_5fother',['AVCODEC_STATIC_LDFLAGS_OTHER',['../CMakeCache_8txt.html#af3c15e081d185f4c9897b707f4dffc9b',1,'CMakeCache.txt']]],
-  ['avcodec_5fstatic_5flibdir',['AVCODEC_STATIC_LIBDIR',['../CMakeCache_8txt.html#aec262640c7dd8587eb8cbf48b5106749',1,'CMakeCache.txt']]],
-  ['avcodec_5fstatic_5flibrary_5fdirs',['AVCODEC_STATIC_LIBRARY_DIRS',['../CMakeCache_8txt.html#ae5874b8c2d90f461b13a55e0f6209bf0',1,'CMakeCache.txt']]],
-  ['avdevice_5fstatic_5fldflags_5fother',['AVDEVICE_STATIC_LDFLAGS_OTHER',['../CMakeCache_8txt.html#a1ad7b9256473935893f7e314f9d451f0',1,'CMakeCache.txt']]],
-  ['avdevice_5fstatic_5flibdir',['AVDEVICE_STATIC_LIBDIR',['../CMakeCache_8txt.html#aef30b06193aa56bac99e478fec04d450',1,'CMakeCache.txt']]],
-  ['avdevice_5fstatic_5flibrary_5fdirs',['AVDEVICE_STATIC_LIBRARY_DIRS',['../CMakeCache_8txt.html#addf0edbcc90d13384d8ddbc0640ddf64',1,'CMakeCache.txt']]],
-  ['avformat_5fstatic_5fldflags_5fother',['AVFORMAT_STATIC_LDFLAGS_OTHER',['../CMakeCache_8txt.html#aac332be56a4ae3ceee4d43173cece59c',1,'CMakeCache.txt']]],
-  ['avformat_5fstatic_5flibdir',['AVFORMAT_STATIC_LIBDIR',['../CMakeCache_8txt.html#a71f7d73ee864debee034971718b13dfe',1,'CMakeCache.txt']]],
-  ['avformat_5fstatic_5flibrary_5fdirs',['AVFORMAT_STATIC_LIBRARY_DIRS',['../CMakeCache_8txt.html#abba937f9b2358f2d67154f88d5a8e5f7',1,'CMakeCache.txt']]],
-  ['avutil_5fstatic_5fldflags_5fother',['AVUTIL_STATIC_LDFLAGS_OTHER',['../CMakeCache_8txt.html#a3a0d0db3e22daff4deb49c8106af0f01',1,'CMakeCache.txt']]],
-  ['avutil_5fstatic_5flibrary_5fdirs',['AVUTIL_STATIC_LIBRARY_DIRS',['../CMakeCache_8txt.html#abdd4ed6daf07dfae3f0d06218c66fde6',1,'CMakeCache.txt']]],
-  ['axis',['axis',['../structgomotion_1_1go__urdf.html#adf9ed0a219d8974da3f75bfddf12b4e6',1,'gomotion::go_urdf']]]
+  ['auto',['AUTO',['../structRCS_1_1CController.html#a3318ffbe7181e831049016f2e521f15d',1,'RCS::CController']]]
 ];

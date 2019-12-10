@@ -1,20 +1,10 @@
 var searchData=
 [
-  ['r',['r',['../structCGearDemo.html#aa8a8d376a8d4735ec72a017ed18f6118',1,'CGearDemo::r()'],['../structgomotion_1_1go__sph.html#a44361cc285fdc563622c7f74121bc5d8',1,'gomotion::go_sph::r()'],['../structgomotion_1_1go__cyl.html#a01ff0e161b92bff5b5742808fc0f5f02',1,'gomotion::go_cyl::r()'],['../structgomotion_1_1go__rpy.html#a37241d3fe9431d408add42f27e395154',1,'gomotion::go_rpy::r()']]],
-  ['rates',['rates',['../classCCrclApi.html#a6e11617f9dbea55b4c379b6de467836c',1,'CCrclApi']]],
-  ['raw1394',['raw1394',['../CMakeCache_8txt.html#a9e4706c8b527374daaa512147d3afa27',1,'CMakeCache.txt']]],
-  ['re',['re',['../structgomotion_1_1go__complex.html#a0c57ecf25c09bb70a15927561479a4f0',1,'gomotion::go_complex']]],
-  ['regex',['regex',['../CMakeCache_8txt.html#af18ab72f8804762b1bd2503efef30523',1,'CMakeCache.txt']]],
-  ['render',['render',['../CMakeCache_8txt.html#abdcafb4d43115c2f4eac628731c86461',1,'CMakeCache.txt']]],
-  ['repeat',['REPEAT',['../structRCS_1_1CController.html#a83c1499d82229f3d6c6bf649d89048a3',1,'RCS::CController']]],
-  ['reverse',['REVERSE',['../structRCS_1_1CController.html#adcbf2f532c7cd63630fa13bc1c90ad14',1,'RCS::CController']]],
-  ['robotconfig',['robotconfig',['../namespaceRCS.html#a937eaf698bba31dd280fa41cf3fb0536',1,'RCS']]],
-  ['rom1394',['rom1394',['../CMakeCache_8txt.html#a72c7376b359402ebdc5d2627bd51f133',1,'CMakeCache.txt']]],
-  ['ros',['Ros',['../cros_8cpp.html#acf5bee58d7e28583ca5e70ce02527bab',1,'Ros():&#160;cros.cpp'],['../cros_8h.html#acf5bee58d7e28583ca5e70ce02527bab',1,'Ros():&#160;cros.cpp']]],
-  ['rot',['rot',['../structgomotion_1_1go__pose.html#af30134c2f4d702ec890ec6726051cf8e',1,'gomotion::go_pose::rot()'],['../structgomotion_1_1go__hom.html#aea63ce241414f57e48ef0fd792d576c6',1,'gomotion::go_hom::rot()']]],
-  ['rows',['rows',['../structgomotion_1_1go__matrix.html#a7e46395453eb9731459d73cbaadd2cdf',1,'gomotion::go_matrix']]],
-  ['rstart',['rstart',['../structgomotion_1_1go__motion__circular__params.html#aeee40430ac2667fef1fc6eba842427b7',1,'gomotion::go_motion_circular_params']]],
-  ['rt',['rt',['../CMakeCache_8txt.html#a58d2eeb08d4e339138727553b3c4336b',1,'CMakeCache.txt']]],
-  ['rtmp',['rtmp',['../CMakeCache_8txt.html#aad43116d29f4ccf0536b42799f5078ed',1,'CMakeCache.txt']]],
-  ['rtot',['rtot',['../structgomotion_1_1go__motion__circular__params.html#a576992f878d73c0771e072fe37438f4f',1,'gomotion::go_motion_circular_params']]]
+  ['shapemutex',['shapemutex',['../namespaceShapeModel.html#aeee6a9fde292e47a2f426a85a7b96f10',1,'ShapeModel']]],
+  ['siginthandler',['sigIntHandler',['../Globals_8cpp.html#abdb680af2f4db1083ccca7ee3a206f70',1,'Globals.cpp']]],
+  ['srosmasterurl',['sRosMasterUrl',['../classCGlobals.html#adf972fa5f9cdd1598d72ad9732436617',1,'CGlobals']]],
+  ['srospackagename',['sRosPackageName',['../classCGlobals.html#adb4d5e6bb8d32b4f050b55f509e0955a',1,'CGlobals']]],
+  ['state',['state',['../classCComandLineInterface.html#ae17b691bd982d4f17f925c79853cc76e',1,'CComandLineInterface::state()'],['../structRCS_1_1CController.html#a044cbc22b904ef33a17ce36668938280',1,'RCS::CController::state()']]],
+  ['static_5fdescriptor_5finitializer_5fgripcommand_5f2eproto_5f',['static_descriptor_initializer_GripCommand_2eproto_',['../namespacemessage.html#a969e6a6ece612c1b640368e388884690',1,'message']]],
+  ['static_5fdescriptor_5finitializer_5fjointscomm_5f2eproto_5f',['static_descriptor_initializer_JointsComm_2eproto_',['../namespacemessage.html#a2fb59189055bb02598d6bed61557d058',1,'message']]]
 ];

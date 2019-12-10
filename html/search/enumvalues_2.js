@@ -1,31 +1,5 @@
 var searchData=
 [
-  ['gmt',['GMT',['../classCGlobals.html#a32f8f289bca445b5a2f6d1c68b6cbbb2ae2624dc9f15430f7e5d885c3807adac3',1,'CGlobals']]],
-  ['gmt_5fuv_5fsec',['GMT_UV_SEC',['../classCGlobals.html#a32f8f289bca445b5a2f6d1c68b6cbbb2ab0c064ba74b13a541bb4b8379bca2ae7',1,'CGlobals']]],
-  ['go_5flink_5fdh',['GO_LINK_DH',['../namespacegomotion.html#a5b5a03fc09c09e262c6941325f7beb17afd19d6aee8f10a912a656a2e01650b62',1,'gomotion']]],
-  ['go_5flink_5fpk',['GO_LINK_PK',['../namespacegomotion.html#a5b5a03fc09c09e262c6941325f7beb17a7b78cd6a637ea7ae037ec521ef34b8ab',1,'gomotion']]],
-  ['go_5flink_5fpp',['GO_LINK_PP',['../namespacegomotion.html#a5b5a03fc09c09e262c6941325f7beb17acbaa1fd4ed04f6ed93cc5296baaf6b78',1,'gomotion']]],
-  ['go_5flink_5furdf',['GO_LINK_URDF',['../namespacegomotion.html#a5b5a03fc09c09e262c6941325f7beb17acaf1a9c02a1e782d2a092d3186ccf9ae',1,'gomotion']]],
-  ['go_5fmotion_5fcircular',['GO_MOTION_CIRCULAR',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12a4f3cd483df8a1589b29c5be3d58ea712',1,'gomotion']]],
-  ['go_5fmotion_5fjoint',['GO_MOTION_JOINT',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12a4dfd8a68dda6ffe82c50ad931121576c',1,'gomotion']]],
-  ['go_5fmotion_5flinear',['GO_MOTION_LINEAR',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12aa864f102b66c4fb339cdc3448f4ae3a8',1,'gomotion']]],
-  ['go_5fmotion_5fnone',['GO_MOTION_NONE',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12ac47bceaf1669bb9214788f7b09d51eb8',1,'gomotion']]],
-  ['go_5fmotion_5fujoint',['GO_MOTION_UJOINT',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12a51b15689f867451eefd6bfa544867779',1,'gomotion']]],
-  ['go_5fmotion_5fworld',['GO_MOTION_WORLD',['../namespacegomotion.html#a82062c31fb510f6d6810ba83bf8a3c12ab73840e3ff8f43a33e770cc18527bf97',1,'gomotion']]],
-  ['go_5fquantity_5fangle',['GO_QUANTITY_ANGLE',['../gotypes_8h.html#a0411cd49bb5b71852cecd93bcbf0ca2da70505768da54108916ca9d850a345c16',1,'gotypes.h']]],
-  ['go_5fquantity_5flength',['GO_QUANTITY_LENGTH',['../gotypes_8h.html#a0411cd49bb5b71852cecd93bcbf0ca2da847a795c80c454fb18dd2843b9a5ae37',1,'gotypes.h']]],
-  ['go_5fquantity_5fnone',['GO_QUANTITY_NONE',['../gotypes_8h.html#a0411cd49bb5b71852cecd93bcbf0ca2daaf19b8b96ec24aee3e4bc35efc855a24',1,'gotypes.h']]],
-  ['go_5fresult_5fbad_5fargs',['GO_RESULT_BAD_ARGS',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a774dfa8abb1bab8ff8599bbcacefa13e',1,'gotypes.h']]],
-  ['go_5fresult_5fbug',['GO_RESULT_BUG',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a5524763e925f0b14dcba6a321574bba7',1,'gotypes.h']]],
-  ['go_5fresult_5fdiv_5ferror',['GO_RESULT_DIV_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635ac2434e23b7ae651aebe2452af7af1995',1,'gotypes.h']]],
-  ['go_5fresult_5fdomain_5ferror',['GO_RESULT_DOMAIN_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a59be6a201b1e7b8905a0c89eec00963b',1,'gotypes.h']]],
-  ['go_5fresult_5fempty',['GO_RESULT_EMPTY',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a24838323a80d8fd8a140c92473f740e3',1,'gotypes.h']]],
-  ['go_5fresult_5ferror',['GO_RESULT_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635acbf54540acb86538b3f72b4b8e0a176d',1,'gotypes.h']]],
-  ['go_5fresult_5fignored',['GO_RESULT_IGNORED',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a2ce6982cf7db77b01c9757c92b8850ac',1,'gotypes.h']]],
-  ['go_5fresult_5fimpl_5ferror',['GO_RESULT_IMPL_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a9d6bb28a1830d96c3dc0c0154153d80a',1,'gotypes.h']]],
-  ['go_5fresult_5fno_5fspace',['GO_RESULT_NO_SPACE',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635ad1cc08529bcdd199480d3d57e53b5d84',1,'gotypes.h']]],
-  ['go_5fresult_5fnorm_5ferror',['GO_RESULT_NORM_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a03cf3256a6fc44ee40192ed232d4c659',1,'gotypes.h']]],
-  ['go_5fresult_5fok',['GO_RESULT_OK',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a474a770c6dd01e6ff6d9316bec185bdc',1,'gotypes.h']]],
-  ['go_5fresult_5frange_5ferror',['GO_RESULT_RANGE_ERROR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635adbdc03b02695760e5650a9c03dba3d0e',1,'gotypes.h']]],
-  ['go_5fresult_5fsingular',['GO_RESULT_SINGULAR',['../gotypes_8h.html#a726ca809ffd3d67ab4b8476646f26635a0f2b551fe19dd46697296b56b83ef1d7',1,'gotypes.h']]]
+  ['local',['LOCAL',['../classCGlobals.html#a32f8f289bca445b5a2f6d1c68b6cbbb2a96d704987b0540065f6bd4c566a83760',1,'CGlobals']]],
+  ['logfile',['LOGFILE',['../classCGlobals.html#a32f8f289bca445b5a2f6d1c68b6cbbb2a44aecc12bde05d802865d0035d4e8270',1,'CGlobals']]]
 ];

@@ -12,7 +12,6 @@ var searchData=
   ['cgzrobothandler',['CGzRobotHandler',['../classCGzRobotHandler.html',1,'']]],
   ['cinstances',['CInstances',['../structShapeModel_1_1CInstances.html',1,'ShapeModel']]],
   ['cjointwriter',['CJointWriter',['../classCJointWriter.html',1,'']]],
-  ['coeff',['coeff',['../structgomotion_1_1coeff.html',1,'gomotion']]],
   ['crobot',['CRobot',['../classCRobot.html',1,'']]],
   ['cros',['CRos',['../classCRos.html',1,'']]],
   ['croscrclrobothandler',['CRosCrclRobotHandler',['../classCRosCrclRobotHandler.html',1,'']]],

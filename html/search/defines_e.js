@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['parsing_5ferror',['Parsing_Error',['../MotionException_8h.html#a2f5cc21498e9fc84892c0f8600bf37db',1,'Parsing_Error():&#160;MotionException.h'],['../RobotControlException_8h.html#a2f5cc21498e9fc84892c0f8600bf37db',1,'Parsing_Error():&#160;RobotControlException.h']]],
-  ['platform_5fid',['PLATFORM_ID',['../CMakeCCompilerId_8c.html#adbc5372f40838899018fadbc89bd588b',1,'PLATFORM_ID():&#160;CMakeCCompilerId.c'],['../CMakeCXXCompilerId_8cpp.html#adbc5372f40838899018fadbc89bd588b',1,'PLATFORM_ID():&#160;CMakeCXXCompilerId.cpp']]],
-  ['position_5flimit_5fexceeded',['Position_Limit_Exceeded',['../MotionException_8h.html#aaa6ed19f5a9f90b5ba1a352cda76fa36',1,'Position_Limit_Exceeded():&#160;MotionException.h'],['../RobotControlException_8h.html#aaa6ed19f5a9f90b5ba1a352cda76fa36',1,'Position_Limit_Exceeded():&#160;RobotControlException.h']]]
+  ['rad2deg',['Rad2Deg',['../gotraj_8cpp.html#ac537143ba31a17c03653c8a73637d2b5',1,'gotraj.cpp']]],
+  ['robot_5fik_5fproblem',['Robot_IK_Problem',['../RobotControlException_8h.html#a624eaf3304fa8f9e46eb8c54a08e82a3',1,'RobotControlException.h']]],
+  ['robot_5fik_5fsingularity',['Robot_IK_Singularity',['../MotionException_8h.html#a05133cdf87db219306e46a5cd300abf5',1,'Robot_IK_Singularity():&#160;MotionException.h'],['../RobotControlException_8h.html#a05133cdf87db219306e46a5cd300abf5',1,'Robot_IK_Singularity():&#160;RobotControlException.h']]],
+  ['rospackagename',['ROSPACKAGENAME',['../Globals_8h.html#ab66122056b4d3a0a8bd7386e2b570a6a',1,'Globals.h']]]
 ];

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['parallelgripperplugin',['ParallelGripperPlugin',['../classgazebo_1_1ParallelGripperPlugin.html#a99ce57376ccdabc4ab2a8239eabd2d67',1,'gazebo::ParallelGripperPlugin']]],
   ['parsecommand',['parseCommand',['../classRCS_1_1CGoInterpreter.html#a502357e7af9a833b8e5d2f3d74afe39d',1,'RCS::CGoInterpreter']]],
   ['parseeeparamgrippercommand',['parseEEParamGripperCommand',['../classRCS_1_1CGoInterpreter.html#a458f0253fa6d8e81482ab1ad5b9bc971',1,'RCS::CGoInterpreter']]],
   ['parsegrippercommand',['parseGripperCommand',['../classRCS_1_1CGoInterpreter.html#aa7921113d801e533973efa4b3e625b31',1,'RCS::CGoInterpreter']]],
@@ -14,8 +13,8 @@ var searchData=
   ['place',['place',['../classCCrclApi.html#a255ddc504935e710de4aba08edcd08f1',1,'CCrclApi']]],
   ['poll',['poll',['../structtimer.html#ae59fbf43e6d72fcf483a49618e1b3cde',1,'timer']]],
   ['pos',['pos',['../structHERMITE__POLYNOMIAL.html#ac7ca13ce23574dabedd885e737b6c05b',1,'HERMITE_POLYNOMIAL']]],
-  ['position',['position',['../classmessage_1_1JointsComm.html#a9e79d8841c506c1950e76bce69407734',1,'message::JointsComm::position(int index) const '],['../classmessage_1_1JointsComm.html#ac29789f746594c86a7be580b1e60a2b8',1,'message::JointsComm::position() const '],['../classmessage_1_1JointsComm.html#a9e79d8841c506c1950e76bce69407734',1,'message::JointsComm::position(int index) const '],['../classmessage_1_1JointsComm.html#a217bda5039d76b60e480256eb2b04ebe',1,'message::JointsComm::position() const '],['../classmessage_1_1JointsComm.html#a9e79d8841c506c1950e76bce69407734',1,'message::JointsComm::position(int index) const '],['../classmessage_1_1JointsComm.html#a217bda5039d76b60e480256eb2b04ebe',1,'message::JointsComm::position() const ']]],
-  ['position_5fsize',['position_size',['../classmessage_1_1JointsComm.html#aea57ddd86d9da93ef54733274a07656d',1,'message::JointsComm::position_size() const '],['../classmessage_1_1JointsComm.html#aea57ddd86d9da93ef54733274a07656d',1,'message::JointsComm::position_size() const '],['../classmessage_1_1JointsComm.html#aea57ddd86d9da93ef54733274a07656d',1,'message::JointsComm::position_size() const ']]],
+  ['position',['position',['../classmessage_1_1JointsComm.html#a9e79d8841c506c1950e76bce69407734',1,'message::JointsComm::position(int index) const '],['../classmessage_1_1JointsComm.html#ac29789f746594c86a7be580b1e60a2b8',1,'message::JointsComm::position() const ']]],
+  ['position_5fsize',['position_size',['../classmessage_1_1JointsComm.html#aea57ddd86d9da93ef54733274a07656d',1,'message::JointsComm']]],
   ['procfind',['procFind',['../classCGlobals.html#a45a353d5adc9da36af06b53f91266a57',1,'CGlobals']]],
   ['protobuf_5fadddesc_5fgripcommand_5f2eproto',['protobuf_AddDesc_GripCommand_2eproto',['../namespacemessage.html#ac78d57cf02e5919feb8fe5d585faccf4',1,'message']]],
   ['protobuf_5fadddesc_5fjointscomm_5f2eproto',['protobuf_AddDesc_JointsComm_2eproto',['../namespacemessage.html#a11ee11e9d9d031d81ba807271516017f',1,'message']]],
@@ -25,7 +24,5 @@ var searchData=
   ['protobuf_5fshutdownfile_5fjointscomm_5f2eproto',['protobuf_ShutdownFile_JointsComm_2eproto',['../namespacemessage.html#a25cb6a722a305749a7e97dcdbfda460a',1,'message']]],
   ['publish_5fjointstate',['publish_jointstate',['../classGripperInterface.html#abc58ac3146134b048f27dd41214c90e8',1,'GripperInterface']]],
   ['publishcrclstatus',['publishCrclStatus',['../classCRosCrclRobotHandler.html#aa96b614b1288c9d5414df90362362770',1,'CRosCrclRobotHandler']]],
-  ['publishgripperstate',['publishGripperState',['../classgazebo_1_1ParallelGripperPlugin.html#a317c70387b405d29849686ad0503e8ac',1,'gazebo::ParallelGripperPlugin']]],
-  ['publishjointstates',['publishJointStates',['../classgazebo_1_1GzJntCmdPlugin.html#a9469030600a941f477cbaf71808f3281',1,'gazebo::GzJntCmdPlugin']]],
   ['publishstatus',['publishStatus',['../structRCS_1_1CController.html#abdb528c93edac6aa1f0f45d719892322',1,'RCS::CController']]]
 ];
