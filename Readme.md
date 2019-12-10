@@ -17,6 +17,10 @@ Below is an animated gif demonstration of the simulation.
 
 ![Figure1](./images/gzaprsros_image2.gif)
 
+Click here
+[To see the Doxygen Documentation](https://usnistgov.github.io/gzaprsros)
+
+
 
 
 
