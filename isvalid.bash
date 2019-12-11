@@ -103,7 +103,7 @@ if [ "" == "$PKG_OK" ]; then
   sudo apt-get --force-yes --yes install yad
 fi
 
-# maybe instsall
+# maybe install
 #sudo apt-get install libreadline6 libreadline6-dev
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' libreadline6-dev|grep "install ok installed")

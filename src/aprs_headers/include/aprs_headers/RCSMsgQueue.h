@@ -36,147 +36,160 @@ namespace RCS
 // types.
 
 /**
- * \brief The CMessageQueue offers a mutexed front to a STL/std deque. The queue
+ * \brief The CMessageQueue offers a mutexed front end to a STL/std deque. The queue
  * is a LIFO data structure.
  *   Useful for safely sharing data between multiple threads.
  */
-    template<typename T>
-    class CMessageQueue
-    {
+template<typename T>
+class CMessageQueue
+{
 public:
-        typedef std::deque<T>                      xmlMessageQueue;
-        typedef typename std::deque<T>::iterator   xmlMessageQueueIterator;
+    typedef std::deque<T>                      xmlMessageQueue;
+    typedef typename std::deque<T>::iterator   xmlMessageQueueIterator;
 
-        CMessageQueue( ) { }
+    /**
+         * @brief CMessageQueue empty constructor.
+         */
+    CMessageQueue( ) { }
 
-        /// \brief ClearMsgQueue clears all contents in message queue. T
+    /// \brief ClearMsgQueue clears all contents in message queue. T
+    void clearMsgQueue ( )
+    {
+        SCOPED_LOCK;
+        xmlMsgs.clear( );
+    }
 
-        void clearMsgQueue ( )
-        {
-            SCOPED_LOCK;
-            xmlMsgs.clear( );
-        }
+    /// \brief SizeMsgQueue returns number of items in message queue.
+    size_t sizeMsgQueue ( )
+    {
+        SCOPED_LOCK;
+        return xmlMsgs.size( );
+    }
 
-        /// \brief SizeMsgQueue returns number of items in message queue.
-
-        size_t sizeMsgQueue ( )
-        {
-            SCOPED_LOCK;
-            return xmlMsgs.size( );
-        }
-
-        /*!
+    /*!
          * \brief PopFrontMsgQueue mutex pop of front item of message queue.
          * \return  T       returns front item from message queue.
          */
-        T popFrontMsgQueue ( )
+    T popFrontMsgQueue ( )
+    {
+        SCOPED_LOCK;
+
+        if ( !xmlMsgs.size( ) )
         {
-            SCOPED_LOCK;
-
-            if ( !xmlMsgs.size( ) )
-            {
-                throw std::runtime_error("Empty queue\n");
-            }
-            T msg = xmlMsgs.front( );
-            xmlMsgs.pop_front( );
-            return msg;
+            throw std::runtime_error("Empty queue\n");
         }
+        T msg = xmlMsgs.front( );
+        xmlMsgs.pop_front( );
+        return msg;
+    }
 
-        /*!
+    /*!
          * \brief PeekFrontMsgQueue mutex peeks at front item of message queue.
          * \return  T       returns front item from message queue.
          */
-        T peekFrontMsgQueue ( )
+    T peekFrontMsgQueue ( )
+    {
+        SCOPED_LOCK;
+
+        if ( !xmlMsgs.size( ) )
         {
-            SCOPED_LOCK;
-
-            if ( !xmlMsgs.size( ) )
-            {
-                throw std::runtime_error("Empty queue\n");
-            }
-            T msg = xmlMsgs.front( );
-            return msg;
+            throw std::runtime_error("Empty queue\n");
         }
+        T msg = xmlMsgs.front( );
+        return msg;
+    }
 
-        /*!
+    /*!
          * \brief BackMsgQueue mutex retrieves back item of message queue.
          * Does not pop queue.
          * \return  T       returns back item from message queue.
          */
-        T backMsgQueue ( )
+    T backMsgQueue ( )
+    {
+        SCOPED_LOCK;
+
+        if ( !xmlMsgs.size( ) )
         {
-            SCOPED_LOCK;
-
-            if ( !xmlMsgs.size( ) )
-            {
-                throw std::runtime_error("Empty queue\n");
-            }
-            return xmlMsgs.back( );
+            throw std::runtime_error("Empty queue\n");
         }
+        return xmlMsgs.back( );
+    }
 
 
-        T popBackMsgQueue()
+    /**
+         * @brief popBackMsgQueue pops back item of message queue.
+         * @return back item from queue
+         */
+    T popBackMsgQueue()
+    {
+        SCOPED_LOCK;
+
+        if ( !xmlMsgs.size( ) )
         {
-            SCOPED_LOCK;
-
-            if ( !xmlMsgs.size( ) )
-            {
-                throw std::runtime_error("Empty queue\n");
-            }
-            T msg = xmlMsgs.back( );
-            xmlMsgs.erase( xmlMsgs.end()-1);
-            return msg;
-
+            throw std::runtime_error("Empty queue\n");
         }
+        T msg = xmlMsgs.back( );
+        xmlMsgs.erase( xmlMsgs.end()-1);
+        return msg;
 
-        /*!
+    }
+
+    /*!
+         * \brief AddMsgQueue muteendx push to back an item onto message queue.
+         * \param  T       item to place in back of message queue.
+         */
+    void addMsgQueue (T t)
+    {
+        SCOPED_LOCK;
+        xmlMsgs.push_back(t);
+    }
+
+    /*!
          * \brief AddMsgQueue mutex push to back an item onto message queue.
          * \param  T       item to place in back of message queue.
          */
-        void addMsgQueue (T t)
-        {
-            SCOPED_LOCK;
-            xmlMsgs.push_back(t);
-        }
+    void addBackMsgQueue (T t)
+    {
+        SCOPED_LOCK;
+        xmlMsgs.push_back(t);
+    }
 
-        /*!
-         * \brief AddMsgQueue mutex push to back an item onto message queue.
-         * \param  T       item to place in back of message queue.
-         */
-        void addBackMsgQueue (T t)
-        {
-            SCOPED_LOCK;
-            xmlMsgs.push_back(t);
-        }
-
-        /*!
+    /*!
          * \brief AddMsgQueue mutex push to front an item onto message queue.
          * \param  T       item to place in front of message queue.
          */
-        void addFrontMsgQueue (T t)
-        {
-            SCOPED_LOCK;
-            xmlMsgs.insert(xmlMsgs.begin( ), t);
-        }
+    void addFrontMsgQueue (T t)
+    {
+        SCOPED_LOCK;
+        xmlMsgs.insert(xmlMsgs.begin( ), t);
+    }
 
-        /*!
+    /*!
          * \brief InsertFrontMsgQueue mutex push to front an item onto message queue.
          * \param  T       item to place in front of message queue.
          */
-        void insertFrontMsgQueue (T t)
-        {
-            SCOPED_LOCK;
+    void insertFrontMsgQueue (T t)
+    {
+        SCOPED_LOCK;
 
-            xmlMsgs.insert(xmlMsgs.begin( ), t);
-        }
+        xmlMsgs.insert(xmlMsgs.begin( ), t);
+    }
 
-        xmlMessageQueueIterator end ( ) { return xmlMsgs.end( ); }
+    /**
+         * @brief end retrieve end iterator of message queue
+         * @return  xmlMessageQueueIterator
+         */
+    xmlMessageQueueIterator end ( ) { return xmlMsgs.end( ); }
 
-        xmlMessageQueueIterator begin ( ) { return xmlMsgs.begin( ); }
+    /**
+         * @brief begin retrieve being iterator of message queue
+         * @return  xmlMessageQueueIterator
+         */
+    xmlMessageQueueIterator begin ( ) { return xmlMsgs.begin( ); }
 protected:
-        msgq::mutex m;
-        xmlMessageQueue xmlMsgs;
-    };
+    msgq::mutex m;
+    xmlMessageQueue xmlMsgs;
+};
 }
 #pragma pop_macro("SCOPED_LOCK")
 

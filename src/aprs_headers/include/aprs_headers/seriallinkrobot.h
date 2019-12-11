@@ -20,6 +20,11 @@
 namespace RCS {
 
 
+/**
+ * @brief The ISerialLinkRobot struct defines an interface containing all the
+ * necessary variable information to contain robot kinematics. It handles URDF
+ * format.
+ */
 
 struct ISerialLinkRobot
 {
@@ -41,14 +46,34 @@ struct ISerialLinkRobot
 
 };
 
+/**
+ * @brief The CSerialLinkRobot struct an implementation to fill an ISerialLinkRobot
+ * from the specification of a URDF XML string. Given the URDF, and
+ * a base and tip link, the robot kinematic information will be
+ * extracted from the URDF.
+ */
 struct CSerialLinkRobot
 {
 
+    /**
+     * @brief CSerialLinkRobot requires a pointer to a  ISerialLinkRobot
+     * instance that will be filled with URDF robot information.
+     * @param robot pointer to a ISerialLinkRobot instance
+     */
     CSerialLinkRobot(ISerialLinkRobot * robot ): _robot(robot)
     {
 
     }
 
+    /**
+     * @brief parseURDF parses a URDF XML string given a base and tip link name, using
+     * ROS URDFdom to parse the URDF. After the parse, the ISerialLinkRobot variable
+     * information will be extracted from the URDFdom.
+     * @param xml_string URDF in string format.
+     * @param base_link  name of the base link in the URDF.
+     * @param end_link name of the tip link in the URDF
+     * @return  true parse correctly. False, failed.
+     */
     bool parseURDF(std::string xml_string, std::string base_link, std::string end_link)
     {
         urdf::Model robot_model;

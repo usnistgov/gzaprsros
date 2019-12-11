@@ -1,10 +1,5 @@
-/**
-
-@mainpage  Agility Performance Robot System Simulation
-
-Agility Performance Robot System simulation based on C++, Gazebo, and ROS.
-
-\copyright  This work was performed by employees of the U.S. Government as part of their official duties and are not protected by copyright in the U.S. (17 U.S.C. §105) and may be used without obtaining permission from NIST.
+/*! \mainpage  Agility Performance Robot System simulation based on C++, Gazebo, and ROS.
+\copyright  This work was by employees of the U.S. Government as part of their official duties and are not protected by copyright in the U.S. (17 U.S.C. §105) and may be used without obtaining permission from NIST.
 
 DISCLAIMER:
 
@@ -24,27 +19,9 @@ simulation uses  Gazebo version 9   and  Ros I version Kinetic. The use of ROS i
 compile all the packages. There are several bash scripts under the bin9 folder that can be used to launch the  with rosagilitydemo.bash 
 being the ROS catkin_make launch script. 
 
-
-\section Requirements
-
-Ubuntu 16.04 or 18.04. The following packages are installed by apt-get (assuming you have sudo privilidges).
-
-ros kinetic
-gazebo9
-eigen3
-xerces-c
-code synthesis xsd
-boost
-assimp
-readline
-yad
-
-
-
-\section Requirements
-
 Navigate to the NIST github site, and clone the gzaprsros repository:
 
+\section Requirements
 
 \section Build
 \code
@@ -57,8 +34,5 @@ To build gzaprsros run the bash script:
 
 
 */
-
-
-
 
 

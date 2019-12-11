@@ -9,7 +9,7 @@ namespace RCS
 
 
 /**
- * @brief The IKinematic class
+ * @brief The IKinematic class abstract interface to define a kinematic plugin.
  */
 class IKinematic : public ISerialLinkRobot
 {
@@ -44,6 +44,13 @@ public:
      */
     virtual  size_t numJoints()=0;
 
+    /**
+     * @brief FK calculate the forward kinematics to derive a pose from the given joints.
+     * @param jv input joint values of the robot
+     * @param pose reference to pose to store FK in
+     * @return  0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual  int FK(const std::vector<double> jv, tf::Pose &pose)=0;
 
     /**
@@ -57,13 +64,55 @@ public:
      */
     virtual int IK(const tf::Pose pose, std::vector<double>&)=0;
 
+    /**
+     * @brief debug set the debug flat
+     * @param flag true to output debug informjatoin
+     * @return 0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual int debug(bool flag)=0;
+
+    /**
+     * @brief debugStream is a pointer to a iostream in which to
+     * output debug information.
+     * @return 0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual int debugStream(std::ostream&)=0;
 
+    /**
+     * @brief set assigns the given param with the given value string. The string
+     * will be converted into the internal format.
+     * @param param string containing name of parameter.
+     * @param value  string  containing new value.
+     * @return 0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual std::string set(std::string param,  std::string value)=0;
+
+    /**
+     * @brief set assigns the given param with the given void pointer.
+     * @param param string containing name of parameter.
+     * @param value  pointer to void to assign to parameter.
+     * @return 0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual std::string set(std::string param,  void * value)=0;
 
+    /**
+     * @brief get returns a string containing the value of the given parameter. If get
+     * parameter is "help" it returns a list of all gets/sets allowed by this kinetmic
+     * plugin.
+     * @param param string containing name of parameter.
+     * @return 0 if successful. Otherwise return error enumeration and error message
+     * to be retrieved by get("help");
+     */
     virtual std::string get(std::string param)=0;
+
+    /**
+     * @brief isError did the last method produce an error.
+     * @return true if error, otherwise false.
+     */
     virtual bool isError()=0;
 
     // Need to set configuration flags for solution: e.g., elbow up/down

@@ -48,6 +48,13 @@ namespace gomotion {
     
     // the class that throws, if an HRESULT failed
 
+    /**
+     * @brief The E class throws an exception, if an internal gomotion method failed
+     * and returned an error code. The exception include the code for the gomotion call, line and file name
+     * as part of the exception. The class uses a C++ wrapper EF(X) to handle
+     * the exception detection and throwing.
+     */
+
     class E {
         std::string error_str;
         std::string file_name;
@@ -59,6 +66,12 @@ namespace gomotion {
 
     public:
 
+        /**
+         * @brief E constructor to handle exception throwing when a gomotion error occurs.
+         * @param error is typically the code line
+         * @param file_name name of the file containing the error
+         * @param line_number line number in the file containing the error
+         */
         E(char* error, char* file_name, int line_number) {
             char buffer[128];
             error_str = error;
@@ -70,6 +83,12 @@ namespace gomotion {
             error_str += this->line_number;
         }
 
+        /**
+         * @brief operator = is the main overloaded operator method to detect and error
+         * and throw an exception.
+         * @param hr is the handle to the result. If non-zero, an exception and on the error string
+         * builtin the constructor is thrown.
+         */
         void operator=(go_result hr) {
             if (hr != GO_RESULT_OK)
                 throw std::runtime_error(error_str.c_str());
@@ -78,18 +97,27 @@ namespace gomotion {
 #define EF(X) E(#X,__FILE__,__LINE__) = X
 
 
+    /**
+     * @brief The go_motion_interface struct interfaces to the gomotion
+     * trajectory generator.
+     */
     struct go_motion_interface {
-        int _type;
-        double _deltat;
+        int _type;  /*< type of gomotion trajectory - pose or joint - motion */
+        double _deltat; /*< cycle time between  gotraj updates */
         go_motion_spec _gms;
-        std::vector<go_motion_spec> _space;
-        go_motion_queue _gmq;
+        std::vector<go_motion_spec> _space; /*<gomotion queue based on _queuesize */
+        go_motion_queue _gmq; /*<gomotion queue of trajectory segments */
         go_position _position;
-        size_t _queuesize;
-        static size_t _id;
+        size_t _queuesize; /*<maximum queue size of gomotion queue - set to 100 */
+        static size_t _id; /*< gotraj id */
     };
     size_t go_motion_interface::_id = 0;
 
+    /**
+     * @brief ConvertTfPose converts from a ROS tf pose into a gomotion pose.
+     * @param pose is the ROS::tf pose representation.
+     * @return  gomotion pose representation (cartesian plus quaternion).
+     */
     static go_pose ConvertTfPose(tf::Pose pose) {
         tf::Quaternion q = pose.getRotation();
         return go_pose_this(pose.getOrigin().x(), pose.getOrigin().y(), pose.getOrigin().z(),
@@ -97,6 +125,11 @@ namespace gomotion {
 
     }
 
+    /**
+     * @brief ConvertGoPose converts from a gomotion pose into a ROS tf pose reprsentation.
+     * @param p gomotion pose representation (cartesian plus quaternion).
+     * @return ROS::tf pose representation.
+     */
     static tf::Pose ConvertGoPose(go_pose p) {
         return tf::Pose(tf::Quaternion(p.rot.x, p.rot.y, p.rot.z, p.rot.s),
                 tf::Vector3(p.tran.x, p.tran.y, p.tran.z));

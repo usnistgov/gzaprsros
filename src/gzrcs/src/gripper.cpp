@@ -18,41 +18,6 @@
 #include "gzrcs/Gripper.h"
 #include "gzrcs/Controller.h"
 
-/**
- * @brief The HERMITE_POLYNOMIAL struct accounts for starting and
- * ending position, velocity and acceleration.  Foley and van Dam
- * in Fundamentals of interactive computer graphics.
- * and LLoyd and Hayward (Real-time trajectory generation using blend functions."
- * Proceedings 1991 IEEE International Conference on Robotics and Automation)
- * offer insight.
-*/
-struct HERMITE_POLYNOMIAL
-{
-    double pos (double t) { return ( ( ( ( ( ( ( ( c5 * t + c4 ) * t ) + c3 ) * t ) + c2 ) * t ) + c1 ) * t ) + c0; }
-    double vel (double t)
-    {
-        return ( ( ( ( ( ( 5. * c5 * t + 4. * c4 ) * t ) + 3. * c3 ) * t ) + 2. * c2 ) * t ) + c1;
-    }
-
-    double acc (double t)
-    {
-        return ( ( ( ( 20.0 * c5 * t + 12.0 * c4 ) * t ) + 6.0 * c3 ) * t ) + 2.0 * c2;
-    }
-
-    double c0, c1, c2, c3, c4, c5;
-
-    HERMITE_POLYNOMIAL( ) { }
-    void setup(double p1, double v1, double a1, double p2, double v2, double a2)
-    {
-        c5 = ( a2 - a1 ) / 2. + 6. * ( p2 - p1 ) - 3. * ( v2 + v1 );
-        c4 = ( 3. * a1 - 2 * a2 ) / 2. + 15. * ( p1 - p2 ) + 8. * v1 + 7. * v2;
-        c3 = ( a2 - 2 * a1 ) / 2. + 10. * ( p2 - p1 ) + -6.0 * v1 - 4 * v2;
-        c2 = a1 / 2.0;
-        c1 = v1;
-        c0 = p1;
-    }
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 GripperInterface::GripperInterface()
 {
