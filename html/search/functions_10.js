@@ -4,6 +4,8 @@ var searchData=
   ['readcycles',['readCycles',['../classCGzRobotHandler.html#aeb3ec5b5f9ad374121fce4dfa84fb894',1,'CGzRobotHandler::readCycles()'],['../classCGzParallelGripper.html#a8d1a2c8682a4fc59067c123b9b5455b3',1,'CGzParallelGripper::readCycles()']]],
   ['readfile',['readFile',['../classCGlobals.html#ad05c6b2042ef105a4725b41229a865ea',1,'CGlobals']]],
   ['reset',['reset',['../structtimer.html#a66fc54d1f33bd9d4bec5f8d563595c2e',1,'timer::reset()'],['../classCGzModelReader.html#ad76167aadc3fb64d7c786f6b0ef9bc27',1,'CGzModelReader::reset()']]],
+  ['resume',['resume',['../classRCS_1_1Thread.html#ae0382f8d155f6b73f43fc246afe128e9',1,'RCS::Thread']]],
+  ['resumeall',['resumeAll',['../classRCS_1_1Thread.html#a27b19d7a9567df468f597580f02a9779',1,'RCS::Thread']]],
   ['retract',['retract',['../classCCrclApi.html#a492821279abc727e8695cd636f2c4c14',1,'CCrclApi::retract(std::string objname)'],['../classCCrclApi.html#aeff95ee4e2182174248afceb7ddbf44a',1,'CCrclApi::retract(double amt=0.01)']]],
   ['righttrim',['RightTrim',['../Globals_8cpp.html#abccc0ebeb979d35b6a1df5fff4be9ee7',1,'Globals.cpp']]],
   ['robotaddgrippercoord',['robotAddGripperCoord',['../structRCS_1_1KinematicRing.html#a60b58642471c42fef8ecf3181d647353',1,'RCS::KinematicRing']]],

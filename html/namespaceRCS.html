@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: RCS Namespace Reference</title>
+<title>APRS Gazebo Simulation: RCS Namespace Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -97,7 +97,14 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html">CGoInterpreter</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classRCS_1_1CGoInterpreter.html" title="The CGoInterpreter class uses gotraj from the gomotion https://github.com/frederickproctor/gomotion g...">CGoInterpreter</a> class uses gotraj from the gomotion <a href="https://github.com/frederickproctor/gomotion">https://github.com/frederickproctor/gomotion</a> github repository. THe control system presents a ROS tf data representation to the gotraj (which converts to gomotion representation behind the scenes. gotraj uses posiiton, vel, acceleration and jerk to determine trajectory motion waypoints. gotraj stops at every goal point and waypoint. gotraj requires a cycle time to determine how to plan the path. gotraj requires rate parameters (vel, acceleration, jerk) to calculate the motion.  <a href="classRCS_1_1CGoInterpreter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CMessageQueue.html">CMessageQueue</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classRCS_1_1CMessageQueue.html" title="The CMessageQueue offers a mutexed front end to a STL/std deque. The queue is a LIFO data structure...">CMessageQueue</a> offers a mutexed front end to a STL/std deque. The queue is a LIFO data structure. Useful for safely sharing data between multiple threads.  <a href="classRCS_1_1CMessageQueue.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRCS_1_1KinematicRing.html">KinematicRing</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1Thread.html">Thread</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classRCS_1_1Thread.html" title="Thread is an RCS ulapi equivalent for a timed thread. Given a cycle time, the thread provides a wait ...">Thread</a> is an <a class="el" href="namespaceRCS.html">RCS</a> ulapi equivalent for a timed thread. Given a cycle time, the thread provides a wait function to sleep to exactly the amount of the thread cycle time. It keeps track of busy/idle time for diagnostic purposes. <br />
+ Notes: <a href="https://www.quantnet.com/threads/c-multithreading-in-boost.10028/">https://www.quantnet.com/threads/c-multithreading-in-boost.10028/</a>.  <a href="classRCS_1_1Thread.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>

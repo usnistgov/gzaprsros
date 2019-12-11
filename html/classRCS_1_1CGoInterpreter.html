@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: RCS::CGoInterpreter Class Reference</title>
+<title>APRS Gazebo Simulation: RCS::CGoInterpreter Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -99,20 +99,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>The <a class="el" href="classRCS_1_1CGoInterpreter.html" title="The CGoInterpreter class uses gotraj from the gomotion https://github.com/frederickproctor/gomotion g...">CGoInterpreter</a> class uses gotraj from the gomotion <a href="https://github.com/frederickproctor/gomotion">https://github.com/frederickproctor/gomotion</a> github repository. THe control system presents a ROS tf data representation to the gotraj (which converts to gomotion representation behind the scenes. gotraj uses posiiton, vel, acceleration and jerk to determine trajectory motion waypoints. gotraj stops at every goal point and waypoint. gotraj requires a cycle time to determine how to plan the path. gotraj requires rate parameters (vel, acceleration, jerk) to calculate the motion.  
  <a href="classRCS_1_1CGoInterpreter.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="RCSInterpreter_8h_source.html">RCSInterpreter.h</a>&gt;</code></p>
+<p><code>#include &lt;RCSInterpreter.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for RCS::CGoInterpreter:</div>
 <div class="dyncontent">
 <div class="center"><img src="classRCS_1_1CGoInterpreter__inherit__graph.png" border="0" usemap="#RCS_1_1CGoInterpreter_inherit__map" alt="Inheritance graph"/></div>
-<map name="RCS_1_1CGoInterpreter_inherit__map" id="RCS_1_1CGoInterpreter_inherit__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for RCS::CGoInterpreter:</div>
 <div class="dyncontent">
 <div class="center"><img src="classRCS_1_1CGoInterpreter__coll__graph.png" border="0" usemap="#RCS_1_1CGoInterpreter_coll__map" alt="Collaboration graph"/></div>
-<map name="RCS_1_1CGoInterpreter_coll__map" id="RCS_1_1CGoInterpreter_coll__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -168,9 +164,9 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a947cf1fa2c58a87f5ec6e253d0613ce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb4b30734277efa41fd2a7dada9a5eff"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html#abb4b30734277efa41fd2a7dada9a5eff">_lastcmdnum</a></td></tr>
 <tr class="separator:abb4b30734277efa41fd2a7dada9a5eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a511228126c575fce71081a8ada678f64"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classgomotion_1_1GoTraj.html">GoTraj</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html#a511228126c575fce71081a8ada678f64">_goRobot</a></td></tr>
+<tr class="memitem:a511228126c575fce71081a8ada678f64"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; GoTraj &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html#a511228126c575fce71081a8ada678f64">_goRobot</a></td></tr>
 <tr class="separator:a511228126c575fce71081a8ada678f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84ea2e884c30d2c65f750a3e8a2508d0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classgomotion_1_1GoTraj.html">GoTraj</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html#a84ea2e884c30d2c65f750a3e8a2508d0">_goGripper</a></td></tr>
+<tr class="memitem:a84ea2e884c30d2c65f750a3e8a2508d0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; GoTraj &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRCS_1_1CGoInterpreter.html#a84ea2e884c30d2c65f750a3e8a2508d0">_goGripper</a></td></tr>
 <tr class="separator:a84ea2e884c30d2c65f750a3e8a2508d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -810,7 +806,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classgomotion_1_1GoTraj.html">GoTraj</a>&gt; RCS::CGoInterpreter::_goGripper</td>
+          <td class="memname">std::shared_ptr&lt;GoTraj&gt; RCS::CGoInterpreter::_goGripper</td>
         </tr>
       </table>
   </td>
@@ -831,7 +827,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classgomotion_1_1GoTraj.html">GoTraj</a>&gt; RCS::CGoInterpreter::_goRobot</td>
+          <td class="memname">std::shared_ptr&lt;GoTraj&gt; RCS::CGoInterpreter::_goRobot</td>
         </tr>
       </table>
   </td>
@@ -908,7 +904,7 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/include/gzrcs/<a class="el" href="RCSInterpreter_8h_source.html">RCSInterpreter.h</a></li>
+<li>/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/include/gzrcs/<a class="el" href="RCSInterpreter_8h.html">RCSInterpreter.h</a></li>
 <li>/home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/src/<a class="el" href="RCSInterpreter_8cpp.html">RCSInterpreter.cpp</a></li>
 </ul>
 </div><!-- contents -->

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: gomotion::E Class Reference</title>
+<title>APRS Gazebo Simulation: gomotion::E Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -94,15 +94,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">gomotion::E Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The <a class="el" href="classgomotion_1_1E.html" title="The E class throws an exception, if an internal gomotion method failed and returned an error code...">E</a> class throws an exception, if an internal gomotion method failed and returned an error code. The exception include the code for the gomotion call, line and file name as part of the exception. The class uses a C++ wrapper <a class="el" href="gotraj_8cpp.html#ad86a5d59a90d30c8702c4069c2d5df5b">EF(X)</a> to handle the exception detection and throwing.  
+ <a href="classgomotion_1_1E.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac6e29102fbd7b31387bf9a0ae16e671b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgomotion_1_1E.html#ac6e29102fbd7b31387bf9a0ae16e671b">E</a> (char *error, char *file_name, int line_number)</td></tr>
+<tr class="memdesc:ac6e29102fbd7b31387bf9a0ae16e671b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classgomotion_1_1E.html" title="The E class throws an exception, if an internal gomotion method failed and returned an error code...">E</a> constructor to handle exception throwing when a gomotion error occurs.  <a href="#ac6e29102fbd7b31387bf9a0ae16e671b">More...</a><br /></td></tr>
 <tr class="separator:ac6e29102fbd7b31387bf9a0ae16e671b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a093c974e2fe6cd0423e0b8520f661684"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgomotion_1_1E.html#a093c974e2fe6cd0423e0b8520f661684">operator=</a> (go_result hr)</td></tr>
+<tr class="memdesc:a093c974e2fe6cd0423e0b8520f661684"><td class="mdescLeft">&#160;</td><td class="mdescRight">operator = is the main overloaded operator method to detect and error and throw an exception.  <a href="#a093c974e2fe6cd0423e0b8520f661684">More...</a><br /></td></tr>
 <tr class="separator:a093c974e2fe6cd0423e0b8520f661684"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The <a class="el" href="classgomotion_1_1E.html" title="The E class throws an exception, if an internal gomotion method failed and returned an error code...">E</a> class throws an exception, if an internal gomotion method failed and returned an error code. The exception include the code for the gomotion call, line and file name as part of the exception. The class uses a C++ wrapper <a class="el" href="gotraj_8cpp.html#ad86a5d59a90d30c8702c4069c2d5df5b">EF(X)</a> to handle the exception detection and throwing. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ac6e29102fbd7b31387bf9a0ae16e671b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -141,6 +148,16 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p><a class="el" href="classgomotion_1_1E.html" title="The E class throws an exception, if an internal gomotion method failed and returned an error code...">E</a> constructor to handle exception throwing when a gomotion error occurs. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">error</td><td>is typically the code line </td></tr>
+    <tr><td class="paramname">file_name</td><td>name of the file containing the error </td></tr>
+    <tr><td class="paramname">line_number</td><td>line number in the file containing the error </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -165,6 +182,14 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>operator = is the main overloaded operator method to detect and error and throw an exception. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hr</td><td>is the handle to the result. If non-zero, an exception and on the error string builtin the constructor is thrown. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

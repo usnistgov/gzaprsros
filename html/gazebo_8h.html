@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/include/gzrcs/gazebo.h File Reference</title>
+<title>APRS Gazebo Simulation: /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gzrcs/include/gzrcs/gazebo.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -101,16 +101,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;aprs_headers/Config.h&quot;</code><br />
 <code>#include &lt;sensor_msgs/JointState.h&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
-<code>#include &quot;<a class="el" href="GripCommand_8pb_8h_source.html">GripCommand.pb.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="JointsComm_8pb_8h_source.html">JointsComm.pb.h</a>&quot;</code><br />
+<code>#include &quot;GripCommand.pb.h&quot;</code><br />
+<code>#include &quot;JointsComm.pb.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for gazebo.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="gazebo_8h__incl.png" border="0" usemap="#_2home_2isd_2michalos_2src_2github_2nist_2gzaprsros-xenial_2src_2gzrcs_2include_2gzrcs_2gazebo_8h" alt=""/></div>
-<map name="_2home_2isd_2michalos_2src_2github_2nist_2gzaprsros-xenial_2src_2gzrcs_2include_2gzrcs_2gazebo_8h" id="_2home_2isd_2michalos_2src_2github_2nist_2gzaprsros-xenial_2src_2gzrcs_2include_2gzrcs_2gazebo_8h">
-<area shape="rect" id="node10" href="GripCommand_8pb_8h.html" title="GripCommand.pb.h" alt="" coords="331,124,465,151"/>
-<area shape="rect" id="node17" href="JointsComm_8pb_8h.html" title="JointsComm.pb.h" alt="" coords="490,124,615,151"/>
-</map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -135,9 +131,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="rect" id="node16" href="cros_8cpp.html" title="/home/isd/michalos\l/src/github/nist/gzaprsros\l&#45;xenial/src/gzrcs/src/cros.cpp" alt="" coords="392,487,587,543"/>
 </map>
 </div>
-</div>
-<p><a href="gazebo_8h_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCGazebo.html">CGazebo</a></td></tr>
@@ -155,9 +149,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a1badb34e9627f4eb3ce007fe7d5dcfa5"><td class="memItemLeft" align="right" valign="top">typedef const boost::shared_ptr&lt; <a class="el" href="classmessage_1_1GripCommand.html">message::GripCommand</a> const  &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gazebo_8h.html#a1badb34e9627f4eb3ce007fe7d5dcfa5">ConstGripperCmdPtr</a></td></tr>
+<tr class="memitem:a1badb34e9627f4eb3ce007fe7d5dcfa5"><td class="memItemLeft" align="right" valign="top">typedef const boost::shared_ptr&lt; message::GripCommand const  &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gazebo_8h.html#a1badb34e9627f4eb3ce007fe7d5dcfa5">ConstGripperCmdPtr</a></td></tr>
 <tr class="separator:a1badb34e9627f4eb3ce007fe7d5dcfa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67f1d20426278cccee99ca7d99347f4d"><td class="memItemLeft" align="right" valign="top">typedef const boost::shared_ptr&lt; <a class="el" href="classmessage_1_1JointsComm.html">message::JointsComm</a> const  &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gazebo_8h.html#a67f1d20426278cccee99ca7d99347f4d">ConstRobotCmdPtr</a></td></tr>
+<tr class="memitem:a67f1d20426278cccee99ca7d99347f4d"><td class="memItemLeft" align="right" valign="top">typedef const boost::shared_ptr&lt; message::JointsComm const  &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gazebo_8h.html#a67f1d20426278cccee99ca7d99347f4d">ConstRobotCmdPtr</a></td></tr>
 <tr class="separator:a67f1d20426278cccee99ca7d99347f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -171,7 +165,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef const boost::shared_ptr&lt;<a class="el" href="classmessage_1_1GripCommand.html">message::GripCommand</a> const&gt; <a class="el" href="gazebo_8h.html#a1badb34e9627f4eb3ce007fe7d5dcfa5">ConstGripperCmdPtr</a></td>
+          <td class="memname">typedef const boost::shared_ptr&lt;message::GripCommand const&gt; <a class="el" href="gazebo_8h.html#a1badb34e9627f4eb3ce007fe7d5dcfa5">ConstGripperCmdPtr</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -183,7 +177,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef const boost::shared_ptr&lt;<a class="el" href="classmessage_1_1JointsComm.html">message::JointsComm</a> const&gt; <a class="el" href="gazebo_8h.html#a67f1d20426278cccee99ca7d99347f4d">ConstRobotCmdPtr</a></td>
+          <td class="memname">typedef const boost::shared_ptr&lt;message::JointsComm const&gt; <a class="el" href="gazebo_8h.html#a67f1d20426278cccee99ca7d99347f4d">ConstRobotCmdPtr</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

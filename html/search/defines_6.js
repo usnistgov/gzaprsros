@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['file_5fnot_5ffound',['File_not_found',['../RobotControlException_8h.html#ab0c4a9abbb9f308df79a381a441292bc',1,'RobotControlException.h']]]
+  ['glogger',['GLOGGER',['../Controller_8cpp.html#a834c7c9eaec3255d38c94aa2b7dd0601',1,'GLOGGER():&#160;Controller.cpp'],['../Globals_8cpp.html#a834c7c9eaec3255d38c94aa2b7dd0601',1,'GLOGGER():&#160;Globals.cpp'],['../nist__robotsnc_8cpp.html#a834c7c9eaec3255d38c94aa2b7dd0601',1,'GLOGGER():&#160;nist_robotsnc.cpp']]]
 ];

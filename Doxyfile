@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Gazebo APRS ROS"
+PROJECT_NAME           = "APRS Gazebo Simulation"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -55,7 +55,7 @@ PROJECT_LOGO           =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
-# entered, it will be relative to the location where doxygen was started. If
+# entered, it will be reladisclaimertive to the location where doxygen was started. If
 # left blank the current directory will be used.
 
 OUTPUT_DIRECTORY       = ./html
@@ -771,8 +771,14 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../src/gzrcs/src ../src/gzrcs/include \
- ../src/crclclient  ../src/gotraj    ../src/gzplugins  
+INPUT                  = ../Readme.md ./MainPage.dox ./MainPage.h ./MainPage.cpp ../src/gzrcs/src ../src/gzrcs/include \
+ ../src/aprs_headers/include/aprs_headers/RCSMsgQueue.h  ../src/aprs_headers/include/aprs_headers/RCSThreadTemplate.h\
+ ../src/aprs_headers/include/aprs_headers/IKinematic.h  ../src/aprs_headers/include/aprs_headers/seriallinkrobot.h\
+ ../src/crclclient  ../src/gotraj/src/gotraj.cpp  ../src/gotraj/include/gotraj/gotraj.h  \
+  ../src/gzplugins/gzjointcmdplugin/gzjointcmdplugin.h  ../src/gzplugins/gzjointcmdplugin/gzjointcmdplugin.cpp\
+  ../src/gzplugins/gzmodelplugin/gzmodelplugin.h  ../src/gzplugins/gzmodelplugin/gzmodelplugin.cpp\
+  ../src/gzplugins/gzparallelgripperplugin/gzparallelgripperplugin.h  ../src/gzplugins/gzparallelgripperplugin/gzparallelgripperplugin.cpp
+  
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -812,7 +818,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = GripCommand.pb.cc  JointsComm.pb.cc GripCommand.pb.h  JointsComm.pb.h
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -828,7 +834,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       =  *.pb.*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -921,7 +927,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = ../Readme.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
@@ -1006,8 +1012,8 @@ USE_HTAGS              = NO
 # specified. Set to NO to disable this.
 # See also: Section \class.
 # The default value is: YES.
-
-VERBATIM_HEADERS       = YES
+# https://stackoverflow.com/questions/17999919/remove-link-to-source-code-in-doxygen
+VERBATIM_HEADERS       = NO
 
 # If the CLANG_ASSISTED_PARSING tag is set to YES then doxygen will use the
 # clang parser (see: http://clang.llvm.org/) for more accurate parsing at the

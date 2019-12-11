@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['offset_5fof_5ffield_5f',['OFFSET_OF_FIELD_',['../GripCommand_8pb_8cc.html#acf500228cdb1c7ca2072d7f7f841be27',1,'GripCommand.pb.cc']]],
   ['ofsgnuplotcart',['ofsGnuPlotCart',['../Globals_8cpp.html#a21622edfec50d1a7795dfc405a8f3283',1,'ofsGnuPlotCart():&#160;Globals.cpp'],['../Globals_8h.html#a21622edfec50d1a7795dfc405a8f3283',1,'ofsGnuPlotCart():&#160;Globals.cpp']]],
   ['ofsgnuplotjnt',['ofsGnuPlotJnt',['../Globals_8cpp.html#a2acd4d8d38d3ba0a25e56c32af18350c',1,'ofsGnuPlotJnt():&#160;Globals.cpp'],['../Globals_8h.html#a2acd4d8d38d3ba0a25e56c32af18350c',1,'ofsGnuPlotJnt():&#160;Globals.cpp']]],
   ['ofsikfast',['ofsIkFast',['../Globals_8cpp.html#a22f07f0acc615c87037f91a222622a2e',1,'ofsIkFast():&#160;Globals.cpp'],['../Globals_8h.html#a22f07f0acc615c87037f91a222622a2e',1,'ofsIkFast():&#160;Globals.cpp']]],
@@ -16,7 +15,6 @@ var searchData=
   ['open',['open',['../classGripperInterface.html#ad7665d5a4aee03a5794f6e4132c59fed',1,'GripperInterface']]],
   ['opengripper',['openGripper',['../classCCrclApi.html#a37aad400d1009a5bdac82e3247c78413',1,'CCrclApi']]],
   ['operator_3c_3c',['operator&lt;&lt;',['../Notes_8txt.html#adaa6021bd615d1ca47a11bf517bded01',1,'Notes.txt']]],
-  ['operator_3d',['operator=',['../classmessage_1_1GripCommand.html#ae16afea51ca56edf9e80fd475eebe49f',1,'message::GripCommand::operator=()'],['../classmessage_1_1JointsComm.html#a96231e7e7af6d1e42682bc5a146c5d26',1,'message::JointsComm::operator=()'],['../classgomotion_1_1E.html#a093c974e2fe6cd0423e0b8520f661684',1,'gomotion::E::operator=()']]],
   ['operator_3e_3e',['operator&gt;&gt;',['../Notes_8txt.html#aa6da481f12186651d0777bee21c965c4',1,'Notes.txt']]],
   ['os',['os',['../Demo_8cpp.html#af583aab7469ad85646c68473fa671258',1,'Demo.cpp']]],
   ['other',['other',['../Notes_8txt.html#ad71d7918938b0c462c551ca1818a36e6',1,'Notes.txt']]]

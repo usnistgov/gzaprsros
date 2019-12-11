@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: Class Members - Functions</title>
+<title>APRS Gazebo Simulation: Class Members - Functions</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -75,7 +75,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
       <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li><a href="functions_eval.html"><span>Enumerator</span></a></li>
-      <li><a href="functions_rela.html"><span>Related&#160;Functions</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -124,26 +123,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 &#160;
 
 <h3><a class="anchor" id="index_a"></a>- a -</h3><ul>
-<li>acc()
-: <a class="el" href="structHERMITE__POLYNOMIAL.html#ae0554d8bd089f4015080ed20446d4bb3">HERMITE_POLYNOMIAL</a>
-</li>
 <li>action()
 : <a class="el" href="structRCS_1_1CController.html#a04bb793a57c8bfe4c1990dcf752a2f2f">RCS::CController</a>
+, <a class="el" href="classRCS_1_1Thread.html#a58618b82be2c2d73a2ba671a4e8a3eff">RCS::Thread</a>
 </li>
-<li>add_effort()
-: <a class="el" href="classmessage_1_1JointsComm.html#a9d27a9004b219f2e257825aae0df3524">message::JointsComm</a>
-</li>
-<li>add_force()
-: <a class="el" href="classmessage_1_1GripCommand.html#a39aa333dea5db0f903ec0613678a574d">message::GripCommand</a>
-</li>
-<li>add_name()
-: <a class="el" href="classmessage_1_1JointsComm.html#ad711cc8ac073144b753d2dece28ce89e">message::JointsComm</a>
-</li>
-<li>add_position()
-: <a class="el" href="classmessage_1_1JointsComm.html#a41ba5821a915dc0064e554747e02eb94">message::JointsComm</a>
-</li>
-<li>add_velocity()
-: <a class="el" href="classmessage_1_1JointsComm.html#a02d6049429ec87e35a9fe43e69b0ac53">message::JointsComm</a>
+<li>addBackMsgQueue()
+: <a class="el" href="classRCS_1_1CMessageQueue.html#a6fe025567c6fa7757b687c3a5ffa75a5">RCS::CMessageQueue&lt; T &gt;</a>
 </li>
 <li>addBaseTransform()
 : <a class="el" href="structRCS_1_1KinematicRing.html#a891caa8016c5356a1b3bfb3246bdae3d">RCS::KinematicRing</a>
@@ -151,12 +136,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>addController()
 : <a class="el" href="classCComandLineInterface.html#a7ff973c74220ca77dde892c5516f4a4a">CComandLineInterface</a>
 </li>
+<li>addFrontMsgQueue()
+: <a class="el" href="classRCS_1_1CMessageQueue.html#a522e1e8909c5dcb5bd7fccc9608795d9">RCS::CMessageQueue&lt; T &gt;</a>
+</li>
+<li>addMsgQueue()
+: <a class="el" href="classRCS_1_1CMessageQueue.html#a80cea56ebc1b6ac057816fc8f8a12f8d">RCS::CMessageQueue&lt; T &gt;</a>
+</li>
+<li>addPostprocessFcn()
+: <a class="el" href="classRCS_1_1Thread.html#a9961c67947741ff34bd54c4b804e717c">RCS::Thread</a>
+</li>
+<li>addPreprocessFcn()
+: <a class="el" href="classRCS_1_1Thread.html#a14f091c30ceb5c446a4a8bceeb9815de">RCS::Thread</a>
+</li>
 <li>addRobotController()
 : <a class="el" href="classCRos.html#a030bed31c0a48c2892cb3a0041c484c4">CRos</a>
-</li>
-<li>AddSolution()
-: <a class="el" href="classikfast_1_1IkSolutionList.html#ac0a503b13e68403e7b2d92afd4c28a7b">ikfast::IkSolutionList&lt; T &gt;</a>
-, <a class="el" href="classikfast_1_1IkSolutionListBase.html#a9d862f550472c2fa15189946b12222bf">ikfast::IkSolutionListBase&lt; T &gt;</a>
 </li>
 <li>allJointNumbers()
 : <a class="el" href="structRCS_1_1CController.html#a230cd5da1b43e7c93809ccb3b8e103ca">RCS::CController</a>
@@ -164,20 +157,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>appendFile()
 : <a class="el" href="classCGlobals.html#aefaede4c9b7c642863799633dad73b3b">CGlobals</a>
 </li>
-<li>AppendJoints()
-: <a class="el" href="classgomotion_1_1GoTraj.html#a142ad5f8d124298c031ebe66301efe09">gomotion::GoTraj</a>
-</li>
-<li>AppendPose()
-: <a class="el" href="classgomotion_1_1GoTraj.html#acb678190fe6bb2f3055c7a8d58b6a417">gomotion::GoTraj</a>
-</li>
 <li>approach()
 : <a class="el" href="classCCrclApi.html#af563fb85eed51dc239188672e9c8bfaa">CCrclApi</a>
 </li>
 <li>assignOfs()
 : <a class="el" href="classCGlobals.html#a2b2176c8a69449820fb7a0ff1a65f72d">CGlobals</a>
-</li>
-<li>AtGoal()
-: <a class="el" href="classMotionControl.html#afdee54c3c7ff79b8d6c2dc2afe64e2d5">MotionControl</a>
 </li>
 </ul>
 </div><!-- contents -->

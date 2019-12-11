@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['backmsgqueue',['backMsgQueue',['../classRCS_1_1CMessageQueue.html#a99bdfb38bf2863f09cf48f8fef60f777',1,'RCS::CMessageQueue']]],
   ['bad_5fconversion',['Bad_Conversion',['../RobotControlException_8h.html#a538f49cd7a9c0b2afe7c307b63298466',1,'RobotControlException.h']]],
   ['bad_5fparameter',['Bad_Parameter',['../MotionException_8h.html#a1d2fddc478f2ad29ab574af10d2a4b62',1,'Bad_Parameter():&#160;MotionException.h'],['../RobotControlException_8h.html#a1d2fddc478f2ad29ab574af10d2a4b62',1,'Bad_Parameter():&#160;RobotControlException.h']]],
   ['basepose',['basePose',['../structRCS_1_1KinematicRing.html#aaaeac3ea4dd5e811110dbb961b650550',1,'RCS::KinematicRing']]],
@@ -7,6 +8,7 @@ var searchData=
   ['bclosestfree',['bClosestFree',['../classCGlobals.html#a0605e07f43ba56c2d9ea9cfc15b5f31c',1,'CGlobals']]],
   ['bclosestopenslot',['bClosestOpenSlot',['../classCGlobals.html#aeb1f1cbe350f61e4eaba662028d2855b',1,'CGlobals']]],
   ['bdebug',['bDebug',['../classCGlobals.html#a07be52459c48783037e4078d4fef8847',1,'CGlobals']]],
+  ['begin',['begin',['../classRCS_1_1CMessageQueue.html#afe32a02e5846fc3c882d864aa4cfd359',1,'RCS::CMessageQueue']]],
   ['bflywheel',['bFlywheel',['../classCGlobals.html#aa3e01cf8cf7b44da91da9a69ee5fa00a',1,'CGlobals']]],
   ['bgazebo',['bGazebo',['../classCGlobals.html#a382e3db428a1ed2fabb80017f0110d33',1,'CGlobals']]],
   ['bgearlocations',['bGearLocations',['../classCGlobals.html#a2ed0e26a32f2541fb61fa44e20082247',1,'CGlobals']]],
@@ -28,6 +30,5 @@ var searchData=
   ['bsetupdebug',['bSetupDebug',['../nist__robotsnc_8cpp.html#a5540df669cd218b031cfd79fec34f248',1,'nist_robotsnc.cpp']]],
   ['build',['BUILD',['../nist__robotsnc_8cpp.html#a03505fe2d99ef550d9e1d39f57048908',1,'nist_robotsnc.cpp']]],
   ['bworldcrclcoordinates',['bWorldCRCLCoordinates',['../classCGlobals.html#a8631865008145478c1366d69a9d53c56',1,'CGlobals']]],
-  ['bytesize',['ByteSize',['../classmessage_1_1GripCommand.html#a414b7c9cbebe83ba3a33358515be03c7',1,'message::GripCommand::ByteSize()'],['../classmessage_1_1JointsComm.html#a10b3ecb0e6757f327670b78cab8b7354',1,'message::JointsComm::ByteSize()']]],
   ['shared_5fptr_3c_20rcs_3a_3aikinematic_20_3e',['shared_ptr&lt; RCS::IKinematic &gt;',['../nist__robotsnc_8cpp.html#add1f398235c08ecfe3a27b9ad8ab5062',1,'nist_robotsnc.cpp']]]
 ];

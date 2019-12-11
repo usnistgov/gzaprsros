@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>Gazebo APRS ROS: /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/src/gotraj.cpp File Reference</title>
+<title>APRS Gazebo Simulation: /home/isd/michalos/src/github/nist/gzaprsros-xenial/src/gotraj/src/gotraj.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Gazebo APRS ROS
+   <div id="projectname">APRS Gazebo Simulation
    </div>
   </td>
  </tr>
@@ -113,8 +113,10 @@ Include dependency graph for gotraj.cpp:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgomotion_1_1E.html">gomotion::E</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classgomotion_1_1E.html" title="The E class throws an exception, if an internal gomotion method failed and returned an error code...">E</a> class throws an exception, if an internal gomotion method failed and returned an error code. The exception include the code for the gomotion call, line and file name as part of the exception. The class uses a C++ wrapper <a class="el" href="gotraj_8cpp.html#ad86a5d59a90d30c8702c4069c2d5df5b">EF(X)</a> to handle the exception detection and throwing.  <a href="classgomotion_1_1E.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgomotion_1_1go__motion__interface.html">gomotion::go_motion_interface</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="structgomotion_1_1go__motion__interface.html" title="The go_motion_interface struct interfaces to the gomotion trajectory generator. ">go_motion_interface</a> struct interfaces to the gomotion trajectory generator.  <a href="structgomotion_1_1go__motion__interface.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -142,8 +144,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a8a443f24940529e711c1b298fefbf2b6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegomotion.html#a8a443f24940529e711c1b298fefbf2b6">gomotion::DumpPoseSimple</a> (tf::Pose pose)</td></tr>
 <tr class="separator:a8a443f24940529e711c1b298fefbf2b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f6c77ef98cdb1e86071ba7722250fba"><td class="memItemLeft" align="right" valign="top">static go_pose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegomotion.html#a1f6c77ef98cdb1e86071ba7722250fba">gomotion::ConvertTfPose</a> (tf::Pose pose)</td></tr>
+<tr class="memdesc:a1f6c77ef98cdb1e86071ba7722250fba"><td class="mdescLeft">&#160;</td><td class="mdescRight">ConvertTfPose converts from a ROS tf pose into a gomotion pose.  <a href="namespacegomotion.html#a1f6c77ef98cdb1e86071ba7722250fba">More...</a><br /></td></tr>
 <tr class="separator:a1f6c77ef98cdb1e86071ba7722250fba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47ba71178172d3a2b0d88805d451ccf2"><td class="memItemLeft" align="right" valign="top">static tf::Pose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegomotion.html#a47ba71178172d3a2b0d88805d451ccf2">gomotion::ConvertGoPose</a> (go_pose p)</td></tr>
+<tr class="memdesc:a47ba71178172d3a2b0d88805d451ccf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">ConvertGoPose converts from a gomotion pose into a ROS tf pose reprsentation.  <a href="namespacegomotion.html#a47ba71178172d3a2b0d88805d451ccf2">More...</a><br /></td></tr>
 <tr class="separator:a47ba71178172d3a2b0d88805d451ccf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
