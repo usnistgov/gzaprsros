@@ -1,3 +1,13 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 #include <algorithm>
 #include <stdlib.h>
@@ -92,6 +102,7 @@ std::vector<double> ConvertV(
 
 ////////////////////////////////////////////////////////////////////////////////
 CComandLineInterface::CComandLineInterface()
+    : RCS::Thread(0.01, "CLI")
 {
     _bDegrees = false;
     _bFlag = true;
@@ -248,7 +259,24 @@ extern "C" void wrapper(char * s) {
     callback(s);
 }
 }
+////////////////////////////////////////////////////////////////////////////////
+int CComandLineInterface::action()
+{
+    rl_callback_read_char();
+    return 1;
+}
+////////////////////////////////////////////////////////////////////////////////
+void CComandLineInterface::init ( )
+{
+    // http://www.mcld.co.uk/blog/2009/simple-gnu-readline-callback-style-example.html
+    const char *prompt = "RCS> ";
+    // Install the callback handler
+    callback=boost::bind(&CComandLineInterface::loopCallback, this,_1);
+    rl_callback_handler_install(prompt, (rl_vcpfunc_t*) wrapper);
 
+}
+#if 0
+////////////////////////////////////////////////////////////////////////////////
 int CComandLineInterface::inputLoop()
 {
     // http://www.mcld.co.uk/blog/2009/simple-gnu-readline-callback-style-example.html
@@ -267,6 +295,8 @@ int CComandLineInterface::inputLoop()
     return 0;
 }
 
+#endif
+////////////////////////////////////////////////////////////////////////////////
 int CComandLineInterface::inputState()
 {
     if(lineq.sizeMsgQueue()>0)

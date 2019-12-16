@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #include "gzjntcommandplugin.h"
 
 
@@ -7,7 +18,7 @@
 namespace gazebo
 {
 ////////////////////////////////////////////////////////////////////////////////
-GzJntCmdPlugin::GzJntCmdPlugin()
+gzJntCmdPlugin::gzJntCmdPlugin()
 {
     update_period_=0.005;
     b_debug=false;
@@ -15,15 +26,15 @@ GzJntCmdPlugin::GzJntCmdPlugin()
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-GzJntCmdPlugin::~GzJntCmdPlugin()
+gzJntCmdPlugin::~gzJntCmdPlugin()
 {
     // hope this kills the thread xx (crossing fingers)
     bFlag=false;
 }
 ////////////////////////////////////////////////////////////////////////////////
-void GzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+void gzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
-    std::cout << "GzJntCmdPlugin: Compiled " << __DATE__ << " " << __TIME__ << "\n" << std::flush;
+    std::cout << "gzJntCmdPlugin: Compiled " << __DATE__ << " " << __TIME__ << "\n" << std::flush;
 
     // Store the model pointer for convenience.
     this->model = _model;
@@ -118,7 +129,7 @@ void GzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     // Subscribe to the joints communication topic, and register a callback
     if(!robotCmd_topicName.empty())
         sub = node->Subscribe(robotCmd_topicName,
-                              &GzJntCmdPlugin::onJointsCommMsg,
+                              &gzJntCmdPlugin::onJointsCommMsg,
                               this);
 
     // advertise status topic
@@ -137,13 +148,13 @@ void GzJntCmdPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     // Update joint model
     // Listen to the update event. This event is broadcast every
     // simulation iteration.
-    this->updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&GzJntCmdPlugin::onUpdate, this, _1));
+    this->updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&gzJntCmdPlugin::onUpdate, this, _1));
 
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void GzJntCmdPlugin::onJointsCommMsg(const ConstJointsCommPtr &msg)
+void gzJntCmdPlugin::onJointsCommMsg(const ConstJointsCommPtr &msg)
 {
     boost::mutex::scoped_lock lock(m);
     for(size_t i=0; i< msg->name_size(); i++)
@@ -165,7 +176,7 @@ void GzJntCmdPlugin::onJointsCommMsg(const ConstJointsCommPtr &msg)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void GzJntCmdPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
+void gzJntCmdPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
 {
     // Apply a small linear velocity to the model.
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -182,7 +193,7 @@ void GzJntCmdPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
         last_update_time_+= common::Time ( update_period_ );
     }
 }
-void GzJntCmdPlugin::updateJointStatus()
+void gzJntCmdPlugin::updateJointStatus()
 {
     boost::mutex::scoped_lock lock(m);
     message::JointsComm jnt_readings;
@@ -208,7 +219,7 @@ void GzJntCmdPlugin::updateJointStatus()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void GzJntCmdPlugin::publishJointStates()
+void gzJntCmdPlugin::publishJointStates()
 {
     // you need to continually update joints or gravity could effect position
     {
@@ -240,7 +251,7 @@ void GzJntCmdPlugin::publishJointStates()
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
-void GzJntCmdPlugin::setJntPosition(const std::string &_jointName, const double &_target)
+void gzJntCmdPlugin::setJntPosition(const std::string &_jointName, const double &_target)
 {
     this->model->SetJointPosition(_jointName, _target);
 }

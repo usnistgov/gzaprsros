@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #ifndef COMMANDLINEINTERFACE_H
 #define COMMANDLINEINTERFACE_H
 
@@ -18,6 +29,7 @@
 #include "gzrcs/CrclApi.h"
 
 #include "aprs_headers/Debug.h"
+#include "aprs_headers/RCSThreadTemplate.h"
 using namespace RCS;
 
 /**
@@ -65,7 +77,7 @@ using namespace RCS;
  * where object - give pose of object
  * move x,y,z  - move to xyz (assumes last rotation)
  */
-class CComandLineInterface
+class CComandLineInterface : public RCS::Thread
 {
 public:
 
@@ -81,10 +93,34 @@ public:
     /// \brief InputLoop sees if the terminal has any input terminated by line feed
     /// \return <0 to quit, 0 if ok and continue, >0 if error.
     ///
-    int inputLoop();
+    //int inputLoop();
+
+    /**
+     * @brief inputState return the latest state of the command line.
+     * If anythin on the command queue, execute and return the status from
+     * the command. If no command return noop.
+     * @return status enumeration.
+     */
     int inputState();
+
     void loopCallback(char* line);
     CMessageQueue<std::string> lineq;
+
+    /**
+     * @brief ActionCyclic loop for the command line interface.
+     * @return 0 if successful
+     */
+    virtual int action();
+
+    /**
+     * @brief init sets up the gnu readline callback and the loop flag.
+     */
+    virtual void init ( );
+
+    /**
+     * @brief Cleanup called when thread is terminating.
+     */
+    virtual void cleanup ( ){}
 
     /// \brief InterpretLine given an input line calls appropriate CrclAPI
     /// \param line command line to interpret

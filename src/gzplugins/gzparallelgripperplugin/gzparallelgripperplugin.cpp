@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #include "gzparallelgripperplugin.h"
 #include <boost/algorithm/string.hpp>
 
@@ -8,7 +19,7 @@ namespace gazebo
 {
 static std::mutex mymutex;
 ////////////////////////////////////////////////////////////////////////////////
-ParallelGripperPlugin::VirtualJoint::VirtualJoint(ParallelGripperPlugin* p,
+gzParallelGripperPlugin::VirtualJoint::VirtualJoint(gzParallelGripperPlugin* p,
                                                   physics::JointPtr j,
                                                   physics::CollisionPtr c1,
                                                   physics::CollisionPtr c2,
@@ -19,7 +30,7 @@ ParallelGripperPlugin::VirtualJoint::VirtualJoint(ParallelGripperPlugin* p,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool ParallelGripperPlugin::VirtualJoint::CheckValidity(VirtualJoint* v)
+bool gzParallelGripperPlugin::VirtualJoint::CheckValidity(VirtualJoint* v)
 {
 #if 0
     //Joint Deletion Callback here
@@ -46,7 +57,7 @@ bool ParallelGripperPlugin::VirtualJoint::CheckValidity(VirtualJoint* v)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ParallelGripperPlugin::ParallelGripperPlugin()
+gzParallelGripperPlugin::gzParallelGripperPlugin()
 {
     update_period_=0.005;
     bDebug=false;
@@ -56,12 +67,12 @@ ParallelGripperPlugin::ParallelGripperPlugin()
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-ParallelGripperPlugin::~ParallelGripperPlugin()
+gzParallelGripperPlugin::~gzParallelGripperPlugin()
 {
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
+void gzParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
     std::cout << "GzParallelGripperPlugin: Compiled " << __DATE__ << " " << __TIME__ << "\n" << std::flush;
 
@@ -145,13 +156,13 @@ void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf
     joint_names.push_back(model_name+"::"+ joint1_name);
     joint_names.push_back(model_name+"::"+ joint2_name);
 
-    std::cout  << "ParallelGripperPlugin Model = " << model_name<< "\n";
-    std::cout  << "ParallelGripperPlugin Joint1 = " << joint1_name << "\n";
-    std::cout  << "ParallelGripperPlugin Joint2 = " << joint2_name << "\n";
-    std::cout  << "ParallelGripperPlugin Link1 = " << link1_name << "\n";
-    std::cout  << "ParallelGripperPlugin Link2 = " << link2_name << "\n";
-    std::cout  << "ParallelGripperPlugin Control Topic = " << control_topic << "\n";
-    std::cout  << "ParallelGripperPlugin State Topic = " << state_topic << "\n";
+    std::cout  << "gzParallelGripperPlugin Model = " << model_name<< "\n";
+    std::cout  << "gzParallelGripperPlugin Joint1 = " << joint1_name << "\n";
+    std::cout  << "gzParallelGripperPlugin Joint2 = " << joint2_name << "\n";
+    std::cout  << "gzParallelGripperPlugin Link1 = " << link1_name << "\n";
+    std::cout  << "gzParallelGripperPlugin Link2 = " << link2_name << "\n";
+    std::cout  << "gzParallelGripperPlugin Control Topic = " << control_topic << "\n";
+    std::cout  << "gzParallelGripperPlugin State Topic = " << state_topic << "\n";
 
     if (!joint1 || !joint2)
     {
@@ -159,7 +170,7 @@ void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf
     }
 
     // Listen to the update event. This event is broadcast every simulation iteration.
-    this->updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&ParallelGripperPlugin::onUpdate, this, _1));
+    this->updateConnection = event::Events::ConnectWorldUpdateBegin(boost::bind(&gzParallelGripperPlugin::onUpdate, this, _1));
 
     // Create our node for communication
     this->node = transport::NodePtr(new transport::Node());
@@ -175,7 +186,7 @@ void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf
 
     // Subscribe to the control topic, and register a callback
     this->sub = this->node->Subscribe(control_topic,
-                                      &ParallelGripperPlugin::onMsg,
+                                      &gzParallelGripperPlugin::onMsg,
                                       this);
 
     // setup contact manager
@@ -208,7 +219,7 @@ void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf
         contacttopic= contactManager->CreateFilter(model->GetScopedName(), collisionNames);
         std::cout<<"Subscribing contact manager to topic " << contacttopic << std::endl;
         bool latching=false;
-        this->contactSub = this->node->Subscribe(contacttopic,&ParallelGripperPlugin::OnContact, this, latching);
+        this->contactSub = this->node->Subscribe(contacttopic,&gzParallelGripperPlugin::OnContact, this, latching);
 
     }
     // Fix...
@@ -218,7 +229,7 @@ void ParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::OnContact(const ConstContactsPtr& _msg)
+void gzParallelGripperPlugin::OnContact(const ConstContactsPtr& _msg)
 {
     std::lock_guard<std::mutex> lockGuard(mymutex);
 
@@ -239,7 +250,7 @@ void ParallelGripperPlugin::OnContact(const ConstContactsPtr& _msg)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::onMsg(const ConstGripCommandPtr &msg)
+void gzParallelGripperPlugin::onMsg(const ConstGripCommandPtr &msg)
 {
     if(bDebug)
         gzdbg << "Grip command requested: " << (msg->enable() ? "Close" : "Open") << std::endl;
@@ -248,7 +259,7 @@ void ParallelGripperPlugin::onMsg(const ConstGripCommandPtr &msg)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
+void gzParallelGripperPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
 {
 #ifdef TIMED_UPDATE
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -332,7 +343,7 @@ void ParallelGripperPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
     publishGripperState();
 }
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::publishGripperState()
+void gzParallelGripperPlugin::publishGripperState()
 {
     message::GripCommand status;
     status.set_enable(grip_enabled);
@@ -344,7 +355,7 @@ void ParallelGripperPlugin::publishGripperState()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::Detach()
+void gzParallelGripperPlugin::Detach()
 {
     for (auto v : this->virtualJoints)
     {
@@ -358,7 +369,7 @@ void ParallelGripperPlugin::Detach()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int ParallelGripperPlugin::CheckAttach()
+int gzParallelGripperPlugin::CheckAttach()
 {
     std::lock_guard<std::mutex> lockGuard(mymutex);
 
@@ -422,7 +433,7 @@ int ParallelGripperPlugin::CheckAttach()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void ParallelGripperPlugin::SetLinksGravityFlag(physics::ModelPtr objmodel, bool bFlag)
+void gzParallelGripperPlugin::SetLinksGravityFlag(physics::ModelPtr objmodel, bool bFlag)
 {
     physics::Link_V links = objmodel->GetLinks();
 

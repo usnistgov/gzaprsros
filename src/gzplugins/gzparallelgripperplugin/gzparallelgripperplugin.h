@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #ifndef GZPARALLELGRIPPERPLUGIN_H
 #define GZPARALLELGRIPPERPLUGIN_H
 
@@ -14,7 +25,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
 
-// Reference:
+// References:
 // https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin
 
 namespace gazebo
@@ -23,7 +34,32 @@ typedef boost::shared_ptr<message::GripCommand const> ConstGripCommandPtr;
 typedef boost::shared_ptr<message::JointsComm const> ConstJointsCommPtr;
 
 
-class  ParallelGripperPlugin : public ModelPlugin
+/**
+ * @brief The gzParallelGripperPlugin class is based on code
+ * from https://github.com/Pavel-P/test_gripper which
+ * uses force control to do simulated grasping.
+ *
+ * gzParallelGripperPlugin works for parallel grippers (two finger grippers)
+ * and accepts a clost or open command from the custom protobuf command
+ * GripCommand.
+ *
+\code
+package message;
+
+message GripCommand {
+    required int32 enable = 1;
+    optional int32 state = 2;
+    repeated double force = 3;
+}
+\endcode
+where an enable =truecloses the gripper and an enable-false
+opens the gripper. The algorithm uses force control to close
+on the grasping object, and upon contact by a finger a virtual joint
+is created between the finger and the object. When both fingers
+have created a virtual joint to the object, the grasping close
+is completed and the state becomes equal to one.
+ */
+class  gzParallelGripperPlugin : public ModelPlugin
 {
 
     /**
@@ -33,14 +69,14 @@ class  ParallelGripperPlugin : public ModelPlugin
     class VirtualJoint
         {
           public: physics::JointPtr joint;
-          public: ParallelGripperPlugin* parent;
+          public: gzParallelGripperPlugin* parent;
           public: physics::CollisionPtr collision1;
           public: physics::CollisionPtr collision2;
           public: ignition::math::Vector3d contactForce;
 
           public: static bool CheckValidity(VirtualJoint* v);
 
-          public: VirtualJoint(ParallelGripperPlugin* p,
+          public: VirtualJoint(gzParallelGripperPlugin* p,
                                physics::JointPtr j,
                                physics::CollisionPtr c1,
                                physics::CollisionPtr c2,
@@ -49,10 +85,10 @@ class  ParallelGripperPlugin : public ModelPlugin
         };
   public:
     /**
-     * @brief ParallelGripperPlugin constructor to create the plugin.
+     * @brief gzParallelGripperPlugin constructor to create the plugin.
      */
-    ParallelGripperPlugin();
-    ~ParallelGripperPlugin();
+    gzParallelGripperPlugin();
+    ~gzParallelGripperPlugin();
 
     /**
      * @brief Loads the gripper model.
@@ -221,7 +257,7 @@ private:
   };
 
   // Register this plugin with the simulator
-  GZ_REGISTER_MODEL_PLUGIN(ParallelGripperPlugin)
+  GZ_REGISTER_MODEL_PLUGIN(gzParallelGripperPlugin)
 
 }
 #endif // GZPARALLELGRIPPERPLUGIN_H

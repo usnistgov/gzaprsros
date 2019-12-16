@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #ifndef GZMODELPLUGIN_H
 #define GZMODELPLUGIN_H
 
@@ -22,14 +33,38 @@ typedef ignition::math::Quaterniond Quaterniond;
 namespace gazebo
 {
 
+
+/**
+ * @brief The gzModelPlugin class is a Gazebo World plugin to report
+ * on the kitting objects (models that start with "sku" name).
+ * Gazebo subscribers to the model message will get the name and pose.
+ * Included in the intial message publish is the bounding box of the object
+ * is also pusblished to allow listeners to understand the top of the model
+ * for simplified grasping.
+ */
 class gzModelPlugin : public WorldPlugin
 {
 
 public:
     gzModelPlugin();
 
+    /// \brief Load function
+    ///
+    /// Called when a Plugin is first created, and after the World has been
+    /// loaded. This function should not be blocking.
+    /// \param[in] _world Pointer to the World
+    /// \param[in] _sdf Pointer to the SDF element of the plugin.
     void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf);
+    /**
+     * @brief Connect initialize and start publishing kitting object
+     * pose data  if listensers.
+     */
     void Connect();
+
+    /**
+     * @brief onWorldUpdate cyclic event callbacvk from gazebo. Update model
+     * poses. Publish new object information.
+     */
     void onWorldUpdate();
 private:
     physics::WorldPtr world;

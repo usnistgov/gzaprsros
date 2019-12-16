@@ -460,9 +460,10 @@ int main(int argc, char** argv)
         CGlobals::bPaused=false;
         cli.state=CController::NORMAL;
 
-        std::thread t1(&CComandLineInterface::inputLoop, &cli);
+        //std::thread t1(&CComandLineInterface::inputLoop, &cli);
+        cli.start();
 
-        int state=0;
+        int demostate=0;
         do {
             for (size_t i = 0; i < ncs.size(); i++)
             {
@@ -475,8 +476,8 @@ int main(int argc, char** argv)
                 }
 
 
-               if(geardemo->isDone(state))
-                   state=0;
+               if(geardemo->isDone(demostate))
+                   demostate=0;
 
                if(clistate==CController::EXITING)
                 {
@@ -510,7 +511,7 @@ int main(int argc, char** argv)
                 // If canned demo AND finished last commands
                 if(!CGlobals::bPaused && Globals.bCannedDemo && ! ncs[i]->isBusy())
                 {
-                    if(geardemo->issueRobotCommands(state)<0)
+                    if(geardemo->issueRobotCommands(demostate)<0)
                     {
                         if(Globals.bRepeatCannedDemo)
                         {

@@ -1,3 +1,13 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 #ifndef Shape_Model_H
 #define Shape_Model_H
@@ -64,6 +74,12 @@ public:
 
 };
 
+/**
+ * @brief The CShapes struct base class is a std vector of shapes.
+ * The list of shapes is defined by the static definition initDefinition.
+ * Once setup, the variety of shapes exist and one can use findDefintion
+ * to find matching Shape definition.
+ */
 struct CShapes : std::vector<CShape>
 {
     static void initDefinitions();
@@ -71,7 +87,8 @@ struct CShapes : std::vector<CShape>
 };
 
 /**
- * @brief The CInstances struct contains all the
+ * @brief The CInstances struct contains all the instances
+ * of the shapes in the world.
  */
 struct CInstances : std::vector<CShape>
 {

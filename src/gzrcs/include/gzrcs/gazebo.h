@@ -1,3 +1,14 @@
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 #ifndef GAZEBO_H
 #define GAZEBO_H
 
@@ -155,9 +166,7 @@ public:
 
     /**
      * @brief Init - initializes connection to gazebo robot
-      * @param gzGriperTopicName name of pavel gazebo topic to advertise and write to
-     * @param gzRobotCmdTopicName name of custom joints communication command topic to advertise and write to
-     * @param gzRobotStatusTopicName name of custom joints communication status topic to sbuscribe and read
+     * @param robotName is the string containing robot name
      */
     virtual std::string init(std::string robotName
                              //std::string gzRobotJointPrefix,
@@ -180,21 +189,23 @@ public:
 
     /**
      * \brief UpdateRobot writes the robot joint_state topic values to listener.
-     * \param a sensor_msgs::JointState describing robot joints
+     * \param time time of update
+     * \param joint a sensor_msgs::JointState describing robot joints
      * \return boolean if write occurred as expected.
      */
     bool updateRobot(double time, sensor_msgs::JointState joint);
 
     /**
      * \brief UpdateGripper writes the robot joint_state topic values to listener.
-     * \param a sensor_msgs::JointState describing robot joints
+     * \param time time of gripper update
+     * \param joint sensor_msgs::JointState describing gripper joints
      * \return boolean if write occurred as expected.
      */
     bool updateGripper(double time, sensor_msgs::JointState joint);
 
     /**
     * @brief OnStatusUpdate receive robot  status in separate thread
-    * @param _msg
+    * @param _msg gazebo message callback describing robot status
     */
     void OnStatusUpdate(ConstRobotCmdPtr &_msg);
 
@@ -205,9 +216,13 @@ public:
 
     /**
      * @brief readCycles return status feedback cycles
-     * @return count
+     * @return positive count
      */
     size_t readCycles() { return _readCycles; }
+    /**
+     * @brief writeCycles returns number of cycle written to robot
+     * @return positive  number of cycles
+     */
     size_t writeCycles() { return _writeCycles; }
     ////////////////////////////////
 private:
@@ -258,8 +273,6 @@ public:
 
     /**
      * @brief Start start updating joints
-     * @param robotjoingnames names of robot joints that will be updates
-     * @param fingernames names of gripper joints that will be updates
      */
     virtual void start();
 
@@ -271,7 +284,8 @@ public:
 
     /**
      * \brief UpdateGripper writes the robot joint_state topic values to listener.
-     * \param a sensor_msgs::JointState describing robot joints
+     * \param time time of gripper update
+     * \param a sensor_msgs::JointState describing gripper joints
      * \return boolean if write occurred as expected.
      */
     bool updateGripper(double time, sensor_msgs::JointState joint);
@@ -280,7 +294,7 @@ public:
 
     /**
      * @brief OnStatusUpdate receive gripper command status in separate thread
-     * @param _msg
+     * @param _msg gzebo messager from plugin describing current status
      */
     void OnStatusUpdate(ConstGripperCmdPtr &_msg);
 

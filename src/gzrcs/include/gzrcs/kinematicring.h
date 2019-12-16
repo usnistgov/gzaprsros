@@ -6,6 +6,18 @@
 
 namespace RCS {
 
+/**
+ * @brief The KinematicRing struct defines a kinematic transform
+ * equation where the left hand side defines the goal and the right
+ * hand side defines the robot. THe lhs is defined by at least one
+ * matrice that defines the desired position/orientation or pose of the robot
+ * defined as a transform. The rhs is a series of transforms that
+ * at least contains the 0T6 series of transforms from the base joint
+ * to the tip joint. However, both the lhs and the rhs may have
+ * additional transforms that modify the kinematic equation. For
+ * example, the rhs may have a gripper which is deined as another
+ * transform.
+ */
 struct KinematicRing
 {
     /**

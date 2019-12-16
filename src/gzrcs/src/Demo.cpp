@@ -40,7 +40,6 @@ typedef std::function<bool ()> TPollFcn;
  */
 
 //http://www.cplusplus.com/forum/beginner/91449/
-////////////////////////////////////////////////////////////////////////////////
 struct timer
 {
     typedef std::chrono::steady_clock clock ;
@@ -94,7 +93,6 @@ static std::ostream* os;
     else os=&nullOstream;}\
     *os
 
-////////////////////////////////////////////////////////////////////////////////
 int CGearDemo::init(std::string robotName)
 {
 
@@ -114,7 +112,6 @@ int CGearDemo::init(std::string robotName)
     return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 void CGearDemo::start()
 {
     if(Globals.bGearLocations)
@@ -131,7 +128,6 @@ void CGearDemo::start()
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 void CGearDemo::stop()
 {
     // These are NOT threads, but ROS or Gazebo subscriptions
