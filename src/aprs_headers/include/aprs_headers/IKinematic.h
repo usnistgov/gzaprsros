@@ -25,6 +25,7 @@ public:
     static const int Bad_URDF_String = -8;
     static const int Bad_Conversion = -9;
     static const int Robot_IK_Problem = -10;
+    static const int Bad_Joints_Size = -11;
 
     virtual int init()=0;
     //virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;

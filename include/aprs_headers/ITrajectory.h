@@ -1,34 +1,35 @@
-#ifndef IKINEMATIC_H
-#define IKINEMATIC_H
+#ifndef ITRAJECOTY_H
+#define ITRAJECOTY_H
 
 #include <tf/tf.h>
 #include <vector>
-#include <aprs_headers/seriallinkrobot.h>
 namespace RCS
 {
 
 
 /**
- * @brief The IKinematic class abstract interface to define a kinematic plugin.
+ * @brief The ITrajectory class abstract interface to define a kinematic plugin.
  */
-class IKinematic : public ISerialLinkRobot
+class ITrajectory
 {
 public:
-    // Errors so far....
-    static const int Kinematics_Ok=0;
+    // Errors
+    static const int Trajectory_Ok=0;
     static const int Parsing_Error = -2;
     static const int Bad_Parameter = -3;
     static const int Initialization_Failed = -4;
     static const int Ini_File_Error = -5;
-    static const int Robot_IK_Singularity = -6;
-    static const int Not_configured = -7;
-    static const int Bad_URDF_String = -8;
-    static const int Bad_Conversion = -9;
-    static const int Robot_IK_Problem = -10;
-    static const int Bad_Joints_Size = -11;
+    static const int Not_configured = -6;
+    static const int Bad_Conversion = -7;
+    static const int Robot_Trajectory_Problem = -8;
+
+    // Control
+    static const int Position=1;
+    static const int MixedModel = 2;
+
 
     virtual int init()=0;
-    //virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;
+
     /**
      * @brief get_name This function gets a descriptive and hopefully unique name so
      *    that the controller can adjust the meaning of the parameters passed
@@ -44,26 +45,6 @@ public:
      * @return positive integer number
      */
     virtual  size_t numJoints()=0;
-
-    /**
-     * @brief FK calculate the forward kinematics to derive a pose from the given joints.
-     * @param jv input joint values of the robot
-     * @param pose reference to pose to store FK in
-     * @return  0 if successful. Otherwise return error enumeration and error message
-     * to be retrieved by get("help");
-     */
-    virtual  int FK(const std::vector<double> jv, tf::Pose &pose)=0;
-
-    /**
-     * @brief inv inverse kinematics take world coordinates and determine joint values,
-     *   given the inverse kinematics flags to resolve any ambiguities. The forward
-     *   flags are set to indicate their value appropriate to the world coordinates
-     *   passed in.
-     * @param world world pose
-     * @param motors joint values
-     * @return
-     */
-    virtual int IK(const tf::Pose pose, std::vector<double>&)=0;
 
     /**
      * @brief debug set the debug flat
@@ -115,15 +96,6 @@ public:
      * @return true if error, otherwise false.
      */
     virtual bool isError()=0;
-
-    // Need to set configuration flags for solution: e.g., elbow up/down
-#if 0
-    int SetWristOffset(double x);
-
-    int set_parameters(go_link *params, int num){ return 0; }
-
-    int get_parameters(go_link *params, int num){ return 0; }
-#endif
 
 
 };

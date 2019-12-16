@@ -26,9 +26,7 @@ GripperInterface::GripperInterface()
 ////////////////////////////////////////////////////////////////////////////////
 std::string GripperInterface::init(std::string robotName)
 {
-
      gripper_name = RCS::robotconfig.getSymbolValue<std::string>(robotName + ".robot.gripper", ",");
-
 
      joint_state.name = RCS::robotconfig.getTokens<std::string>( gripper_name+  + ".gripperJoints", ",");
      // Prepend the current robot prefix to these names. CONVENTION/STANDARD/HACK
