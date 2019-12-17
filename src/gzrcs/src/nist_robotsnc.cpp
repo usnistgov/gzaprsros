@@ -467,13 +467,16 @@ int main(int argc, char** argv)
         do {
             for (size_t i = 0; i < ncs.size(); i++)
             {
+                // This will hang on auto as it now changes the state back to noop after every empty fetch.
+                // Keep last state in cli?
                 int clistate= cli.inputState();
 
-                if(clistate==CController::NOOP)
-                {
-                    Globals.sleep(100);
-                    continue;
-                }
+
+//                if(clistate==CController::NOOP)
+//                {
+//                    Globals.sleep(100);
+//                    continue;
+//                }
 
 
                if(geardemo->isDone(demostate))

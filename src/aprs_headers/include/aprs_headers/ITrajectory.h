@@ -3,6 +3,9 @@
 
 #include <tf/tf.h>
 #include <vector>
+#include <aprs_headers/seriallinkrobot.h>
+
+
 namespace RCS
 {
 
@@ -25,7 +28,7 @@ public:
 
     // Control
     static const int Position=1;
-    static const int MixedModel = 2;
+    static const int MixedMode = 2;
 
 
     virtual int init()=0;
