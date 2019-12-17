@@ -35,8 +35,10 @@ namespace RCS
     {
 public:
 
-        /*!
-         * \brief Constructor of thread, that takes cycle time as input.
+        /**
+         * @brief Thread Constructor of thread, that takes cycle time and name as input.
+         * @param cycletime cycle time of the thread in seconds
+         * @param name string defining thread name
          */
         Thread(double cycletime, std::string name) : _timer(cycletime)
         {
@@ -113,7 +115,7 @@ public:
         }
 
         /*!
-         * \brief Start starts the thread which call Init(), and then does Action()
+         * \brief Start starts the thread which call init(), and then does action()
          * loop.
          */
         void start ( )
