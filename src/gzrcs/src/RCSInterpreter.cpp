@@ -49,6 +49,7 @@ static void LogRobotPosition(std::string message,
         return;
 
     std::stringstream ss;
+#if 0
     ss << message;
     ss << "ROBOT COORDINATES\n";
     ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
@@ -59,6 +60,14 @@ static void LogRobotPosition(std::string message,
     ss << "    Next joints     "  << RCS::vectorDump<double>(nextjoints) << "\n" << std::flush;
     ss << "    Current joints  "  << RCS::vectorDump<double>(curjoints) << "\n" << std::flush;
     //TRAJ_LOG<< ss.str();
+
+#endif
+    ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
+    ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
+    ss << RCS::vectorDump(nextjoints) << ","
+       << boost::format("%5.2f") % r_nextpose.getOrigin().getX() << ","
+       << boost::format("%5.2f") % r_nextpose.getOrigin().getY() << ","
+       << boost::format("%5.2f") % r_nextpose.getOrigin().getZ() << "\n" << std::flush;
     ofsMotionTrace << ss.str();
 
 }
@@ -405,7 +414,6 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
         message=Globals.strFormat("%s: GO CANON_MOVE_TO Ended\n",_nc->name().c_str());
 
 #ifdef DEBUG
-    if (bNewCmd || _goRobot->IsDone())
         LogRobotPosition(
                     message,
                     r_goalpose,

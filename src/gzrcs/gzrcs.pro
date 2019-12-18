@@ -254,6 +254,7 @@ config_features.path     = ../../install/lib/$$TARGET/config
 config_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/MotomanSia20d.urdf\
    $$PWD/config/FanucLRMate200iD.urdf\
+   $$PWD/config/lrmate200id.urdf\
    $$PWD/config/motoman_sia20d.ini
 
 message("gzrcs install $$config_features.path")
@@ -265,6 +266,7 @@ build_features.path     = "$$OUT_PWD/$$DESTDIR/config"
 build_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/MotomanSia20d.urdf\
    $$PWD/config/FanucLRMate200iD.urdf\
+   $$PWD/config/lrmate200id.urdf\
    $$PWD/config/motoman_sia20d.ini
 INSTALLS  += build_features
 

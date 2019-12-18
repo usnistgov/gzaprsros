@@ -36,7 +36,7 @@ public:
     int debug(bool flag);
     int debugStream(std::ostream&);
     int SetWristOffset(double x);
-    size_t numJoints() { return jointNames.size(); }
+    size_t numJoints() ;
 
     std::string set(std::string param,  std::string value);
     std::string set(std::string param,  void * value);
@@ -74,6 +74,7 @@ private:
     std::string  _tiplink;
     std::string  _inifilename;
     std::string ini;
+    size_t _nJoints;
 
     //    boost::filesystem::path temp ;
     //    std::string tempstr;

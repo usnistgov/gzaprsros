@@ -27,6 +27,7 @@ static KDL::Frame tfPoseToKDLFrame(tf::Pose m)
     k.p[1] = m.getOrigin().y();
     k.p[2] = m.getOrigin().z();
 
+    //Quaternion (double x, double y, double z, double w)
     k.M = KDL::Rotation::Quaternion( m.getRotation().x(), m.getRotation().y(), m.getRotation().z(),m.getRotation().w());
     return k;
 }
@@ -34,16 +35,17 @@ static KDL::Frame tfPoseToKDLFrame(tf::Pose m)
 ////////////////////////////////////////////////////////////////////////////////
 static tf::Pose  KDLFrameToTfPose(KDL::Frame k)
 {
-    tf::Pose m;
+//    tf::Pose m;
 
-    m.getOrigin().setX(k.p[0]);
-    m.getOrigin().setY(k.p[1]);
-    m.getOrigin().setZ(k.p[2]);
+//    m.getOrigin().setX(k.p[0]);
+//    m.getOrigin().setY(k.p[1]);
+//    m.getOrigin().setZ(k.p[2]);
 
     double x,y,z,w;
     k.M.GetQuaternion(x,y,z,w);
-    m.setRotation(tf::Quaternion(x,y,z,w));
-    return m;
+//    m.setRotation(tf::Quaternion(x,y,z,w));
+    tf::Pose p(tf::Quaternion(x,y,z,w), tf::Vector3(k.p[0],k.p[1],k.p[2]));
+    return p;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,10 +229,18 @@ std::string Ckdl_plugin::get(std::string param)
         ss << "\turdf\n";
         ss << "\tbase\n";
         ss << "\ttip\n";
+        ss << "\tmaxiterations\n";
+        ss << "\tepsilon\n";
         ss << "Parameters Set:\n";
         ss << "\tdebug\n";
         ss << "\tHandleExceptions\n";
+        ss << "\tmaxiterations\n";
+        ss << "\tepsilon\n";
         return ss.str();
+    }
+    else if(param == "URDFFILE")
+    {
+        return _urdffile;
     }
     else if(param == "URDF")
     {
@@ -243,6 +253,14 @@ std::string Ckdl_plugin::get(std::string param)
     else if(param == "TIP")
     {
         return _tiplink;
+    }
+    else if(param == "MAXITERATIONS")
+    {
+        return std::to_string( maxIterations);
+    }
+    else if(param == "EPSILON")
+    {
+        return std::to_string(epsilon);
     }
     return std::string("No get for parameter ") + param;
 }
@@ -282,6 +300,16 @@ std::string Ckdl_plugin::set(std::string param,  std::string value)
     else if(param == "TIPLINK")
     {
         _tiplink=value;
+    }
+    else if(param == "MAXITERATIONS")
+    {
+        // this is actually an error?
+        maxIterations= std::stod(value);
+    }
+    else if(param == "EPSILON")
+    {
+        // this is actually an error?
+        epsilon= std::stod(value);
     }
     return std::string("No match for ") + param;
 

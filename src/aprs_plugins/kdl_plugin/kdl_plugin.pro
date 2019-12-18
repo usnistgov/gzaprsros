@@ -63,8 +63,7 @@ LIBS += -lboost_regex
 
 SOURCES +=   src/kdl_plugin.cpp
 
-HEADERS += Debug.h\
-    include/kdl_plugin/kdl_plugin.h
+HEADERS +=  include/kdl_plugin/kdl_plugin.h
 
 
 config_features.path     = "../../include/$$TARGET"

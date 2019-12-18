@@ -246,7 +246,7 @@ int GoKin::Init(std::string filename)
 
     return Kinematics_Ok;
 
-}
+}qt ide
 ////////////////////////////////////////////////////////////////////////////////
 int GoKin::debugStream(std::ostream& o)
 {
@@ -255,7 +255,7 @@ int GoKin::debugStream(std::ostream& o)
     out.basic_ios<char>::rdbuf(o.rdbuf());
     return Kinematics_Ok;
 }
-
+qt ide
 ////////////////////////////////////////////////////////////////////////////////
 int GoKin::debug(bool flag)
 {
@@ -279,7 +279,7 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     //go_result genser_kin_fwd(void * kins, const go_real *joints,  go_pose * pos)
     if (GO_RESULT_OK != genser_kin_fwd(&kins, &joints[0], &gopose)) {
         errmsg= "Can't run general serial forward kinematics\n";
-        return -1;
+        return -1;qt ide
     }
 
     pose=tf::Pose(tf::Quaternion(gopose.rot.x,gopose.rot.y,gopose.rot.z,gopose.rot.s ),

@@ -40,16 +40,6 @@
 #include "gzrcs/cros.h"
 
 
-
-#ifdef GOKIN
-#include "gzrcs/Fanuc/fanuc_lrmate200id.h"
-#endif
-
-#ifdef Trac_IK
-#include <gzrcs/Fanuc/fanuc_lrmate200id_tracik.h>
-#endif
-
-
 #ifndef MAJOR
 #define MAJOR  1
 #define MINOR 0
@@ -244,21 +234,8 @@ int main(int argc, char** argv)
                 ncs[i]->base_rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->base_linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
 
-                std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".xform.base", ",");
-                std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".xform.qbend",",");
-                ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
 
-                // Trasnlate 4 doubles into quaternion
-                ncs[i]->QBend() = tf::Quaternion(dbend[0], dbend[1], dbend[2], dbend[3]);
 
-#ifdef GOKIN
-                KinUtils::SetQuaternionFromRpy( Deg2Rad(dbend[0]), Deg2Rad(dbend[1]), Deg2Rad(dbend[2]), ncs[i]->QBend());
-#endif
-
-                ncs[i]->Retract() =  Convert<std::vector<double>, tf::Pose>(
-                            RCS::robotconfig.getTokens<double>(robots[i] + ".xform.retract", ",")
-                            );
-                ncs[i]->RetractInv()=ncs[i]->Retract().inverse();
 
                 // Gripper hacks.
                 ncs[i]->gripperName() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.gripper", ",");
@@ -305,7 +282,6 @@ int main(int argc, char** argv)
 
                 // get kinematic plugin configuration information
                 std::string kin_plugin_dll = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.plugin", "");
-                std::string kin_plugin_name = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.name", "");
 
                 std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
                 std::string ld_library_path = Env::findPath(v, kin_plugin_dll);
@@ -345,31 +321,43 @@ int main(int argc, char** argv)
                     {
                         std::string value;
                         std::string param= paramnames[j];
-                        if(param.find("fileread ",0)==0)
+                        if(param.find("exepath ",0)==0)
                         {
-                            param.erase(0, sizeof("fileread"));
-                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot." + param, "");
+                            param.erase(0, sizeof("exepath"));
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
                             value=Globals.appProperties["PackageSrcPath"]+ value;
                          }
                         else
                         {
-                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot." + param, "");
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
                         }
 
                         ncs[i]->robotKinematics()->set(param,value);
-                        // load in urdf
-                        // std::string urdffile = Globals.appProperties["PackageSrcPath"]+ RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".urdf", "");
-                        // std::string urdf;
-                        // Globals.readFile(urdffile, urdf);
                     }
 
                     if(ncs[i]->robotKinematics()->init()) //urdf, ncs[i]->robotBaselink(), ncs[i]->robotTiplink())<0)
                     {
+                        std::cerr << "Urdf file: " <<  ncs[i]->robotKinematics()->get("urdffile") << std::endl;
+                        std::cerr << "errore: " <<  ncs[i]->robotKinematics()->get("error") << std::endl;
+
                         throw std::runtime_error("robotKinematics() urdf parse failed");
 
                     }
                     if(bSetupDebug)
                         std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
+
+                    std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.base", ",");
+                    std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.qbend",",");
+                    ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
+
+                    // Translate 4 doubles into quaternion
+                    ncs[i]->QBend() = tf::Quaternion(dbend[0], dbend[1], dbend[2], dbend[3]);
+
+                    ncs[i]->Retract() =  Convert<std::vector<double>, tf::Pose>(
+                                RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.retract", ",")
+                                );
+                    ncs[i]->RetractInv()=ncs[i]->Retract().inverse();
+
 
                 }
                 catch (const std::exception& e) {
