@@ -1,4 +1,31 @@
 
+Thu 19 Dec 2019 17:18:57 EST
+KDL dev package for ubuntu
+https://ubuntu.pkgs.org/18.04/ubuntu-universe-amd64/liborocos-kdl-dev_1.3.1+dfsg-1_amd64.deb.html
+https://github.com/orocos/orocos_kinematics_dynamics/blob/master/orocos_kdl/examples/trajectory_example.cpp
+
+Thu 19 Dec 2019 04:13:39 PM EST
+
+xform.tool= 0.008, 0.000, .2643, 0.0,0.0,0.0
+RCS> approach sku_part_large_gear22
+moveTo=   0.56,  -0.07,   0.03|Q= 1,0,0,0
+
+WRONG
+RCS> where
+FK Robot Pose   =   0.56,  -0.07,   0.22|Q= 1,4.24669e-13,-4.24511e-13,-8.48523e-10
+FK World Pose   =   0.39,  -1.21,   0.97|Q= 1,4.24669e-13,-4.24511e-13,-8.48523e-10
+FK World Base   =   0.39,  -1.21,   1.15|Q= 1,4.24669e-13,-4.24511e-13,-8.48523e-10
+IK Robot Joints =-0.141, 0.980,-0.205, 0.152, 1.189, 3.085
+
+RIGHT
+RCS> where
+FK Robot Pose   =   0.49,  -0.02,   0.57|Q= 0.877963,0.000239365,0.478729,-0.000239604
+FK World Pose   =   0.47,  -1.16,   1.40|Q= 0.877963,0.000239365,0.478729,-0.000239604
+FK World Base   =   0.32,  -1.16,   1.50|Q= 0.877963,0.000239365,0.478729,-0.000239604
+IK Robot Joints =-0.043, 0.122,-0.127,-0.114,-0.326,-0.132
+
+Thu 19 Dec 2019 04:13:39 PM EST
+GIT HELP
 
 git diff xenial origin/xenial  # Compare local and remote repository
 git rm -r --cached .   # Clear cache so .gitignore change works

@@ -152,7 +152,7 @@ int Ckdl_plugin::init()
      KDL::JntArray joint_min= vectorToKdlJointArray(this->jointMin);
      KDL::JntArray joint_max= vectorToKdlJointArray(this->jointMax);
 
-     ik_solver_pos = new KDL::ChainIkSolverPos_NR_JL(chain, joint_min, joint_max,
+     ik_solver_pos = new KDL::ChainIkSolverPos_NR(chain,
              *fk_solver, *ik_solver_vel, maxIterations, epsilon);
 
      return 0;

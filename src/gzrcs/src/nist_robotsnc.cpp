@@ -263,7 +263,7 @@ int main(int argc, char** argv)
                 // Gripper hacks.
                 ncs[i]->gripperName() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.gripper", ",");
                 ncs[i]->crclGripperAlgorithm() = RCS::robotconfig.getSymbolValue<std::string>( robots[i] + ".crcl.GripperAlgorithm", "percentage");
-                std::vector<double> dtool = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".tool",",");
+                std::vector<double> dtool = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".xform.tool",",");
                 ncs[i]->setGripperOffset(Convert<std::vector<double>, tf::Pose> (dtool));
 
                 std::vector<double> dCorrection = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".correction",",");

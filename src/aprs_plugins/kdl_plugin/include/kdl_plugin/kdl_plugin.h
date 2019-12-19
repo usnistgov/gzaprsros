@@ -58,7 +58,7 @@ private:
     KDL::Tree tree;
     KDL::Chain chain;
     KDL::ChainFkSolverPos_recursive* fk_solver;
-    KDL::ChainIkSolverPos_NR_JL *ik_solver_pos;
+    KDL::ChainIkSolverPos_NR *ik_solver_pos;
     KDL::ChainIkSolverVel_pinv * ik_solver_vel;
 
     tf::Pose basepose;

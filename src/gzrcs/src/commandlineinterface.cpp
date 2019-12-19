@@ -746,6 +746,7 @@ int CComandLineInterface::interpretLine(std::string line)
         // message should now contain object - can't really detect if exists
         crclApi->moveTo(msg);
     }
+
     else if (msg.compare( 0, strlen("ik "), "ik ") == 0 )
     {
 
@@ -775,6 +776,7 @@ int CComandLineInterface::interpretLine(std::string line)
         std::cout << "\n" << std::flush;
         return CController::NORMAL;
     }
+
 #ifdef GAZEBO
     else if (msg.compare( 0, strlen("where "), "where ") == 0 )
     {
@@ -826,6 +828,33 @@ int CComandLineInterface::interpretLine(std::string line)
             recordFile << "\tPose   =" << RCS::dumpPoseSimple(r_curpose) << "\n";
             recordFile.close();
         }
+    }
+    else if (msg.compare( 0, strlen("IK "), "IK ") == 0 )
+    {
+        msg=msg.erase(0,std::string("IK ").size());
+        msg=Globals.trim(msg); // now have name of where?
+
+        std::vector<std::string> str_dbls = Globals.split(msg, ',');
+        std::vector<double> dbls= ConvertStringVector<double>(str_dbls);
+        tf::Pose pose = Convert<std::vector<double>, tf::Pose> (dbls);
+
+        std::vector<double> joints;
+        ncs[_ncindex]->robotKinematics()->IK(pose, joints);
+        std::cout << "IK Joints   =" << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+    }
+    else if (msg.compare( 0, strlen("FK "), "FK ") == 0 )
+    {
+        msg=msg.erase(0,std::string("FK ").size());
+        msg=Globals.trim(msg); // now have name of where?
+
+        JointState joints;
+        std::vector<std::string> str_dbls = Globals.split(msg, ',');
+        joints.position= ConvertStringVector<double>(str_dbls);
+        // joint names - assume filled in by kinsolver init
+
+        tf::Pose r_pose;
+        ncs[_ncindex]->robotKinematics()->FK(joints.position, r_pose);
+        std::cout << "FK Pose   =" << RCS::dumpPoseSimple(r_pose) << "\n";
     }
     else if (msg.compare( 0, strlen("where"), "where") == 0 )
     {
