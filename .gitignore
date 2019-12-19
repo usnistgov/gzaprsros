@@ -8,6 +8,6 @@
 Log_*
 install
 Todo.txt
-debug
+debug/
 *.so*
 docs/
