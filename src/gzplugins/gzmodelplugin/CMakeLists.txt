@@ -25,7 +25,13 @@ catkin_package(
 )
 
 include_directories(
-  include ${catkin_INCLUDE_DIRS}${GAZEBO_INCLUDE_DIRS})
+  include 
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ../../aprs_headers/include
+  ../../../include/dll/include
+
+)
 link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
