@@ -1,13 +1,13 @@
 *.~*~
 *.pyc
 .catkin_workspace
-*build/*
+*build/
 *devel/
-*Log/*
+*Log/
 *.log
 Log_*
 install
 Todo.txt
-debug/*
+debug/
 *.so*
-docs/*
+docs/
