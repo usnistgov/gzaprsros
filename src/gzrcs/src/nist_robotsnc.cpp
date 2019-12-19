@@ -70,6 +70,28 @@ static     std::string get_env(  std::string  var )
     }
 }
 
+static void cleanup()
+{
+    // Stopping application
+    Globals.bRunning=false;
+
+    // Stop demo (i.e. testing) related activies
+    if(Globals.bGearLocations && geardemo.get() != nullptr)
+        geardemo->stop();
+
+    // ^C pressed - stop all threads or will hang
+    RCS::Thread::stopAll(); // includes thread for Controller, robotstatus
+
+
+#ifdef ROS
+    // Shutdown ROS
+    Ros.close();
+#endif
+
+    // close logging file
+    GLogger.close();
+}
+
 // Do not put creator where it can be destroyed or you will
 // get segmentation fault. It's here for now.
 typedef boost::shared_ptr<RCS::IKinematic> (pluginapi_create_t)();
@@ -127,6 +149,7 @@ int main(int argc, char** argv)
                 robots = RCS::robotconfig.getTokens<std::string>("system.robots", ",");
             if(robots.size() ==0)
                 throw "No robots defined";
+
             Globals.appProperties["robot"] = robots[0] ;
 
             // ROS configuration
@@ -526,41 +549,28 @@ int main(int argc, char** argv)
 
         std::cerr << "Cntrl C pressed  or CLI quit\n" << std::flush;
 
-        // Stopping application
-        Globals.bRunning=false;
+        cleanup();
 
-        // Stop demo (i.e. testing) related activies
-        if(Globals.bGearLocations)
-            geardemo->stop();
-
-        // ^C pressed - stop all threads or will hang
-        RCS::Thread::stopAll(); // includes thread for Controller, robotstatus
-
-
-#ifdef ROS
-        // Shutdown ROS
-        Ros.close();
-#endif
-
-        // close logging file
-        GLogger.close();
     }
     catch (std::string e)
     {
         LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.c_str());
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        cleanup();
     }
     catch (std::exception e)
     {
         LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.what());
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        cleanup();
     }
     catch (...)
     {
         LOG_FATAL << "Abnormal exception end to  CRCL2Robot";
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        cleanup();
     }
-    logFatal( "gzrcs: Stopped %s\n" , Globals.getTimeStamp() );
+    logFatal( "gzrcs: Stopped %s\n" , Globals.getTimeStamp().c_str() );
 }
 
 

@@ -146,10 +146,13 @@ void CGzModelReader::start()
 /////////////////////////////////////////////////////////////////////////////
 void CGzModelReader::stop()
 {
-    _sub->Unsubscribe();
-    modelPub->Fini();
+    if(_sub.get()!=nullptr)
+        _sub->Unsubscribe();
+    if(modelPub.get()!=nullptr)
+        modelPub->Fini();
     // want to kill gazebo update of model callback
-    _sub.reset();
+    if(_sub.get()!=nullptr)
+        _sub.reset();
     std::cout << "Gazebo model reader subscriber stopped\n";
 }
 

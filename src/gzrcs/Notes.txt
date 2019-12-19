@@ -1,7 +1,7 @@
 
 
-git diff xenial origin/xenial
-
+git diff xenial origin/xenial  # Compare local and remote repository
+git rm -r --cached .   # Clear cache so .gitignore change works
 
 boost dll requires later version than 1.58 default on xenial....
 https://www.osetc.com/en/how-to-install-boost-on-ubuntu-16-04-18-04-linux.html
