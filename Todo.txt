@@ -1,0 +1,4 @@
+
+
+need to add rosparams to bin9/rosagilitydemo.bash
+
