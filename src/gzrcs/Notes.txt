@@ -1,5 +1,8 @@
 
 
+git diff xenial origin/xenial
+
+
 boost dll requires later version than 1.58 default on xenial....
 https://www.osetc.com/en/how-to-install-boost-on-ubuntu-16-04-18-04-linux.html
 
