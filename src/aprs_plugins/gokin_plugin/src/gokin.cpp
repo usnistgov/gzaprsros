@@ -143,7 +143,7 @@ int GoKin::init()
         ini +="NAME="+robot_name+"\n";
         ini +="VERSION=1.0\n";
         ini +="EXT_INIT_STRING=\n";
-        ini +="LENGTH_UNITS_PER_M=1000\std::vector<std::string>n";
+        ini +="LENGTH_UNITS_PER_M=1000\n";
         ini +="ANGLE_UNITS_PER_RAD=57.2957795130823\n";
 
         ini +="\n[TRAJ]\n";
@@ -276,7 +276,7 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     errmsg.clear();
     go_pose gopose;
 
-    //go_result genser_kin_fwd(void * kins, const go_real *joints,  go_pose * pos)
+    //go_result genser_kin_fGoKinwd(void * kins, const go_real *joints,  go_pose * pos)
     if (GO_RESULT_OK != genser_kin_fwd(&kins, &joints[0], &gopose)) {
         errmsg= "Can't run general serial forward kinematics\n";
         return -1;

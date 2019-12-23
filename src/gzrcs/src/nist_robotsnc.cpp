@@ -369,6 +369,11 @@ int main(int argc, char** argv)
                     if(bSetupDebug)
                         std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
 
+                    std::vector<double> testJnts(6,0.0);
+                    tf::Pose testPose ;
+                    ncs[i]->robotKinematics()->FK(testJnts, testPose);
+                    std::cout << "Test Pose= " << RCS::dumpPose(testPose) << "\n";
+
                     std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.base", ",");
                     std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.qbend",",");
                     ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));

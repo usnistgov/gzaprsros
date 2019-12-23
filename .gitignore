@@ -11,3 +11,4 @@ Todo.txt
 debug/
 *.so*
 docs/
+*.user.*

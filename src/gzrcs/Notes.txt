@@ -1,4 +1,34 @@
 
+WORKS:
+Test Pose=
+XYZ   = 0.465,0,0.695
+RPY = -180,-90,0
+Q   = 0.707107,0,0.707107,0
+
+WRONG:
+Test Pose= 0 0 0 0 0 0
+XYZ   = 0.385,0,0.365
+RPY = -180,-90,0
+Q   = 0.707107,0,0.707107,0
+
+CORRECTED:
+Test Pose=
+XYZ   = 0.465,0,0.695
+RPY = -180,-90,0
+Q   = 0.707107,0,0.707107,0
+
+
+
+Fri 20 Dec 2019 11:37:54 AM EST
+Q: How long does it take to build gz aprs repository
+A: Using time rosbuild.bash after removing build/devel/install folders....
+real	7m51.289s
+
+Q: Don't compile a package:
+A: add CATKIN_IGNORE to packagefolder
+
+https://answers.ros.org/question/208180/how-to-use-catkin_ignore-file-correctly/
+
 Thu 19 Dec 2019 17:18:57 EST
 KDL dev package for ubuntu
 https://ubuntu.pkgs.org/18.04/ubuntu-universe-amd64/liborocos-kdl-dev_1.3.1+dfsg-1_amd64.deb.html
