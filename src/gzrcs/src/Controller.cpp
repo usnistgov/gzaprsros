@@ -580,19 +580,19 @@ nextposition:
 void CController::dumpRobotNC(std::ostream & ofsRobotURDF, std::shared_ptr<CController> nc)
 {
 
-    ofsRobotURDF << "============================================================\n";
+//    ofsRobotURDF << "============================================================\n";
     ofsRobotURDF << "NC " << nc->name().c_str() << "\n";
-    ofsRobotURDF << "base link " << nc->robotKinematics()->get("help") << "\n";
-    ofsRobotURDF << "base link " << nc->robotKinematics()->get("base") << "\n";
-    ofsRobotURDF << "ee link " << nc->robotKinematics()->get("tip") << "\n";
-    ofsRobotURDF << "num joints " << nc->robotKinematics()->numJoints() << "\n";
-    ofsRobotURDF << "baseoffset " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
-    ofsRobotURDF << "tooloffset " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
-    ofsRobotURDF << "Joint names " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
+    ofsRobotURDF << "Robot= " << nc->robotKinematics()->get("ROBOTNAME") << "\n";
+    ofsRobotURDF << "base link= " << nc->robotKinematics()->get("baselink") << "\n";
+    ofsRobotURDF << "ee link= " << nc->robotKinematics()->get("tiplink") << "\n";
+    ofsRobotURDF << "num joints= " << nc->robotKinematics()->numJoints() << "\n";
+    ofsRobotURDF << "baseoffset= " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
+    ofsRobotURDF << "tooloffset= " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
+    ofsRobotURDF << "Joint names= " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
 
     for (std::map<std::string, std::vector<double>>::iterator it = nc->namedJointMove().begin(); it != nc->namedJointMove().end(); it++)
         ofsRobotURDF << (*it).first << "=" << vectorDump<double>(nc->namedJointMove()[(*it).first]).c_str() << "\n";
-    ofsRobotURDF << "Cycletime   " << nc->cycleTime() << "\n";
+    ofsRobotURDF << "Cycletime=   " << nc->cycleTime() << "\n";
 
     ofsRobotURDF << std::flush;
 }

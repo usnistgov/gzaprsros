@@ -282,6 +282,27 @@ std::string IKFAST_FanucKin::get(std::string param)
     {
         return _tiplink;
     }
+    else if(param == "ALL")
+    {
+        std::stringstream ss;
+        ss << "ROBOTNAME="<< robot_name << std::endl;
+        ss << "NUMJOINTS="<< std::to_string(_nJoints)<< std::endl;
+        ss << "JOINTS=";
+        for(size_t i=0; i< jointNames.size(); i++)
+        {
+            if(i>0)
+                ss<< ",";
+            ss << jointNames[i];
+        }
+        ss<< std::endl;
+        ss << "INIFILE="<< _inifilename << std::endl;
+        ss << "TIPLINK="<< _tiplink << std::endl;
+        ss << "BASELINK="<< _baselink << std::endl;
+        ss << "URDFFILE="<< _urdffile << std::endl;
+        ss << "ERROR="<< errmsg << std::endl;
+
+        return ss.str();
+    }
     return std::string("No get for parameter ") + param;
 }
 

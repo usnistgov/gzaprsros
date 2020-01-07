@@ -26,6 +26,13 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+
 
 #ifndef DEBUG
 #include "boost/iostreams/stream.hpp"
@@ -174,6 +181,26 @@ public:
       * \brief destructor. Closes all output debug streams.
       * */
     ~CGlobals();
+
+
+
+    /**
+    /** * @brief exec execute a shell command and return output
+    /** * @param cmd shell command
+    /** * @return  string containing output
+    /** */std::string exec(const char* cmd)
+    {
+        std::array<char, 128> buffer;
+        std::string result;
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+        if (!pipe) {
+            throw std::runtime_error("popen() failed!");
+        }
+        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+            result += buffer.data();
+        }
+        return result;
+    }
 
     /**
      * @brief catch_control_c provides a Linux mechanism to catch a console control c.

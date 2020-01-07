@@ -121,6 +121,7 @@ int main(int argc, char** argv)
         // Find path of executable
         Globals.appProperties["ExeDirectory"] = getexefolder();
         Globals.appProperties["ConfigFile"] =config_file;
+        Globals.appProperties["appPath"] = getexepath();
         Globals.appProperties["appName"] = getexepath().substr(getexepath().find_last_of('/') + 1);
         Globals.appProperties["PackageSrcPath"] = getexefolder();
         Globals.appProperties["version"] = std::string("")+std::to_string(MAJOR) +":"+std::to_string(MINOR) +":"+std::to_string(BUILD) ;
@@ -318,6 +319,7 @@ int main(int argc, char** argv)
                 boost::filesystem::path lib_path(ld_library_path);
 
                 try {
+                    Globals.appProperties["kinsolverdll"] = ld_library_path+"/"+kin_plugin_dll;
 
                     creator = boost::dll::import_alias<pluginapi_create_t>(             // type of imported symbol must be explicitly specified
                          lib_path/kin_plugin_dll,                                           // path to library
@@ -360,14 +362,15 @@ int main(int argc, char** argv)
 
                     if(ncs[i]->robotKinematics()->init()) //urdf, ncs[i]->robotBaselink(), ncs[i]->robotTiplink())<0)
                     {
-                        std::cerr << "Urdf file: " <<  ncs[i]->robotKinematics()->get("urdffile") << std::endl;
-                        std::cerr << "errore: " <<  ncs[i]->robotKinematics()->get("error") << std::endl;
+                        std::cerr << "Kinematic plug init() failed\n";
+                        std::cerr << "errors: " <<  ncs[i]->robotKinematics()->get("error") << std::endl;
 
-                        throw std::runtime_error("robotKinematics() urdf parse failed");
+                        throw std::runtime_error("robotKinematics() init() failed");
 
                     }
+
                     if(bSetupDebug)
-                        std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
+                        std::cout << ncs[i]->robotKinematics()->get("ALL") << "\n";
 
                     std::vector<double> testJnts(6,0.0);
                     tf::Pose testPose ;

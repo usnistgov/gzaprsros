@@ -7,14 +7,16 @@
 
 QT       -= core  gui
 
-message("Compiling go_infanuc_plugin")
-TARGET = gokin_fanuc_plugin
+message("Compiling gomotion_plugin")
+TARGET = gomotion_plugin
 TEMPLATE = lib
 
 CONFIG += c++11
+#CONFIG += staticlib  # can't use boost dll to load, must statically link
 
 gzversion=9
 
+DEFINES+=TARGET_UNIX
 
 release: DESTDIR = release
 debug:   DESTDIR = debug
@@ -24,6 +26,8 @@ MOC_DIR = $$DESTDIR/.moc
 RCC_DIR = $$DESTDIR/.qrc
 UI_DIR = $$DESTDIR/.ui
 
+QMAKE_CXX = g++ -fPIC
+QMAKE_LFLAGS+= -fPIC  -Wl,--no-whole-archive
 QMAKE_CXXFLAGS +=-std=c++11
 QMAKE_CXXFLAGS +=-Wno-unused-variable
 QMAKE_CXXFLAGS +=-Wno-sign-compare
@@ -47,6 +51,12 @@ INCLUDEPATH += $$PWD/../../gzrcs/include
 INCLUDEPATH += $$PWD/../../aprs_headers/include
 INCLUDEPATH += $$PWD/../../../include/dll/include
 
+
+INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/include
+INCLUDEPATH += $HOME/src/Fred/ulapi/src
+
+
 #ROS
 INCLUDEPATH += "/opt/ros/kinetic/include"
 LIBS += -L/opt/ros/kinetic/lib
@@ -61,12 +71,14 @@ LIBS += -lactionlib  -ltf2_ros
 LIBS += -lboost_system
 LIBS += -lboost_regex
 
+#LIBS += -L/usr/local/lib
+LIBS +=   -lm   -lgo  -ldl -lrt  -lulapi -lgokin
 
 
 config_features.path     = "../../include/$$TARGET"
 config_features.files     = $$HEADERS
 
-message("ikfast_fanuc_plugin installation to folder $$config_features.path")
+message("gomotion_plugin installation to folder $$config_features.path")
 message("mkspecs files $$config_features.files")
 INSTALLS                  += config_features
 
@@ -74,10 +86,11 @@ target.path = ../../../lib
 INSTALLS += target
 
 HEADERS += \
-    include/gokin_fanuc_plugin/fanuc_lrmate200id.h \
-    include/gokin_fanuc_plugin/gokin_fanuc_plugin.h
-
+    include/gomotion_plugin/gomotion_plugin.h 
+ 
 SOURCES += \
-    src/gokin_fanuc_plugin.cpp \
-    src/fanuc_lrmate200id.cpp
+     src/gomotion_plugin.cpp \
+    src/main.cpp 
 
+DISTFILES += \
+    Notes

@@ -17,5 +17,5 @@ fi
 #catkin_make install  --only-pkg-with-deps  gokin_plugin
 #catkin_make install  --only-pkg-with-deps  ikfast_fanuc_plugin
 #catkin_make install  --only-pkg-with-deps  gzrcsdemo
-catkin_make install  --only-pkg-with-deps  crclclient
+catkin_make install  --only-pkg-with-deps  gomotion_plugin
 

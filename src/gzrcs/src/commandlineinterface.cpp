@@ -27,6 +27,7 @@
 #include "gzrcs/commandlineinterface.h"
 #include "aprs_headers/Conversions.h"
 #include "aprs_headers/Debug.h"
+#include "aprs_headers/env.h"
 
 // THanks to: http://cc.byexamples.com/2007/04/08/non-blocking-user-input-in-loop-without-ncurses/
 #define NB_ENABLE 1
@@ -391,6 +392,43 @@ int CComandLineInterface::interpretLine(std::string line)
     else if (msg.compare("config") == 0)
     {
         std::string filename = Globals.appProperties["ConfigFile"];
+
+        try
+        {
+            std::cout << "============================================================\n";
+            std::cout << "Host name = " << Globals.exec("hostname") ;
+            std::cout << "OS version = " << Globals.exec("cat /etc/*release  | grep DISTRIB_D | sed 's/.*=//'") ;
+            std::cout << "Compiler version = " << __GNUC__ << "."<< __GNUC_MINOR__ << "\n";
+            std::cout << Globals.exec("gazebo -v | grep Gaze") ;
+            std::cout << "ROS version = " << Globals.exec("rosversion -d") ;
+
+            std::cout << "App name = " << Globals.appProperties["appName"] << "\n";
+            std::cout << "App path = " << Globals.appProperties["appPath"]  << "\n";
+            std::cout << "App version = " << Globals.appProperties["version"] << "\n";
+            boost::filesystem::path apppath = Globals.appProperties["appPath"];
+            std::time_t appt = last_write_time(apppath);
+            std::cout << "App modification time = " << std::ctime(&appt);
+
+
+            // Gotraj dll
+            std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
+            boost::filesystem::path gotrajdll = Env::findPath(v, "libgotraj.so");
+            std::time_t gotrajt = last_write_time(gotrajdll);
+            std::cout << "Gotraj dll modification time = " << std::ctime(&gotrajt) ;
+
+            // kinsolver plugin
+            boost::filesystem::path kinsolverdll = Globals.appProperties["kinsolverdll"];
+            std::time_t t = last_write_time(kinsolverdll);
+            std::cout << "Kinsolver plugin modification time = " << std::ctime(&t) << '\n';
+        }
+        catch (boost::filesystem::filesystem_error &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+
+        //std::cout << ncs[0]->robotKinematics()->get("ALL") << "\n";
+        RCS::CController::dumpRobotNC(std::cout, ncs[0]);
+
     }
     else if (msg.compare("timing") == 0)
     {
