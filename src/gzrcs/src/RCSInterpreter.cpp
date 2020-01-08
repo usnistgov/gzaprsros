@@ -49,7 +49,7 @@ static void LogRobotPosition(std::string message,
         return;
 
     std::stringstream ss;
-#if 0
+#if 1
     ss << message;
     ss << "ROBOT COORDINATES\n";
     ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
@@ -60,15 +60,18 @@ static void LogRobotPosition(std::string message,
     ss << "    Next joints     "  << RCS::vectorDump<double>(nextjoints) << "\n" << std::flush;
     ss << "    Current joints  "  << RCS::vectorDump<double>(curjoints) << "\n" << std::flush;
     //TRAJ_LOG<< ss.str();
-
-#endif
+#else
     ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
     ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
     ss << RCS::vectorDump(nextjoints) << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getX() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getY() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getZ() << "\n" << std::flush;
-    ofsMotionTrace << ss.str();
+#endif
+    if(Globals.DEBUG_Log_Robot_Position())
+        ofsMotionTrace << ss.str();
+    if(Globals.DEBUG_Log_Robot_Position()>1)
+        std::cout << ss.str();
 
 }
 static void LogGripperStatus(std::string message,

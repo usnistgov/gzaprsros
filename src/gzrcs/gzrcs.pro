@@ -238,7 +238,8 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/Debug.h \
     ../aprs_headers/include/aprs_headers/Core.h \
     ../aprs_headers/include/aprs_headers/Conversions.h \
-    ../aprs_headers/include/aprs_headers/Config.h
+    ../aprs_headers/include/aprs_headers/Config.h \
+    ../aprs_headers/include/aprs_headers/logging.h
 
 DISTFILES += \
     Notes.txt \

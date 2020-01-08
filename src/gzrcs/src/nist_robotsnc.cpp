@@ -172,7 +172,6 @@ int main(int argc, char** argv)
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
             Globals.DEBUG_Log_Gripper_Status()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Gripper_Status","0");
-            Globals.DEBUG_IKFAST()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_IKFAST","0");
             Globals.DEBUG_Log_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Position","0");
             Globals.DEBUG_Log_Robot_Config()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Config","0");
             Globals.DEBUG_Log_Cyclic_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Cyclic_Robot_Position","0");
@@ -319,7 +318,8 @@ int main(int argc, char** argv)
                 boost::filesystem::path lib_path(ld_library_path);
 
                 try {
-                    Globals.appProperties["kinsolverdll"] = ld_library_path+"/"+kin_plugin_dll;
+                    Globals.appProperties["kinsolverdll"] = kin_plugin_dll;
+                    Globals.appProperties["kinsolverdllpath"] = ld_library_path+"/"+kin_plugin_dll;
 
                     creator = boost::dll::import_alias<pluginapi_create_t>(             // type of imported symbol must be explicitly specified
                          lib_path/kin_plugin_dll,                                           // path to library

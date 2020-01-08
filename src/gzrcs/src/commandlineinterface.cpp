@@ -23,6 +23,7 @@
 #include <readline/history.h>
 
 #include <boost/algorithm/string.hpp>
+#include <gazebo/gazebo_config.h>
 
 #include "gzrcs/commandlineinterface.h"
 #include "aprs_headers/Conversions.h"
@@ -399,8 +400,9 @@ int CComandLineInterface::interpretLine(std::string line)
             std::cout << "Host name = " << Globals.exec("hostname") ;
             std::cout << "OS version = " << Globals.exec("cat /etc/*release  | grep DISTRIB_D | sed 's/.*=//'") ;
             std::cout << "Compiler version = " << __GNUC__ << "."<< __GNUC_MINOR__ << "\n";
-            std::cout << Globals.exec("gazebo -v | grep Gaze") ;
-            std::cout << "ROS version = " << Globals.exec("rosversion -d") ;
+            std::cout << "Gazebo Version " << (int) GAZEBO_MAJOR_VERSION << "." <<GAZEBO_MINOR_VERSION << "\n" ;
+
+            std::cout << "ROS version = " << Env::get_env("ROS_DISTRO") ;
 
             std::cout << "App name = " << Globals.appProperties["appName"] << "\n";
             std::cout << "App path = " << Globals.appProperties["appPath"]  << "\n";
@@ -417,17 +419,23 @@ int CComandLineInterface::interpretLine(std::string line)
             std::cout << "Gotraj dll modification time = " << std::ctime(&gotrajt) ;
 
             // kinsolver plugin
-            boost::filesystem::path kinsolverdll = Globals.appProperties["kinsolverdll"];
-            std::time_t t = last_write_time(kinsolverdll);
-            std::cout << "Kinsolver plugin modification time = " << std::ctime(&t) << '\n';
+            boost::filesystem::path kinsolverdllpath = Globals.appProperties["kinsolverdllpath"];
+            std::time_t t = last_write_time(kinsolverdllpath);
+            std::cout << "Kinsolver "  << Globals.appProperties["kinsolverdll"]  << " plugin modification time = " << std::ctime(&t) << '\n';
         }
         catch (boost::filesystem::filesystem_error &e)
         {
             std::cerr << e.what() << '\n';
         }
 
-        //std::cout << ncs[0]->robotKinematics()->get("ALL") << "\n";
         RCS::CController::dumpRobotNC(std::cout, ncs[0]);
+
+    }
+    else if (msg.compare( 0, strlen("kinsolver"),"kinsolver") == 0)
+    {
+        msg=msg.erase(0,std::string("kinsolver").size());
+        msg=Globals.trim(msg);
+        std::cout << ncs[0]->robotKinematics()->get(msg) << "\n";
 
     }
     else if (msg.compare("timing") == 0)
@@ -490,7 +498,41 @@ int CComandLineInterface::interpretLine(std::string line)
         std::string echo = shell(msg.c_str());
         std::cout << echo << std::flush;
     }
+    else if (msg.compare( 0, strlen("debug"), "debug") == 0)
+    {
+        msg=msg.erase(0,std::string("debug").size());
+        msg=Globals.trim(msg);
+        if(msg.empty())
+        {
+          std::cout << "traj\n";
+        }
+        else
+        {
+            if(msg.compare( 0, strlen("traj"), "traj") == 0)
+            {
+                msg=msg.erase(0,std::string("traj").size());
+                msg=Globals.trim(msg);
+                if(msg.compare( 0, strlen("on"), "on") == 0)
+                    Globals.DEBUG_Log_Robot_Position()=2;
+                else if(msg.compare( 0, strlen("off"), "off") == 0)
+                    Globals.DEBUG_Log_Robot_Position()=0;
+                else
+                    Globals.DEBUG_Log_Robot_Position()=1;
+            }
+            if(msg.compare( 0, strlen("crcl"), "crcl") == 0)
+            {
+                msg=msg.erase(0,std::string("crcl").size());
+                msg=Globals.trim(msg);
+                if(msg.compare( 0, strlen("on"), "on") == 0)
+                    Globals.DEBUG_LogRobotCrcl()=2;
+                else if(msg.compare( 0, strlen("off"), "off") == 0)
+                    Globals.DEBUG_LogRobotCrcl()=0;
+                else
+                    Globals.DEBUG_LogRobotCrcl()=1;
+            }
+        }
 
+    }
 
     else if (msg.compare( 0, strlen("robot "), "robot ") == 0)
     {
@@ -508,6 +550,8 @@ int CComandLineInterface::interpretLine(std::string line)
         std::cout << "Robot match not found for " << msg << "\n>"<< std::flush;
 
     }
+
+
     else if (msg.compare("speeds") == 0)
     {
         std::cout << "speed:\n\trobot joint vel=" << ncs[_ncindex]->currentRobotJointSpeed()

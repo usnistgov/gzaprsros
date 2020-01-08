@@ -34,7 +34,6 @@
 CGlobals Globals;
 std::ofstream   ofsRobotURDF;
 std::ofstream   ofsMotionTrace;
-std::ofstream   ofsIkFast;
 std::ofstream   LOG_FATAL;
 std::ofstream   ofsRobotCrcl;
 std::ofstream   ofsGnuPlotCart;
@@ -112,13 +111,11 @@ CGlobals::CGlobals()
 
     // Global debugging files
     DEBUG_World_Command()=0; // Log controller action loop for robot servo of world cartesian move
-    DEBUG_IKFAST()=0; //  Debug IK Fast information
     DEBUG_Log_Gripper_Status()=0;
     DEBUG_Log_Robot_Position()=0;
     DEBUG_Log_Robot_Config()=0;
     DEBUG_GnuPlot()=0;
     DEBUG_Log_Cyclic_Robot_Position()=0;
-    Globals.DEBUG_LogRobotCrcl()=0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +125,6 @@ CGlobals::~CGlobals() {
     if(Globals.DEBUG_Log_Robot_Config())
         ofsRobotURDF.close();
     ofsMotionTrace.close();
-    ofsIkFast.close();
     LOG_FATAL.close();
     ofsRobotCrcl.close();
     ofsGnuPlotCart.close();
@@ -256,8 +252,7 @@ void CGlobals::debugSetup()
     LOG_FATAL.clear(GLogger.ofsDebugFile.rdstate()); //2
     LOG_FATAL.basic_ios<char>::rdbuf(GLogger.ofsDebugFile.rdbuf());           //3
 
-    if(Globals.DEBUG_LogRobotCrcl())
-        ofsRobotCrcl.open(logfolder()+Globals.appProperties["robot"]+"_nc_crcl.log", std::ofstream::out);
+    ofsRobotCrcl.open(logfolder()+Globals.appProperties["robot"]+"_nc_crcl.log", std::ofstream::out);
 
     if(Globals.DEBUG_Log_Robot_Config())
         ofsRobotURDF.open(logfolder()+"RobotUrdf.log", std::ofstream::out);
@@ -268,18 +263,8 @@ void CGlobals::debugSetup()
         ofsGnuPlotJnt.open(logfolder()+"JntPlot.log", std::ofstream::out);
     }
 
-    if(Globals.DEBUG_Log_Robot_Position() ||
-            Globals.DEBUG_Log_Cyclic_Robot_Position() ||
-            Globals.DEBUG_Log_Gripper_Status())
-        ofsMotionTrace.open(logfolder() + "MotionTrace.log", std::ofstream::out);
+    ofsMotionTrace.open(logfolder() + "MotionTrace.log", std::ofstream::out);
 
-    if(DEBUG_IKFAST())
-    {
-        ofsIkFast.copyfmt(ofsMotionTrace);
-        ofsIkFast.clear(ofsMotionTrace.rdstate()); //2
-        ofsIkFast.basic_ios<char>::rdbuf(ofsMotionTrace.rdbuf());           //3
-    }
-   
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CGlobals::assignOfs(std::ostream *inOfs, std::ostream *replacementOfs)

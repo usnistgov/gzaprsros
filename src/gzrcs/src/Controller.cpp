@@ -476,6 +476,8 @@ nextposition:
                 // write to "robot"_nc_crcl.log
                 if(Globals.DEBUG_LogRobotCrcl())
                     ofsRobotCrcl << Logging::CLogger::strTimestamp() << " " << cc.toString() << "\n" << std::flush;
+                if(Globals.DEBUG_LogRobotCrcl()>1)
+                    std::cout << Logging::CLogger::strTimestamp() << " " << cc.toString() << "\n" << std::flush;
             }
             // Save command number for comparison next time
             last_crcl_command_num=msg.crclcommandnum;

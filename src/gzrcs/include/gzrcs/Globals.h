@@ -51,6 +51,7 @@
 #include <tf/tf.h>
 
 #include <aprs_headers/Core.h>
+#include <aprs_headers/logging.h>
 
 
 #ifndef ROSPACKAGENAME
@@ -185,10 +186,11 @@ public:
 
 
     /**
-    /** * @brief exec execute a shell command and return output
-    /** * @param cmd shell command
-    /** * @return  string containing output
-    /** */std::string exec(const char* cmd)
+     * @brief exec execute a shell command and return output
+     * @param cmd shell command
+     * @return  string containing output
+    */
+    std::string exec(const char* cmd)
     {
         std::array<char, 128> buffer;
         std::string result;
@@ -401,14 +403,13 @@ public:
     VAR(std::string, logfolder);
 
     // Debug Flags for more debugging information:
-    VAR(bool, DEBUG_World_Command); // Log controller action loop for robot servo of world cartesian move
-    VAR(bool, DEBUG_IKFAST); //  Debug IK Fast information
-    VAR(bool, DEBUG_Log_Gripper_Status);
-    VAR(bool, DEBUG_Log_Robot_Position);
-    VAR(bool, DEBUG_Log_Robot_Config);
-    VAR(bool, DEBUG_GnuPlot);
-    VAR(bool, DEBUG_Log_Cyclic_Robot_Position);
-    VAR(bool, DEBUG_LogRobotCrcl);
+    VAR(int, DEBUG_World_Command); // Log controller action loop for robot servo of world cartesian move
+    VAR(int, DEBUG_Log_Gripper_Status);
+    VAR(int, DEBUG_Log_Robot_Position);
+    VAR(int, DEBUG_Log_Robot_Config);
+    VAR(int, DEBUG_GnuPlot);
+    VAR(int, DEBUG_Log_Cyclic_Robot_Position);
+    VAR(int, DEBUG_LogRobotCrcl);
 
 };
 extern CGlobals Globals; /**< global definition of globals  */
