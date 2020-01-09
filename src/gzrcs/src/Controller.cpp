@@ -28,8 +28,6 @@
 #include "gzrcs/cros.h"
 #include "aprs_headers/Debug.h"
 
-#define GLOGGER GLogger
-#include "aprs_headers/LoggerMacros.h"
 
 #ifdef CRCL_DLL
 #include <crcllib/nistcrcl.h>
@@ -87,12 +85,12 @@ bool CController::verify()
 {
     if(robotKinematics() == NULL)
     {
-        logFatal("Controller has no kinematic element\n");
+        STATUS_LOG << "Controller has no kinematic element\n";
         return false;
     }
     if(robotInterpreter() == NULL)
     {
-        logFatal("Controller has no robotInterpreter element\n");
+        STATUS_LOG << "Controller has no robotInterpreter element\n";
         return false;
     }
     return true;
@@ -179,8 +177,10 @@ void CController::setup()
                                                             robotKinematics()->end_link ));
 
         pCrclServer()->setCmdQueue(&crclcmds);
+#ifdef FIXME
         if(Globals.DEBUG_LogRobotCrcl())
             pCrclServer()->setDebugStream(&ofsRobotCrcl);
+#endif
         pCrclServer()->start();
         std::cout << "Crcl server connected port=" << crclPort() << "\n";
     }
@@ -426,7 +426,7 @@ bool CController::updateRobot()
         static tf::Pose lastpose=tf::Identity();
         if(!(lastpose == _status.currentpose) )
         {
-            if(Globals.DEBUG_Log_Cyclic_Robot_Position())
+            if(ofsMotionTrace.isEnabled())
             {
                 ofsMotionTrace << name().c_str() << " UPDATED ROBOT\n";
                 ofsMotionTrace << "  Robot Pose    =" << RCS::dumpPoseSimple(_status.currentpose).c_str() << "\n";
@@ -474,10 +474,7 @@ nextposition:
                 cc.Set(msg);
 
                 // write to "robot"_nc_crcl.log
-                if(Globals.DEBUG_LogRobotCrcl())
-                    ofsRobotCrcl << Logging::CLogger::strTimestamp() << " " << cc.toString() << "\n" << std::flush;
-                if(Globals.DEBUG_LogRobotCrcl()>1)
-                    std::cout << Logging::CLogger::strTimestamp() << " " << cc.toString() << "\n" << std::flush;
+                ofsRobotCrcl << Globals.getTimeStamp() << " " << cc.toString() << "\n" << std::flush;
             }
             // Save command number for comparison next time
             last_crcl_command_num=msg.crclcommandnum;
@@ -542,7 +539,7 @@ nextposition:
             }
             else
             {
-                LOG_DEBUG << "Command not handled";
+                STATUS_LOG << "Command not handled";
             }
 
             updateRobot();

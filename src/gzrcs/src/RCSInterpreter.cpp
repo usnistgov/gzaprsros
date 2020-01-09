@@ -21,15 +21,6 @@
 
 #include "aprs_headers/Conversions.h"
 #include "aprs_headers/Debug.h"
-#include "aprs_headers/Logger.h"
-#include "aprs_headers/LoggerMacros.h"
-
-// Debug flags are set in Debug.h
-// Depending on what is defined, you will log certain information
-
-
-#define TRAJ_LOG  std::cout
-//#define TRAJ_LOG  ofsRobotMoveTo
 
 using namespace RCS;
 using namespace sensor_msgs;
@@ -45,7 +36,7 @@ static void LogRobotPosition(std::string message,
 
 {
 
-    if(!Globals.DEBUG_Log_Robot_Position())
+    if(!ofsMotionTrace.isEnabled())
         return;
 
     std::stringstream ss;
@@ -68,10 +59,7 @@ static void LogRobotPosition(std::string message,
        << boost::format("%5.2f") % r_nextpose.getOrigin().getY() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getZ() << "\n" << std::flush;
 #endif
-    if(Globals.DEBUG_Log_Robot_Position())
-        ofsMotionTrace << ss.str();
-    if(Globals.DEBUG_Log_Robot_Position()>1)
-        std::cout << ss.str();
+    ofsMotionTrace << ss.str();
 
 }
 static void LogGripperStatus(std::string message,
@@ -158,13 +146,13 @@ void CGoInterpreter::init(std::vector<double> initjts)
     jts.name = this->_nc->robotKinematics()->jointNames;
     if(0!=_goRobot->Init(jts, this->_nc->cycleTime()))
     {
-        logFatal( "Go robot init failed\n") ;
+        STATUS_LOG << "Go robot init failed\n" ;
     }
 
     jts=_nc->cncGripperJoints();
     if(0!=_goGripper->Init(jts, this->_nc->cycleTime()))
     {
-        logFatal( "Go gripper init failed\n") ;
+        STATUS_LOG << "Go gripper init failed\n" ;
     }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -268,7 +256,7 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
                                  _nc->linearParams(),
                                  _nc->rotationalParams()))
         {
-            logFatal("Go init pose failed\n");
+            STATUS_LOG <<"Go init pose failed\n";
         }
 
         for(size_t i=1; i<  waypoints.size(); i++)
@@ -378,7 +366,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
                                  _nc->linearParams(),
                                  _nc->rotationalParams()))
         {
-            logFatal("go init pose failed goal pose= %s\n", dumpPoseSimple(r_goalpose).c_str());
+            STATUS_LOG << "go init pose failed goal pose= "<< dumpPoseSimple(r_goalpose) << "\n";
         }
 
         bNewCmd=true;
@@ -402,7 +390,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     outcmd.joints.position=hint; // use hint as seed
     if(_kinematics->IK(r_nextpose, outcmd.joints.position))
     {
-        logStatus("IK failed next pose= %s\n", dumpPoseSimple(r_nextpose).c_str());
+        STATUS_LOG << "IK failed next pose= " << dumpPoseSimple(r_nextpose)<< "\n";
         return CanonStatusType::CANON_ERROR;
     }
 
@@ -498,7 +486,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
         size_t index = std::distance(incmd.parameter_names.begin(), iter);
         if(index == incmd.parameter_names.size())
         {
-            logFatal("Error: bad parameter names - no leading action\n");
+            STATUS_LOG << "Error: bad parameter names - no leading action\n";
             return CanonStatusType::CANON_ERROR;
         }
 
@@ -548,7 +536,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
         }
         else
         {
-            logFatal("Unknown gripper action paramter setting\n");
+            STATUS_LOG <<"Unknown gripper action paramter setting\n";
         }
     }
     _lastcmdnum=-1;
@@ -765,7 +753,7 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     }
     catch (RobotControlException & e)
     {
-        LOG_DEBUG << "Exception in  GoInterpreter::ParseCommand() thread: " << e.what() << "\n";
+        STATUS_LOG << "Exception in  GoInterpreter::ParseCommand() thread: " << e.what() << "\n";
         outcmd.crclcommand = CanonCmdType::CANON_STOP_MOTION;
         outcmd.opmessage = e.what();
         outcmd.stoptype = CanonStopMotionType::NORMAL;

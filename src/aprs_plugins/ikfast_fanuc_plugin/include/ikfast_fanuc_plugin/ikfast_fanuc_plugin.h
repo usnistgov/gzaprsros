@@ -55,6 +55,7 @@ private:
     std::string _urdffile;
     std::string _baselink;
     std::string  _tiplink;
+    std::string _inifilename;
 
 
     int allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints);

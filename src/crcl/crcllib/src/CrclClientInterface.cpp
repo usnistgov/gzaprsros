@@ -34,9 +34,7 @@
 
 #include "aprs_headers/RCSMsgQueue.h"
 #include "aprs_headers/Conversions.h"
-
-#define GLOGGER CrclLogger
-#include <aprs_headers/LoggerMacros.h>
+#include "aprs_headers/logging.h"
 
 
 using namespace xsd;
@@ -45,6 +43,7 @@ using namespace Crcl;
 using namespace RCS;
 
 unsigned long long CrclClientCmdInterface::_commandnum = 0;
+extern Logger CrclLogger;
 
 static std::string replace_all(std::string str, std::string oldstr, std::string newstr)
 {
@@ -72,7 +71,7 @@ static bool ReadFile (std::string filename, std::string & contents)
 
     if(!in.is_open())
     {
-        logFatal("CGlobals::ReadFile failed file does not exist %s\n" , filename.c_str());
+        CrclLogger.LOG("CGlobals::ReadFile failed file does not exist %s\n" , filename.c_str());
         return false;
 
     }
@@ -491,10 +490,10 @@ CrclReturn CrclStatusMsgInterface::ParseCRCLStatusString(std::string str) {
         VALIDSTORE(_status._CurrentPose, (*crclstat->PoseStatus()).Pose()); // no change if not valid
         // _status.Dump();
     }    catch (const xml_schema::exception & e) {
-        logError(e.what());
+        CrclLogger.LOG(e.what());
         return CANON_FAILURE;
     }    catch (...) {
-        logError("ParseCRCLStatusString error\n");
+        CrclLogger.LOG("ParseCRCLStatusString error\n");
         return CANON_FAILURE;
     }
     return CANON_SUCCESS;

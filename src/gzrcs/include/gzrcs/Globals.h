@@ -405,8 +405,6 @@ public:
     // Debug Flags for more debugging information:
     VAR(int, DEBUG_World_Command); // Log controller action loop for robot servo of world cartesian move
     VAR(int, DEBUG_Log_Gripper_Status);
-    VAR(int, DEBUG_Log_Robot_Position);
-    VAR(int, DEBUG_Log_Robot_Config);
     VAR(int, DEBUG_GnuPlot);
     VAR(int, DEBUG_Log_Cyclic_Robot_Position);
     VAR(int, DEBUG_LogRobotCrcl);
@@ -417,16 +415,15 @@ extern CGlobals Globals; /**< global definition of globals  */
 extern void DebugBreak(); /**< global definition of windows DebugBreak equivalent.  */
 #endif
 
-extern std::ofstream ofsRobotCrcl;
-extern std::ofstream ofsRobotURDF;
-extern std::ofstream ofsMotionTrace;
-extern std::ofstream ofsGnuPlotCart;
-extern std::ofstream ofsGnuPlotJnt;
-extern std::ofstream ofsIkFast;
-extern std::ofstream LOG_FATAL;
-#ifdef DEBUG
-#define LOG_DEBUG LOG_FATAL
-#else
-extern boost::iostreams::stream< boost::iostreams::null_sink > LOG_DEBUG;
-#endif
+extern Logger ofsRobotCrcl;
+extern Logger ofsRobotURDF;
+extern Logger ofsMotionTrace;
+extern Logger ofsGnuPlotCart;
+extern Logger ofsGnuPlotJnt;
+extern Logger STATUS_LOG;
+//#ifdef DEBUG
+//#define LOG_DEBUG LOG_FATAL
+//#else
+//extern boost::iostreams::stream< boost::iostreams::null_sink > LOG_DEBUG;
+//#endif
 #endif

@@ -35,9 +35,6 @@
 
 #include "aprs_headers/RCSMsgQueue.h"
 #include "aprs_headers/Conversions.h"
-#define GLOGGER CrclLogger
-#include <aprs_headers/LoggerMacros.h>
-
 
 using namespace xsd;
 using namespace xml_schema;
@@ -59,7 +56,7 @@ static bool ReadFile (std::string filename, std::string & contents)
 
     if(!in.is_open())
     {
-        logFatal("CGlobals::ReadFile failed file does not exist %s\n" , filename.c_str());
+        CrclLogger.LOG("CGlobals::ReadFile failed file does not exist %s\n" , filename.c_str());
 
     }
     buffer << in.rdbuf( );
@@ -131,12 +128,12 @@ CrclReturn CrclServerDelegateInterface::DelegateCRCLCmd(std::string str) {
             crclwm.CommandID()= crclCommand.CommandID();
 
             if (GetStatusType * stat = dynamic_cast<GetStatusType *> (&(crclCommand))) {
-                logDebug("GetStatus id=%d\n", stat->CommandID());                
+                CrclLogger.logDEBUG("GetStatus id=%d\n", stat->CommandID());
                 return GetStatus();
             }
             if(crcl::crclServer::bDebugCrclCommandMsg)
             {
-                logDebug("===========================================================\n"
+                CrclLogger.logDEBUG("===========================================================\n"
                           "[%s]\n",
                           str.c_str());
             }
@@ -144,7 +141,7 @@ CrclReturn CrclServerDelegateInterface::DelegateCRCLCmd(std::string str) {
             return DelegateCRCLCmd(crclCommand);
         } catch (const xml_schema::exception& e) {
             // Most likely here due to illegal XML in Crcl command. Note, is not validated against XSD?!?!
-            logFatal( "Parse Exception CrclServerDelegateInterface::DelegateCRCLCmd: %s\n%s\n", e.what(), str.c_str());
+            CrclLogger.LOG( "Parse Exception CrclServerDelegateInterface::DelegateCRCLCmd: %s\n%s\n", e.what(), str.c_str());
             return CANON_FAILURE;
         } 
     }
@@ -166,7 +163,7 @@ CrclReturn CrclServerDelegateInterface::DelegateCRCLCmd(::CRCLCommandType &crclC
         crclwm.Update(_nCommandNum);
         crclwm.Update(Crcl::CommandStateEnum("CRCL_Working"));
         ActuateJointsType::ActuateJoint_sequence & joints(actuateJoints->ActuateJoint());
-        logDebug("ActuateJoints id=%d joint=%d pos = %6.5f\n", crclCommand.CommandID(), joints[0].JointNumber(), joints[0].JointPosition());
+        CrclLogger.logDEBUG("ActuateJoints id=%d joint=%d pos = %6.5f\n", crclCommand.CommandID(), joints[0].JointNumber(), joints[0].JointPosition());
         return ActuateJoints(joints);
 
         // m_thread=boost::thread(&CrclServerDelegateInterface::CRCLActuateJoints, this, joints);
@@ -183,7 +180,7 @@ CrclReturn CrclServerDelegateInterface::DelegateCRCLCmd(::CRCLCommandType &crclC
     }
     else if (InitCanonType * init = dynamic_cast<InitCanonType *> (&(crclCommand)))
     {
-        logDebug("InitCanonType id=%d\n", init->CommandID());
+        CrclLogger.logDEBUG("InitCanonType id=%d\n", init->CommandID());
         return  InitCanon();
     }
     else if (MessageType * msg = dynamic_cast<MessageType *> (&(crclCommand)))
@@ -437,7 +434,7 @@ CrclReturn CrclServerDelegateInterface::ActuateJoints(Crcl::ActuatorJointSequenc
         {
             cc.jointnum.push_back(joints[i].JointNumber() - 1); // adjust back to zero based math
             double pos = joints[i].JointPosition() * crclwm._angleConversion;
-            logDebug("Joint names %s\n", RCS::vectorDump<std::string> (crclwm.jointnames).c_str());
+            CrclLogger.logDEBUG("Joint names %s\n", RCS::vectorDump<std::string> (crclwm.jointnames).c_str());
             cc.joints.name.push_back(crclwm.jointnames[cc.jointnum.back()]);
             cc.joints.position.push_back(pos);
             cc.joints.velocity.push_back(speed); //  need conversion of velocity?
@@ -445,8 +442,8 @@ CrclReturn CrclServerDelegateInterface::ActuateJoints(Crcl::ActuatorJointSequenc
             strcmd+=StrFormat(",%6.4f",pos);
         }
     }
-    logDebug("ActuateJoints In=%s\n", strcmd.c_str());
-    logDebug("ActuateJoints Rcs=%s\n", RCS::vectorDump<double>(cc.joints.position).c_str());
+    CrclLogger.logDEBUG("ActuateJoints In=%s\n", strcmd.c_str());
+    CrclLogger.logDEBUG("ActuateJoints Rcs=%s\n", RCS::vectorDump<double>(cc.joints.position).c_str());
 
     RCS::cmds.addMsgQueue(cc);
 
@@ -589,8 +586,8 @@ CrclReturn CrclServerDelegateInterface::MoveThroughTo(std::vector<Crcl::PoseType
         tf::Pose waypoint = Convert(poses[i], crclwm._lengthConversion);
         cc.waypoints.push_back(RCS::Convert<tf::Pose, geometry_msgs::Pose>(waypoint));
 
-        logDebug("GotoCRCL Pose %s\n" , Crcl::DumpPose(poses[i], ",").c_str() );
-        logDebug("Goto urdf Pose %s\n" , RCS::dumpPose(waypoint).c_str());
+        CrclLogger.logDebug("GotoCRCL Pose %s\n" , Crcl::DumpPose(poses[i], ",").c_str() );
+        CrclLogger.logDebug("Goto urdf Pose %s\n" , RCS::dumpPose(waypoint).c_str());
     }
 
     // FIXME: add tolerance to each waypoint - blending distance?
@@ -617,7 +614,7 @@ CrclReturn CrclServerDelegateInterface::RunProgram(std::string programText)
     cc.CrclCommandID() =  crclwm.CommandID();
     RCS::cmds.addMsgQueue(cc);
 
-    logFatal("CrclServerDelegateInterface::RunProgram NOT IMPLEMENTED\n");
+    CrclLogger.LOG("CrclServerDelegateInterface::RunProgram NOT IMPLEMENTED\n");
     return CANON_SUCCESS;
 }
 
@@ -778,7 +775,7 @@ CrclReturn CrclServerDelegateInterface::SetParameter(char *paramName, void *para
     cc.CrclCommandID() =  crclwm.CommandID();
     RCS::cmds.addMsgQueue(cc);
 
-    logFatal("CrclServerDelegateInterface::SetParameter NOT IMPLEMENTED\n");
+    CrclLogger.LOG("CrclServerDelegateInterface::SetParameter NOT IMPLEMENTED\n");
     return CANON_SUCCESS;
 }
 

@@ -286,7 +286,7 @@ std::string IKFAST_FanucKin::get(std::string param)
     {
         std::stringstream ss;
         ss << "ROBOTNAME="<< robot_name << std::endl;
-        ss << "NUMJOINTS="<< std::to_string(_nJoints)<< std::endl;
+        ss << "NUMJOINTS="<< std::to_string(numJoints())<< std::endl;
         ss << "JOINTS=";
         for(size_t i=0; i< jointNames.size(); i++)
         {

@@ -504,31 +504,29 @@ int CComandLineInterface::interpretLine(std::string line)
         msg=Globals.trim(msg);
         if(msg.empty())
         {
-          std::cout << "traj\n";
+            std::cout << "debug turn on or off console logging\n";
+            std::cout << "debug {traj|crcl} {on|off}\n";
         }
         else
         {
             if(msg.compare( 0, strlen("traj"), "traj") == 0)
             {
+                // turn on/off stdout echo
                 msg=msg.erase(0,std::string("traj").size());
                 msg=Globals.trim(msg);
                 if(msg.compare( 0, strlen("on"), "on") == 0)
-                    Globals.DEBUG_Log_Robot_Position()=2;
-                else if(msg.compare( 0, strlen("off"), "off") == 0)
-                    Globals.DEBUG_Log_Robot_Position()=0;
+                    ofsMotionTrace.enable() = 1;
                 else
-                    Globals.DEBUG_Log_Robot_Position()=1;
+                    ofsMotionTrace.enable() = 0;
             }
             if(msg.compare( 0, strlen("crcl"), "crcl") == 0)
             {
                 msg=msg.erase(0,std::string("crcl").size());
                 msg=Globals.trim(msg);
                 if(msg.compare( 0, strlen("on"), "on") == 0)
-                    Globals.DEBUG_LogRobotCrcl()=2;
-                else if(msg.compare( 0, strlen("off"), "off") == 0)
-                    Globals.DEBUG_LogRobotCrcl()=0;
+                    ofsRobotCrcl.enable()=1;
                 else
-                    Globals.DEBUG_LogRobotCrcl()=1;
+                    ofsRobotCrcl.enable()=0;
             }
         }
 

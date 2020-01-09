@@ -85,13 +85,14 @@ struct timer
 
 boost::iostreams::stream< boost::iostreams::null_sink > nullOstream( ( boost::iostreams::null_sink() ) );
 
-
-static std::ostream* os;
-#define ONCE(X)  \
-{ static int Y##__LINE__=-1;\
-    if(++Y##__LINE__==0) os=&X; \
-    else os=&nullOstream;}\
-    *os
+#if 0
+//static std::ostream* os;
+//#define ONCE(X)  \
+//{ static int Y##__LINE__=-1;\
+//    if(++Y##__LINE__==0) os=&X; \
+//    else os=&nullOstream;}\
+//    *os
+#endif
 
 int CGearDemo::init(std::string robotName)
 {
@@ -163,7 +164,7 @@ int CGearDemo::issueRobotCommands(int & state)
 
     if( ShapeModel::instances.size()==0)
     {
-        ONCE(  std::cout) << "Error: No gear instances can be read from Gazebo model- restart Gazebo!\n";
+        STATUS_LOG.ONCE() << "Error: No gear instances can be read from Gazebo model- restart Gazebo!\n";
         return -1;
     }
 
@@ -174,7 +175,7 @@ int CGearDemo::issueRobotCommands(int & state)
         // Find a free gear
         if ((_instance = ShapeModel::instances.findFreeGear(r->cnc()->part_list(), r->cnc()->currentPose())) == NULL)
         {
-            ONCE( std::cout) << "Error: No Free Gear in tray to move\n";
+            STATUS_LOG.ONCE() << "Error: No Free Gear in tray to move\n";
             return -1;
         }
         return state++;

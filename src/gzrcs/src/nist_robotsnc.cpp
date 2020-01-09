@@ -21,8 +21,6 @@
 
 #include "aprs_headers/Debug.h"
 #include "aprs_headers/Config.h"
-#define GLOGGER GLogger
-#include "aprs_headers/LoggerMacros.h"
 #include "aprs_headers/env.h"
 
 
@@ -58,7 +56,7 @@ using namespace RCS;
 
 // Globals
 std::shared_ptr<CGearDemo> geardemo;
-Logging::CLogger GLogger;
+
 static     std::string get_env(  std::string  var )
 {
     const char * val = ::getenv( var.c_str() );
@@ -88,8 +86,6 @@ static void cleanup()
     Ros.close();
 #endif
 
-    // close logging file
-    GLogger.close();
 }
 
 // Do not put creator where it can be destroyed or you will
@@ -172,13 +168,11 @@ int main(int argc, char** argv)
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
             Globals.DEBUG_Log_Gripper_Status()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Gripper_Status","0");
-            Globals.DEBUG_Log_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Position","0");
-            Globals.DEBUG_Log_Robot_Config()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Config","0");
             Globals.DEBUG_Log_Cyclic_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Cyclic_Robot_Position","0");
             Globals.DEBUG_LogRobotCrcl()=RCS::robotconfig.getSymbolValue<int>("debug.LogRobotCrcl","0");
-            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
-            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
-            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
+//            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
+//            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
+//            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
 
             Globals.appProperties["robot"] = RCS::robotconfig.getSymbolValue<std::string>(robots[0] + ".robot.longname");
 
@@ -191,9 +185,9 @@ int main(int argc, char** argv)
             // Application setup of debug and logging setup of logging files
             Globals.debugSetup();
 
-            logStatus( "gzrcs: Compiled %s %s\n" , __DATE__ , __TIME__ );
-            logStatus( "gzrcs: Build %d\n" , BUILD);
-            logStatus( "gzrcs: Started %s\n" , Globals.getTimeStamp().c_str() );
+            STATUS_LOG<< "gzrcs: Compiled %s %s\n" << __DATE__ << __TIME__ ;
+            STATUS_LOG << "gzrcs: Build %d\n"  << BUILD;
+            STATUS_LOG << "gzrcs: Started %s\n" << Globals.getTimeStamp().c_str() ;
 
 
 #ifdef ROS
@@ -434,7 +428,7 @@ int main(int argc, char** argv)
 
 //                if(bSetupDebug)
                 {
-                    ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log", std::ofstream::app);
+                    ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log");
                     RCS::CController::dumpRobotNC(ofsRobotURDF, ncs[i]);
                     ofsRobotURDF.close();
                 }
@@ -442,7 +436,7 @@ int main(int argc, char** argv)
             }
         } catch (std::exception &e) {
             std::cerr << e.what();
-            LOG_FATAL << e.what();
+            STATUS_LOG << e.what();
             throw;
         }
 
@@ -562,23 +556,20 @@ int main(int argc, char** argv)
     }
     catch (std::string e)
     {
-        LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.c_str());
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        STATUS_LOG << Globals.strFormat("%s%s%s", "Abnormal exception end to gzrcs", e.c_str() , Globals.getTimeStamp().c_str());
         cleanup();
     }
     catch (std::exception e)
     {
-        LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.what());
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        STATUS_LOG << Globals.strFormat("%s%s%s", "Abnormal exception end to gzrcst", e.what(), Globals.getTimeStamp().c_str());
         cleanup();
     }
     catch (...)
     {
-        LOG_FATAL << "Abnormal exception end to  CRCL2Robot";
-        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp().c_str() );
+        STATUS_LOG << "Abnormal exception end to  gzrcs at" <<  Globals.getTimeStamp().c_str();
         cleanup();
     }
-    logFatal( "gzrcs: Stopped %s\n" , Globals.getTimeStamp().c_str() );
+    STATUS_LOG << "gzrcs: Stopped " << Globals.getTimeStamp().c_str() << "\n" ;
 }
 
 

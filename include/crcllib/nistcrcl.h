@@ -1,5 +1,15 @@
 #ifndef NISTCRCL_H
 #define NISTCRCL_H
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 // C++ headers
 #include <string>
@@ -14,14 +24,12 @@
 #include <aprs_headers/IRcs.h>
 #include <aprs_headers/RCSThreadTemplate.h>
 #include <aprs_headers/RCSMsgQueue.h>
-#include <aprs_headers/seriallinkrobot.h>
+#include <aprs_headers/logging.h>
 
 #include <mutex>
 
-class CRcs2Crcl;
 class CCrcl2RosMsg;
 class CCrclSession;
-
 namespace crcl
 {
 struct crclServer //: public RCS::Thread
@@ -37,14 +45,14 @@ struct crclServer //: public RCS::Thread
     virtual void setCmdQueue(RCS::CrclMessageQueue *crclcmdsq);
     virtual void start ( );
     virtual void stop ( );
-    static std::ofstream *debugstream;
-    virtual void setDebugStream(std::ofstream *dstream)
+    static std::ostream *debugstream;
+    virtual void setDebugStream(std::ostream *dstream)
     {
         debugstream=dstream;
     }
 
-    static bool bDebugStatusMsg;
-    static bool bDebugCommandMsg;
+    static bool bDebugCrclStatusMsg;
+    static bool bDebugCrclCommandMsg;
     static bool bCrclStopIgnore;
     static bool bFlywheel;
     static bool bProcessAllCrclMessages;
@@ -66,46 +74,7 @@ protected:
     std::string tip_link;
     double _cycletime;                                 /**< cycletime of thread in seconds */
 };
-
-struct crclClient
-{
-    crclClient();
-    int init(std::string crclIp,
-                int crclport,
-                double d_cycle_time);
-
-    /**
-     * @brief addcommand queues up ROS/RCS command to send to listening crcl server
-     * @return command num
-     */
-    int addcommand(crcl_rosmsgs::CrclCommandMsg cmd) ;
-    int cmd_status(int cmdnum) ;
-    bool isDone();
-    bool isBusy();
-
-    virtual void start ( );
-    virtual void stop ( );
-    static std::ofstream *debugstream;
-    virtual void setDebugStream(std::ofstream *dstream)
-    {
-        debugstream=dstream;
-    }
-
-    static bool bDebugStatusMsg;
-    static bool bDebugCommandMsg;
-    static bool bCrclStopIgnore;
-    static bool bFlywheel;
-    static bool bProcessAllCrclMessages;
-    static std::string sRobot;
-    int syncGetStatus(RCS::CCanonWorldModel&);
-    bool isConnected();
-
-//protected:
-
-    /**
-     * @brief crcl2rcs reads new ROS representation, translates into CRCL and sends out the socket.
-     */
-    std::shared_ptr<CRcs2Crcl> rcs2crcl;
-};
 }
+extern Logger CrclLogger;
+
 #endif // NISTCRCL_H

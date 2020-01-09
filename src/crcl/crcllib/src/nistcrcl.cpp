@@ -72,10 +72,9 @@ port: 47548
 #include <aprs_headers/File.h>
 
 #include "aprs_headers/Config.h"
-#define GLOGGER CrclLogger
-#include <aprs_headers/LoggerMacros.h>
+#include <aprs_headers/logging.h>
 
-Logging::CLogger CrclLogger;
+Logger CrclLogger;
 
 #include <sys/time.h>
 enum TimeFormat {
@@ -146,7 +145,7 @@ bool crclServer::bFlywheel=false;
 bool crclServer::bProcessAllCrclMessages=false;
 std::string crclServer::sRobot;
 static boost::iostreams::stream<boost::iostreams::null_sink> nullout { boost::iostreams::null_sink{} };
-std::ofstream *crclServer::debugstream=(std::ofstream *) &nullout;
+std::ostream *crclServer::debugstream=(std::ostream *) &nullout;
 
 
 
@@ -210,30 +209,30 @@ void crclServer::start ( )
 
     // Logging setup for now
 
-    std::string logFolder=CrclLogger.loggerFolder();
-    CrclLogger.open(logFolder+"/crclxml_" + crcl2ros->robotName + ".log");
-    CrclLogger.isTimestamping( )=true;
-    CrclLogger.isOutputConsole()=true;
+//    std::string logFolder=CrclLogger.loggerFolder();
+//    CrclLogger.open(logFolder+"/crclxml_" + crcl2ros->robotName + ".log");
+//    CrclLogger.isTimestamping( )=true;
+//    CrclLogger.isOutputConsole()=true;
 
     // Load NIST style - less draconian errors. Maybe worse.
     Nist::Config cfg;
     if(!cfg.loadFile(inifile))
     {
-        logFatal( "crcl_server can't load ini file\n");
+        CrclLogger <<  "crcl_server can't load ini file\n";
     }
 
     std::string length_units = cfg.getSymbolValue<std::string>("CRCL.length_units", "METER");
     std::string angle_units = cfg.getSymbolValue<std::string>("CRCL.angle_units", "RADIAN");
     if(crcl2ros->crclinterface->SetLengthUnits(length_units) == Crcl::CANON_FAILURE)
     {
-        logFatal( "SetLengthUnits from ini file failed\n");
+        CrclLogger<< "SetLengthUnits from ini file failed\n";
     }
 
     if(crcl2ros->crclinterface->SetAngleUnits(angle_units)== Crcl::CANON_FAILURE)
     {
-        logFatal( "SetAngleUnits from ini file failed\n");
+        CrclLogger<< "SetAngleUnits from ini file failed\n";
     }
-    CrclLogger.debugLevel() = cfg.getSymbolValue<int>("CRCL.DebugLevel", "5");
+    //CrclLogger.debugLevel() = cfg.getSymbolValue<int>("CRCL.DebugLevel", "5");
     crclServer::bDebugCrclStatusMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugStatusMsg", "0");
     crclServer::bDebugCrclCommandMsg = (bool) cfg.getSymbolValue<int>("CRCL.DebugCommandMsg", "0");
     crclServer::bCrclStopIgnore = (bool) cfg.getSymbolValue<int>("CRCL.StopIgnore", "0");
@@ -242,27 +241,27 @@ void crclServer::start ( )
     crclServer::bProcessAllCrclMessages=(bool) cfg.getSymbolValue<double>("CRCL.processAllCrclMessages", "0");
     crclServer::sRobot= cfg.getSymbolValue<std::string>("system.robots","robie");
 
-    logStatus( " crclServer started %s\n", getTimeStamp(GMT_UV_SEC).c_str());
-    logStatus( " crclServer bDebugCrclStatusMsg= %d\n", crclServer::bDebugCrclStatusMsg);
-    logStatus( " crclServer bDebugCrclCommandMsg= %d\n", crclServer::bDebugCrclCommandMsg);
-    logStatus( " crclServer bCrclStopIgnore= %d\n", crclServer::bCrclStopIgnore);
-    logStatus( " crclServer bDebugCrclXML= %d\n", CCrclSession::bDebugCrclXML);
-    logStatus( " crclServer bFlywheel= %d\n", crclServer::bFlywheel);
-    logStatus( " crclServer bProcessAllCrclMessages= %d\n", crclServer::bProcessAllCrclMessages);
-    logStatus( " crclServer sRobot= %s\n", crclServer::sRobot.c_str());
+    CrclLogger.LOG( " crclServer started %s\n", getTimeStamp(GMT_UV_SEC).c_str());
+    CrclLogger.LOG( " crclServer bDebugCrclStatusMsg= %d\n", crclServer::bDebugCrclStatusMsg);
+    CrclLogger.LOG( " crclServer bDebugCrclCommandMsg= %d\n", crclServer::bDebugCrclCommandMsg);
+    CrclLogger.LOG( " crclServer bCrclStopIgnore= %d\n", crclServer::bCrclStopIgnore);
+    CrclLogger.LOG( " crclServer bDebugCrclXML= %d\n", CCrclSession::bDebugCrclXML);
+    CrclLogger.LOG( " crclServer bFlywheel= %d\n", crclServer::bFlywheel);
+    CrclLogger.LOG( " crclServer bProcessAllCrclMessages= %d\n", crclServer::bProcessAllCrclMessages);
+    CrclLogger.LOG( " crclServer sRobot= %s\n", crclServer::sRobot.c_str());
 
     if(crcl2ros->crclcmdsq == NULL)
-        logStatus( " ERROR: crcl2ros crclcmdsq is NOT set\n");
+        CrclLogger.LOG( " ERROR: crcl2ros crclcmdsq is NOT set\n");
 
     // Start asio crcl reader
-    logStatus( "Start crcl socket reader\n");
-    logStatus( "   crcl socket reader Ip=%s Port=%d\n",   crclIp.c_str(), crclport);
+    CrclLogger.LOG( "Start crcl socket reader\n");
+    CrclLogger.LOG( "   crcl socket reader Ip=%s Port=%d\n",   crclIp.c_str(), crclport);
 
     crclCommServer->start();
 
 
     // Start crcl translater to ros msg
-    logStatus( "Start crcl translater to ros msg\n");
+    CrclLogger.LOG( "Start crcl translater to ros msg\n");
 
     crcl2ros->start();
 
@@ -271,7 +270,7 @@ void crclServer::start ( )
 ////////////////////////////////////////////////////////////////////////////////
 void crclServer::stop ( )
 {
-    logStatus( "Stop crclServer %s\n", getTimeStamp(GMT_UV_SEC).c_str());
+    CrclLogger.LOG( "Stop crclServer %s\n", getTimeStamp(GMT_UV_SEC).c_str());
 
     //stop communication thread that accepts queued XML messages and translates into CRCL
     crclCommServer->stop();

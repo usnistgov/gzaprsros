@@ -229,7 +229,6 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/RCSMsgQueueThread.h \
     ../aprs_headers/include/aprs_headers/RCSMsgQueue.h \
     ../aprs_headers/include/aprs_headers/LoggerMacros.h \
-    ../aprs_headers/include/aprs_headers/Logger.h \
     ../aprs_headers/include/aprs_headers/IRcs.h \
     ../aprs_headers/include/aprs_headers/IKinematic.h \
     ../aprs_headers/include/aprs_headers/hexdump.h \
