@@ -185,9 +185,9 @@ int main(int argc, char** argv)
             // Application setup of debug and logging setup of logging files
             Globals.debugSetup();
 
-            STATUS_LOG<< "gzrcs: Compiled %s %s\n" << __DATE__ << __TIME__ ;
-            STATUS_LOG << "gzrcs: Build %d\n"  << BUILD;
-            STATUS_LOG << "gzrcs: Started %s\n" << Globals.getTimeStamp().c_str() ;
+            STATUS_LOG.LOG("gzrcs: Compiled %s %s\n" , __DATE__ , __TIME__ );
+            STATUS_LOG.LOG( "gzrcs: Build %d\n"  , BUILD);
+            STATUS_LOG.LOG( "gzrcs: Started %s\n" , Globals.getTimeStamp().c_str()) ;
 
 
 #ifdef ROS
