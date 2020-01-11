@@ -29,6 +29,7 @@
 #include "aprs_headers/Conversions.h"
 #include "aprs_headers/Debug.h"
 #include "aprs_headers/env.h"
+#include "aprs_headers/Path.h"
 
 // THanks to: http://cc.byexamples.com/2007/04/08/non-blocking-user-input-in-loop-without-ncurses/
 #define NB_ENABLE 1
@@ -330,6 +331,32 @@ int CComandLineInterface::interpretMacro(std::string macro_name)
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+int CComandLineInterface::interpretFile(std::string filename)
+{
+    std::string line;
+    std::vector<std::string> paths= {Globals.appProperties["ExeDirectory"]};
+    if(!Globals.appProperties["CurDirectory"].empty())
+        paths.push_back(Globals.appProperties["CurDirectory"]);
+
+    std::string filepath=Path::find(paths, filename);
+    if(filepath.empty() || !File(filepath).exists() )
+    {
+         std::cout << filename << "does not exist\n";
+         return 0;
+    }
+    std::ifstream myfile( filepath );
+    if (myfile)  // same as: if (myfile.good())
+    {
+        while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
+        {
+            interpretLine(line);
+        }
+        myfile.close();
+    }
+    return 0;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -436,8 +463,21 @@ int CComandLineInterface::interpretLine(std::string line)
         msg=msg.erase(0,std::string("kinsolver").size());
         msg=Globals.trim(msg);
         std::cout << ncs[0]->robotKinematics()->get(msg) << "\n";
-
     }
+    else if (msg.compare( 0, strlen("setcwd"),"setcwd") == 0)
+    {
+        msg=msg.erase(0,std::string("setcwd").size());
+        msg=Globals.trim(msg);
+        Globals.appProperties["CurDirectory"]=msg;
+    }
+    else if (msg.compare( 0, strlen("run"),"run") == 0)
+    {
+        msg=msg.erase(0,std::string("run").size());
+        msg=Globals.trim(msg);
+        interpretFile(msg);
+    }
+
+
     else if (msg.compare("timing") == 0)
     {
         std::cout << RCS::Thread::cpuLoads();
@@ -827,10 +867,10 @@ int CComandLineInterface::interpretLine(std::string line)
         crclApi->moveTo(msg);
     }
 
-    else if (msg.compare( 0, strlen("ik "), "ik ") == 0 )
+    else if (msg.compare( 0, strlen("kinsolve "), "kinsolve ") == 0 )
     {
 
-        msg=msg.erase(0,std::string("ik ").size());
+        msg=msg.erase(0,std::string("kinsolve ").size());
         msg=Globals.trim(msg);
 
         // IK of a given object position
@@ -909,32 +949,52 @@ int CComandLineInterface::interpretLine(std::string line)
             recordFile.close();
         }
     }
-    else if (msg.compare( 0, strlen("IK "), "IK ") == 0 )
+    else if (msg.compare( 0, strlen("ik "), "ik ") == 0 )
     {
-        msg=msg.erase(0,std::string("IK ").size());
+        msg=msg.erase(0,std::string("ik ").size());
         msg=Globals.trim(msg); // now have name of where?
 
         std::vector<std::string> str_dbls = Globals.split(msg, ',');
         std::vector<double> dbls= ConvertStringVector<double>(str_dbls);
         tf::Pose pose = Convert<std::vector<double>, tf::Pose> (dbls);
 
-        std::vector<double> joints;
-        ncs[_ncindex]->robotKinematics()->IK(pose, joints);
-        std::cout << "IK Joints   =" << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+        size_t n = ncs[_ncindex]->robotKinematics()->numJoints();
+        std::vector<double> joints(n, 0.001);
+        if(ncs[_ncindex]->robotKinematics()->IK(pose, joints))
+        {
+            std::cout << "Seed Joints = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+            std::cout << ncs[_ncindex]->robotKinematics()->get("error") << "\n" << std::flush;
+
+        }
+        else
+        {
+            std::cout << "Solve IK    = " << RCS::dumpPoseSimple(pose) << "\n";
+            std::cout << "IK Joints   = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+        }
+        std::cout << "\n" << std::flush;
     }
-    else if (msg.compare( 0, strlen("FK "), "FK ") == 0 )
+    else if (msg.compare( 0, strlen("fk "), "fk ") == 0 )
     {
-        msg=msg.erase(0,std::string("FK ").size());
+        msg=msg.erase(0,std::string("fk ").size());
         msg=Globals.trim(msg); // now have name of where?
 
-        JointState joints;
         std::vector<std::string> str_dbls = Globals.split(msg, ',');
-        joints.position= ConvertStringVector<double>(str_dbls);
-        // joint names - assume filled in by kinsolver init
+        std::vector<double>joints = ConvertStringVector<double>(str_dbls);
+
+        // joint names - must be filled in by kinsolver init
 
         tf::Pose r_pose;
-        ncs[_ncindex]->robotKinematics()->FK(joints.position, r_pose);
-        std::cout << "FK Pose   =" << RCS::dumpPoseSimple(r_pose) << "\n";
+        if(ncs[_ncindex]->robotKinematics()->FK(joints, r_pose))
+        {
+            std::cout << "Seed  Joints = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+            std::cout << ncs[_ncindex]->robotKinematics()->get("error") << "\n" << std::flush;
+        }
+        else
+        {
+            std::cout << "Solve FK     = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
+            std::cout << "FK Pose      = " << RCS::dumpPoseSimple(r_pose) << "\n";
+        }
+        std::cout << "\n" << std::flush;
     }
     else if (msg.compare( 0, strlen("where"), "where") == 0 )
     {

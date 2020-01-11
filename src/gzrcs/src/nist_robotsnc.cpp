@@ -373,9 +373,14 @@ int main(int argc, char** argv)
 
                     std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.base", ",");
                     std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.qbend",",");
-                    ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
 
                     // Translate 4 doubles into quaternion
+                    if(dbase.size() < 6  || dbend.size() < 4)
+                    {
+                        throw std::runtime_error(std::string( "dbase or dbend missing values"));
+
+                    }
+                    ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
                     ncs[i]->QBend() = tf::Quaternion(dbend[0], dbend[1], dbend[2], dbend[3]);
 
                     ncs[i]->Retract() =  Convert<std::vector<double>, tf::Pose>(

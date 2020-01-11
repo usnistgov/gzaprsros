@@ -587,6 +587,8 @@ void CController::dumpRobotNC(std::ostream & ofsRobotURDF, std::shared_ptr<CCont
     ofsRobotURDF << "num joints= " << nc->robotKinematics()->numJoints() << "\n";
     ofsRobotURDF << "baseoffset= " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
     ofsRobotURDF << "tooloffset= " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
+    ofsRobotURDF << "qbend= " << RCS::dumpQuaterion(nc->QBend()).c_str() << "\n";
+
     ofsRobotURDF << "Joint names= " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
 
     for (std::map<std::string, std::vector<double>>::iterator it = nc->namedJointMove().begin(); it != nc->namedJointMove().end(); it++)

@@ -1,0 +1,152 @@
+
+Wed 08 Jan 2020 11:12:00 AM EST 
+=======================================================================================================
+WORKING
+
+RCS> config
+RCS> ============================================================
+Host name = woodsy
+OS version = "Ubuntu 16.04.6 LTS"
+Compiler version = 5.4
+Gazebo Version 9.8
+ROS version = App name = gzrcs
+App path = /home/isd/michalos/build/gzrcs/debug/gzrcs
+App version = 1:0:430
+App modification time = Thu Jan  9 15:53:17 2020
+Gotraj dll modification time = Thu Jan  9 15:34:42 2020
+Kinsolver libikfast_fanuc_plugin.so plugin modification time = Thu Jan  9 14:09:28 2020
+
+NC fanuc_controller
+Robot= No get for parameter ROBOTNAME
+base link= fanuc_base_link
+ee link= fanuc_link_6
+num joints= 6
+baseoffset=   -0.17,  -1.14,   0.93|Q= 0,0,0,1
+tooloffset=    0.00,   0.00,   0.18|Q= 0,0,0,1
+Joint names= fanuc_joint_1,fanuc_joint_2,fanuc_joint_3,fanuc_joint_4,fanuc_joint_5,fanuc_joint_6
+joints.home=0,0,0,0,0,0
+joints.nothome=0.001,0.001,0.001,0.001,0.001,0.001,0.001
+joints.random=0.01,0.099,0.2,0.41,0.71,0.22,0.99
+Cycletime=   0.0025
+
+RCS> debug
+RCS> debug turn on or off console logging
+debug {traj|crcl} {on|off}
+
+RCS> debug traj throttle 1000
+
+
+
+RCS> approach sku_part_large_gear23
+RCS> setGripper=1
+moveTo=   0.56,  -0.18,   0.03|Q= 1,0,0,0
+fanuc_controller: GO CANON_MOVE_TO Started
+ROBOT COORDINATES
+    GoalRobot Pose=    0.56,  -0.18,   0.22|Q= 1,0,0,0
+    Current   Pose=    0.47,   0.00,   0.70|Q= 0.706753,0.00035373,0.70746,-0.000354084
+    NextRobot Pose=    0.47,   0.00,   0.70|Q= 0.706753,0.00035373,0.70746,-0.000354084
+ROBOT JOINTS
+    Goal joints     0,0,0,0,0,0
+    Next joints     0.000999998,1.48512,2.93239,-1.01008e-06,-1.44628,-1.24902e-07
+    Current joints  0.001,0.001,0.001,0.001,0.001,0.001
+ROBOT COORDINATES
+    GoalRobot Pose=    0.56,  -0.18,   0.22|Q= 1,0,0,0
+    Current   Pose=    0.52,  -0.10,   0.42|Q= 0.934811,0.000177573,0.355145,-0.00017775
+    NextRobot Pose=    0.52,  -0.10,   0.42|Q= 0.934967,0.000177367,0.354733,-0.000177544
+ROBOT JOINTS
+    Goal joints     0,0,0,0,0,0
+    Next joints     -0.21377,0.400245,-0.174869,-0.473667,-0.314645,-0.614797
+    Current joints  -0.213468,0.399137,-0.17499,-0.473396,-0.314688,-0.614175
+
+RCS> Status Joints   =-0.306, 1.001, 0.217, 0.000,-0.787,-0.306
+FK Robot Pose   =   0.56,  -0.18,   0.22|Q= 1,-1.70697e-15,-1.11615e-16,-1.84236e-17
+FK World Pose   =   0.39,  -1.32,   0.97|Q= 1,-1.70697e-15,-1.11615e-16,-1.84236e-17
+FK World Base   =   0.39,  -1.32,   1.15|Q= 1,-1.70697e-15,-1.11615e-16,-1.84236e-17
+IK Robot Joints =-0.306, 1.001, 0.217, 0.000,-0.787,-0.306
+
+
+
+
+=======================================================================================================
+NOT WORKING
+
+RCS> config
+RCS> ============================================================
+Host name = woodsy
+OS version = "Ubuntu 16.04.6 LTS"
+Compiler version = 5.4
+Gazebo Version 9.8
+ROS version = App name = gzrcs
+App path = /home/isd/michalos/build/gzrcs/debug/gzrcs
+App version = 1:0:430
+App modification time = Thu Jan  9 16:11:47 2020
+Gotraj dll modification time = Thu Jan  9 15:34:42 2020
+Kinsolver libgokin_plugin.so plugin modification time = Thu Jan  9 14:09:27 2020
+
+NC fanuc_controller
+Robot= No get for parameter ROBOTNAME
+base link= 
+ee link= 
+num joints= 6
+baseoffset=   -0.17,  -1.14,   0.93|Q= 0,0,0,1
+tooloffset=    0.00,   0.00,   0.10|Q= 0,0,0,1
+Joint names= fanuc_joint_1,fanuc_joint_2,fanuc_joint_3,fanuc_joint_4,fanuc_joint_5,fanuc_joint_6
+joints.home=0,0,0,0,0,0
+joints.nothome=0.001,0.001,0.001,0.001,0.001,0.001,0.001
+joints.random=0.01,0.099,0.2,0.41,0.71,0.22,0.99
+Cycletime=   0.0025
+
+
+
+sku_part_large_gear23 at    0.56,  -0.18,  -0.19|Q= -0.000952112,-0.00187853,0.193114,0.981174|height=0
+
+RCS> approach sku_part_large_gear23
+RCS> setGripper=1
+moveTo=   0.56,  -0.18,   0.03|Q= 1,0,0,0
+fanuc_controller: GO CANON_MOVE_TO Started
+ROBOT COORDINATES
+    GoalRobot Pose=    0.56,  -0.18,   0.14|Q= 1,0,0,0
+    Current   Pose=    0.47,   0.00,   0.70|Q= 2.5e-07,-0.0005,0.0005005,1
+    NextRobot Pose=    0.47,   0.00,   0.70|Q= 3.35644e-07,-0.0005,0.0005005,1
+ROBOT JOINTS
+    Goal joints     0,0,0,0,0,0
+    Next joints     0.000999998,0.001,0.000999993,0.00100202,0.00100001,0.00100202
+    Current joints  0.001,0.001,0.001,0.001,0.001,0.001
+ROBOT COORDINATES
+    GoalRobot Pose=    0.56,  -0.18,   0.14|Q= 1,0,0,0
+    Current   Pose=    0.51,  -0.09,   0.41|Q= 0.709861,-0.000352171,0.000352523,0.704342
+    NextRobot Pose=    0.51,  -0.09,   0.41|Q= 0.71044,-0.000351879,0.000352231,0.703758
+ROBOT JOINTS
+    Goal joints     0,0,0,0,0,0
+    Next joints     -0.203448,0.426952,-0.380545,0.277854,0.828024,1.77102
+    Current joints  -0.203097,0.425494,-0.380595,0.277743,0.826604,1.76959
+
+RCS> where
+RCS> Status Joints   =-0.353, 1.240, 0.033, 0.375, 1.230,-3.011
+FK Robot Pose   =   0.56,  -0.18,   0.14|Q= 1,-5.61063e-12,5.61622e-12,1.12212e-08
+FK World Pose   =   0.39,  -1.32,   0.97|Q= 1,-5.61063e-12,5.61622e-12,1.12212e-08
+FK World Base   =   0.39,  -1.32,   1.07|Q= 1,-5.61063e-12,5.61622e-12,1.12212e-08
+IK Robot Joints =-0.353, 1.240, 0.033, 0.375, 1.230,-3.011
+
+
+
+Fri 10 Jan 2020 02:07:46 PM EST 
+JOG DOESN'T WORK
+sku_part_large_gear23 at    0.56,  -0.18,   0.14|Q= -0.00195282,-0.00087118,0.187958,0.982175|height=0
+approach sku_part_large_gear23
+RCS> setGripper=1
+moveTo=   0.56,  -0.18,   0.36|Q= 0,0.707107,0,0.707107
+
+RCS> where
+RCS> Status Joints   =-0.437, 0.305,-0.436,-0.000,-0.830,-0.437
+FK Robot Pose   =   0.38,  -0.18,   0.36|Q= -4.50893e-08,0.707107,2.65374e-10,0.707107
+FK World Pose   =   0.39,  -1.32,   0.97|Q= -4.50893e-08,0.707107,2.65374e-10,0.707107
+FK World Base   =   0.21,  -1.32,   0.97|Q= -4.50893e-08,0.707107,2.65374e-10,0.707107
+IK Robot Joints =-0.437, 0.305,-0.436,-0.000,-0.830,-0.437
+
+
+
+
+
+
+

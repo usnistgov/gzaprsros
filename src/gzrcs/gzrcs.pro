@@ -238,7 +238,8 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/Core.h \
     ../aprs_headers/include/aprs_headers/Conversions.h \
     ../aprs_headers/include/aprs_headers/Config.h \
-    ../aprs_headers/include/aprs_headers/logging.h
+    ../aprs_headers/include/aprs_headers/logging.h \
+    ../aprs_headers/include/aprs_headers/Path.h
 
 DISTFILES += \
     Notes.txt \
@@ -256,7 +257,8 @@ config_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/FanucLRMate200iD.urdf\
    $$PWD/config/lrmate200id.urdf\
    $$PWD/config/motoman_sia20d.ini\
-   $$PWD/config/fanuc-lrmate-200id.ini
+   $$PWD/config/fanuc-lrmate-200id.ini\
+   $$PWD/config/kintest.txt
 
 message("gzrcs install $$config_features.path")
 message("gzrcs instal files $$config_features.files")
@@ -269,7 +271,8 @@ build_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/FanucLRMate200iD.urdf\
    $$PWD/config/lrmate200id.urdf\
    $$PWD/config/motoman_sia20d.ini\
-   $$PWD/config/fanuc-lrmate-200id.ini
+   $$PWD/config/fanuc-lrmate-200id.ini\
+   $$PWD/config/kintest.txt
 
 INSTALLS  += build_features
 

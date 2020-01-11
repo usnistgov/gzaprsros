@@ -133,6 +133,15 @@ public:
     ///
     int interpretMacro(std::string macro_name);
 
+    /**
+     * @brief interpretFile accepts a file of CLI commands
+     * and executes each line
+     * @param filename file optionally containing path of file
+     * @return 0 if everthing ok
+     */
+    int interpretFile(std::string filename);
+
+
      /// \brief IsDone return if no more interpreting to do (quit commanded)
     /// \return true if done
     ///
