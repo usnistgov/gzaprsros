@@ -180,6 +180,10 @@ public:
     bool isError(){ return errmsg.empty(); }
 
 
+    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
+    {
+        return 0;
+    }
     static boost::shared_ptr<fanuc_lrmate200id> create()
     {
         return boost::shared_ptr<fanuc_lrmate200id>( new fanuc_lrmate200id());

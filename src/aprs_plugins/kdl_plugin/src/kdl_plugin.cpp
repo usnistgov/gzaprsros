@@ -74,6 +74,9 @@ static KDL::JntArray  vectorToKdlJointArray(std::vector<double> joints)
 Ckdl_plugin::Ckdl_plugin() : CSerialLinkRobot(this)
 {
     bDebug=false;
+
+    // assign calibrated local to world transform to identity
+    poseLocal2Wrld=tf::Pose::getIdentity();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +85,22 @@ Ckdl_plugin::~Ckdl_plugin()
     // delete temp file...
 
 }
+
+////////////////////////////////////////////////////////////////////////////////
+int Ckdl_plugin::calibrate(const std::vector<double>& joints, const tf::Pose pose)
+{
+    tf::Pose myPose;
+
+    this->FK(joints, myPose);
+
+    poseLocal2Wrld=myPose.inverse()*pose;
+
+
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 size_t Ckdl_plugin::numJoints()
 {
     return chain.getNrOfJoints();
@@ -179,6 +198,9 @@ int Ckdl_plugin::debug(bool flag)
 int Ckdl_plugin::IK(tf::Pose pose, std::vector<double>&  joints)
 {
     errmsg.clear();
+
+    pose = pose * poseLocal2Wrld.inverse();
+
     KDL::JntArray jnt_pos_in=vectorToKdlJointArray(joints);
     KDL::Frame F_dest=tfPoseToKDLFrame(pose);
 
@@ -205,6 +227,8 @@ int Ckdl_plugin::FK(std::vector<double> joints, tf::Pose &pose)
     fk_solver->JntToCart(kdL_current_joints,kdl_pose_frame);
 
     pose = KDLFrameToTfPose(kdl_pose_frame);
+    pose =  poseLocal2Wrld*pose;
+
     return 0;
 }
 

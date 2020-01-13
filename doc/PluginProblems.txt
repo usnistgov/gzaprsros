@@ -1,4 +1,40 @@
 
+IKFAST
+moveTo= 0.00100: 0.00100: 0.00100: 0.00100: 0.00100: 0.00100: 0.00100:
+RCS> where
+RCS> Status Joints   = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+FK Robot Pose   =   0.47,   0.00,   0.70,0.706753,0.00035373,0.70746,-0.000354084
+FK World Pose   =   0.48,  -1.14,   1.63,0.706753,0.00035373,0.70746,-0.000354084
+FK World Base   =   0.30,  -1.14,   1.63,0.706753,0.00035373,0.70746,-0.000354084
+IK Robot Joints = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+
+
+KDL
+RCS> where
+RCS> Status Joints   = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+FK Robot Pose   =   0.47,   0.00,   0.70,-0.00099975,-0.0005005,0.0005,0.999999
+FK World Pose   =   0.30,  -1.14,   1.63,-0.00099975,-0.0005005,0.0005,0.999999
+FK World Base   =   0.30,  -1.14,   1.45,-0.00099975,-0.0005005,0.0005,0.999999
+IK Robot Joints = 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+
+
+baseoffset=   -0.17,  -1.14,   0.60,0,0,0,1
+
+
+moveTo=   0.56,  -0.18,   0.36,0,0.707107,0,0.707107
+
+RCS> where
+RCS> Status Joints   =-0.437, 0.305,-0.436,-0.000,-0.830, 0.437
+FK Robot Pose   =   0.38,  -0.18,   0.36,-7.69973e-13,0.707107,2.09902e-14,0.707107
+FK World Pose   =   0.39,  -1.32,   0.97,-7.69973e-13,0.707107,2.09902e-14,0.707107
+FK World Base   =   0.21,  -1.32,   0.97,-7.69973e-13,0.707107,2.09902e-14,0.707107
+IK Robot Joints =-0.437, 0.305,-0.436,-0.000,-0.830, 0.437
+
+
+Sat 11 Jan 2020 07:02:26 PM EST 
+[ WARN] [1578787288.956403674]: The root link fanuc_base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+
+
 Wed 08 Jan 2020 11:12:00 AM EST 
 =======================================================================================================
 WORKING
@@ -8,6 +44,7 @@ RCS> ============================================================
 Host name = woodsy
 OS version = "Ubuntu 16.04.6 LTS"
 Compiler version = 5.4
+
 Gazebo Version 9.8
 ROS version = App name = gzrcs
 App path = /home/isd/michalos/build/gzrcs/debug/gzrcs

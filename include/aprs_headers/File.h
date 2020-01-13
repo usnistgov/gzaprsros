@@ -367,7 +367,7 @@ public:
         s << std::asctime(std::gmtime(&ft)) << std::endl;
         return s.str();
     }
-    std::string PathSeparator()
+    static std::string PathSeparator()
     {
 #ifdef WIN32
         return "\\";

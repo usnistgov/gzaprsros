@@ -43,7 +43,10 @@ public:
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
 
-
+    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
+    {
+        return 0;
+    }
     static boost::shared_ptr<GoKin> create()
     {
         return boost::shared_ptr<GoKin>( new GoKin());

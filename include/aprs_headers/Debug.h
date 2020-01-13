@@ -116,7 +116,7 @@ inline std::string dumpPoseSimple(tf::Pose pose) {
 
     s << boost::format("%7.2f") % (pscale * pose.getOrigin().x()) << "," <<
          boost::format("%7.2f") % (pscale * pose.getOrigin().y()) << "," <<
-         boost::format("%7.2f") % (pscale * pose.getOrigin().z()) << "|";
+         boost::format("%7.2f") % (pscale * pose.getOrigin().z()) << ",";
     double roll=0, pitch=0, yaw=0;
     //getRPY(pose, roll, pitch, yaw);
     //tf::Matrix3x3(pose.getRotation()).getRPY(roll, pitch, yaw);
@@ -125,7 +125,7 @@ inline std::string dumpPoseSimple(tf::Pose pose) {
 //    s << "RPY= " << boost::format("%5.2f") % Rad2Deg(roll) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(pitch) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(yaw);
-    s << "Q= " << pose.getRotation().x() << "," << pose.getRotation().y() << "," << pose.getRotation().z() << "," << pose.getRotation().w();
+    s << pose.getRotation().x() << "," << pose.getRotation().y() << "," << pose.getRotation().z() << "," << pose.getRotation().w();
 
     return s.str();
 }
@@ -177,7 +177,7 @@ inline std::ostream & operator<<(std::ostream & os, tf::Pose & pose) {
 * \brief dumpQuaterion takes a urdf quaterion  and generates a string describing x,y,z,w coordinates.
 * Can be used as std::cout << DumpQuaterion(urdf::rotation);
 */
-inline std::string dumpQuaterion(std::ostream & os, const tf::Quaternion & rot) {
+inline std::string dumpQuaterion(const tf::Quaternion & rot) {
     std::stringstream s;
     s << "[Quaterion = ]";
     s << boost::format("X=%8.4f") % rot.x() << ",";

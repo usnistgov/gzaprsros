@@ -36,7 +36,10 @@ public:
     std::string set(std::string param,  void * value);
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
-
+    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
+    {
+        return 0;
+    }
     /**
      * @brief create boost dll factory method. Creates IKFAST_FanucKin instances.
      * @return  wrapped shared pointer to new IKFAST_FanucKin instance.

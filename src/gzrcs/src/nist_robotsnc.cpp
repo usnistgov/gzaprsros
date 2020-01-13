@@ -244,15 +244,11 @@ int main(int argc, char** argv)
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.vesselslot", ",");
                 ncs[i]->slotoffset()["vessel"]=Convert<std::vector<double>, tf::Pose> (offset);
 
-
                 ncs[i]->rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
                 ncs[i]->accelerationMultipler()=RCS::robotconfig.getSymbolValue<double>(robots[i] + ".rate.acceleration_multipler", "10.0");
                 ncs[i]->base_rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->base_linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
-
-
-
 
                 // Gripper hacks.
                 ncs[i]->gripperName() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.gripper", ",");
@@ -335,6 +331,8 @@ int main(int argc, char** argv)
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
+                    std::vector<double> calibrationJoints;
+                    tf::Pose calibrationPose;
                     std::vector<std::string> paramnames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".nc.kinsolver.params", ",");
                     for (size_t j = 0; j < paramnames.size(); j++)
                     {
@@ -346,6 +344,7 @@ int main(int argc, char** argv)
                             value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
                             value=Globals.appProperties["PackageSrcPath"]+ value;
                          }
+
                         else
                         {
                             value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
@@ -361,6 +360,15 @@ int main(int argc, char** argv)
 
                         throw std::runtime_error("robotKinematics() init() failed");
 
+                    }
+
+                    // is calibration of kinematics necessary?
+                    std::vector<double> calibJts = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationjts", ",");
+                    if(calibJts.size() > 0)
+                    {
+                        std::vector<double> dbls = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationpose", ",");
+                        tf::Pose calibPose =ConvertDblVectorTf (dbls);
+                        ncs[i]->robotKinematics()->calibrate(calibJts, calibPose);
                     }
 
                     if(bSetupDebug)
