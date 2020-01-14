@@ -17,7 +17,7 @@
 
 namespace RCS
 {
-class IKFAST_FanucKin :  public IKinematic, public  CSerialLinkRobot
+class IKFAST_FanucKin :  public IKinematic, public  CSerialLinkRobot, public TestingKinematics<IKFAST_FanucKin>
 {
 public:
 
@@ -38,8 +38,15 @@ public:
     bool isError(){ return errmsg.empty(); }
     int calibrate(const std::vector<double>& joints, const tf::Pose pose)
     {
+        // no need to calibrate
         return 0;
     }
+
+    int runtests(std::string filepath)
+    {
+        return TestingKinematics<IKFAST_FanucKin>::runtests(filepath);
+    }
+
     /**
      * @brief create boost dll factory method. Creates IKFAST_FanucKin instances.
      * @return  wrapped shared pointer to new IKFAST_FanucKin instance.
@@ -121,7 +128,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  IKFAST_FanucKin ikfast_fanuc_kin;
 BOOST_DLL_ALIAS(
-            RCS::IKFAST_FanucKin::create, create_plugin
+            IKFAST_FanucKin::create, create_plugin
         )
 
 }

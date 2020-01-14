@@ -23,13 +23,14 @@
 
 #include <aprs_headers/IKinematic.h>
 #include <aprs_headers/seriallinkrobot.h>
+#include <aprs_headers/Testing.h>
 
 #include <boost/dll/alias.hpp>
 #include <boost/config.hpp>
 namespace RCS
 {
 
-class Ckdl_plugin : public IKinematic, public  CSerialLinkRobot
+class Ckdl_plugin : public IKinematic, public  CSerialLinkRobot, public TestingKinematics<Ckdl_plugin>
 {
 public:
 
@@ -56,6 +57,10 @@ public:
     }
 
     int calibrate(const std::vector<double>& joints, const tf::Pose pose);
+    int runtests(std::string filepath)
+    {
+        return TestingKinematics<Ckdl_plugin>::runtests(filepath);
+    }
 
 private:
     KDL::Tree tree;
@@ -83,7 +88,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  Ckdl_plugin kdl_plugin;
 BOOST_DLL_ALIAS(
-            RCS::Ckdl_plugin::create, create_plugin
+            Ckdl_plugin::create, create_plugin
         )
 }
 

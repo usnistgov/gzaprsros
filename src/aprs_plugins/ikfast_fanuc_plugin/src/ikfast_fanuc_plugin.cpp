@@ -3,7 +3,7 @@
 #include <ikfast_fanuc_plugin/ikfast_fanuc_plugin.h>
 #include <aprs_headers/Debug.h>
 
-using namespace RCS;
+//using namespace RCS;
 
 //IKFAST_FanucKin ikfast_fanuc_kin;
 
@@ -31,14 +31,14 @@ static bool readFile (std::string filename, std::string & contents)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
+RCS::IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
 {
     bDebug=false;
     bHandleExceptions=false;
     debugStream(std::cout);
 }
 ////////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::debugStream(std::ostream& o)
+int RCS::IKFAST_FanucKin::debugStream(std::ostream& o)
 {
     out.copyfmt(o); //1
     out.clear(o.rdstate()); //2
@@ -46,18 +46,18 @@ int IKFAST_FanucKin::debugStream(std::ostream& o)
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-size_t IKFAST_FanucKin::numJoints()
+size_t RCS::IKFAST_FanucKin::numJoints()
 {
     return GetNumJoints ( );
 }
 ////////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::debug(bool flag)
+int RCS::IKFAST_FanucKin::debug(bool flag)
 {
     bDebug=flag;
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::init()
+int RCS::IKFAST_FanucKin::init()
 {
     errmsg.clear();
     int hr=0;
@@ -88,7 +88,7 @@ int IKFAST_FanucKin::init()
     return hr;
 }
 ////////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
+int RCS::IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
 {
     errmsg.clear();
     // DO NOT Handle gearing of joints
@@ -116,7 +116,7 @@ int IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
 //http://docs.ros.org/hydro/api/ric_mc/html/GetPositionIK_8h_source.html
 
 //////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints)
+int RCS::IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints)
 {
 
     // Inverse kinematics
@@ -144,7 +144,7 @@ int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &jo
     //TODO(Fix Singularity issue in FanucLRMate200idFastKinematics::AllPoseToJoints)
     if (!bSuccess) {
         std::stringstream ss;
-        ss <<"Failed to get ik solution:"<<RCS::dumpPoseSimple(pose)<<"\n"<< std::flush;
+        ss <<"Failed to get ik solution:"<<dumpPoseSimple(pose)<<"\n"<< std::flush;
         IKFAST_FanucKin::out << ss.str();
         errmsg=ss.str();
 
@@ -161,7 +161,7 @@ int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &jo
     // There are no redundant joints, so no free dof
     std::vector<double> solvalues(GetNumJoints());
     if(bDebug)
-        IKFAST_FanucKin::out << "IKFAST IK Solve: " << RCS::dumpPoseSimple(pose).c_str()<<"\n";
+        IKFAST_FanucKin::out << "IKFAST IK Solve: " << dumpPoseSimple(pose).c_str()<<"\n";
 
     for (std::size_t i = 0; i < solutions.GetNumSolutions(); ++i) {
         const ikfast::IkSolutionBase<double> & sol = solutions.GetSolution(i);
@@ -184,7 +184,7 @@ int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &jo
 
 
 //////////////////////////////////////////////////////////////////////////////
-std::vector<double> IKFAST_FanucKin::nearestJoints(
+std::vector<double> RCS::IKFAST_FanucKin::nearestJoints(
         std::vector<double> oldjoints,
         std::vector<std::vector<double>> &newjoints)
 {
@@ -210,7 +210,7 @@ std::vector<double> IKFAST_FanucKin::nearestJoints(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int IKFAST_FanucKin::IK(tf::Pose pose,
+int RCS::IKFAST_FanucKin::IK(tf::Pose pose,
          std::vector<double>& newjoints)
 {
     // Clear error message
@@ -235,7 +235,7 @@ int IKFAST_FanucKin::IK(tf::Pose pose,
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-std::string IKFAST_FanucKin::get(std::string param)
+std::string RCS::IKFAST_FanucKin::get(std::string param)
 {
     const char* ws = " \t\n\r";
 
@@ -308,7 +308,7 @@ std::string IKFAST_FanucKin::get(std::string param)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string IKFAST_FanucKin::set(std::string param,  std::string value)
+std::string RCS::IKFAST_FanucKin::set(std::string param,  std::string value)
 {
     const char* ws = " \t\n\r";
     errmsg.clear();
@@ -350,7 +350,7 @@ std::string IKFAST_FanucKin::set(std::string param,  std::string value)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string IKFAST_FanucKin::set(std::string param,  void * value)
+std::string RCS::IKFAST_FanucKin::set(std::string param,  void * value)
 {
     return std::string("No match for ") + param;
 }

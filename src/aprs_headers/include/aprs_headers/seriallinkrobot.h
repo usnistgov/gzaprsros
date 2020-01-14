@@ -16,6 +16,7 @@
 #include <tf/tf.h>
 #include <urdf/model.h>
 
+
 // You must have ROS installed to use this URDF parsing.
 namespace RCS {
 
@@ -170,6 +171,116 @@ private:
         return tf::Vector3(v.x, v.y, v.z);
     }
 };
+
+#include <aprs_headers/Testing.h>
+
+template <typename Derived>
+class TestingKinematics
+{
+public:
+    int  runtests(std::string filepath)
+    {
+        int runstatus=0;
+        std::string line;
+
+        //    if(filepath.empty() || !File(filepath).exists() )
+        //    {
+        //        std::cout << filename << "does not exist\n";
+        //        return 0;
+        //    }
+        std::ifstream myfile( filepath );
+        std::string summary;
+        if (myfile)  // same as: if (myfile.good())
+        {
+            while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
+            {
+                size_t numJoints =static_cast<Derived*>(this)->numJoints();
+                if(line.empty())
+                    continue;
+
+                size_t n;
+                if((n=line.find("="))==std::string::npos)
+                    continue;
+
+                // split between =
+                std::string test = line.substr(0, n); // cmd
+                std::string eq = line.substr(n+1); // answer
+                boost::trim(test);
+                boost::trim(eq);
+
+                std::vector<std::string> result;
+                boost::split( result, test, boost::is_any_of(" "), boost::token_compress_on );
+                std::string cmd(*(result.begin()));
+                boost::trim(cmd);
+                test=test.erase(0,std::string(cmd + " ").length());
+
+                std::vector<double> ds;
+                boost::split( result, test, boost::is_any_of(","), boost::token_compress_on );
+                ds.resize(result.size());
+                std::transform(result.begin(), result.end(), ds.begin(), [](const std::string& val)
+                {
+                    std::string tval = boost::trim_copy(val);
+                    return std::stod(tval);
+                });
+
+                std::vector<double> answer;
+                result.clear();
+                boost::split( result, eq, boost::is_any_of(","), boost::token_compress_on );
+                answer.resize(result.size());
+                std::transform(result.begin(), result.end(), answer.begin(), [](const std::string& val)
+                {
+                    std::string tval = boost::trim_copy(val);
+                    return std::stod(tval);
+                });
+
+                // now run command.
+                if(cmd == "fk")
+                {
+                    std::cout << "Run fk command\n";
+                    tf::Pose pose;
+                    if(!static_cast<Derived*>(this)->FK(ds, pose ))
+                    {
+                        summary+="FK Internal Failed:"+line;
+                        runstatus=-1;
+                        continue;
+                    }
+                    tf::Pose answerpose = tf::Pose(tf::Quaternion(answer[3], answer[4], answer[5], answer[6]), tf::Vector3(answer[0], answer[1], answer[2]));
+                    if(!RCS::EQ(pose, answerpose))
+                    {
+                        summary+="FK Failed:"+line;
+                        runstatus=-1;
+                    }
+                }
+                else if(cmd == "ik")
+                {
+                    tf::Pose pose = tf::Pose(tf::Quaternion(ds[3], ds[4], ds[5], ds[6]), tf::Vector3(ds[0], ds[1], ds[2]));
+                    std::vector<double> joints(numJoints);
+                    std::cout << "Run ik command\n";
+                    if(!static_cast<Derived*>(this)->IK(pose, joints ))
+                    {
+                        summary+="IK Internal Failed:"+line;
+                        runstatus=-1;
+                        continue;
+
+                    }
+                    if(!RCS::EQ<double>(joints, answer))
+                    {
+                        summary+="IK Failed:"+line;
+                        runstatus=-1;
+                    }
+                }
+            }
+            myfile.close();
+        }
+        else
+        {
+            summary+="File open failed";
+            runstatus=-1;
+        }
+        return runstatus;
+    }
+};
+
 
 }
 #endif // SERIALLINKROBOT_H

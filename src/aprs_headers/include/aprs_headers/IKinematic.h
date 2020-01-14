@@ -139,6 +139,7 @@ public:
 #endif
 
 
+    virtual int runtests(std::string filename)=0;
 };
 }
 #endif // IKINEMATIC_H

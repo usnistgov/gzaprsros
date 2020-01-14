@@ -19,14 +19,17 @@ class fanuc_lrmate200id;
 namespace RCS
 {
 
-class Cfanuckin_plugin : public IKinematic, public  CSerialLinkRobot
+class Cfanuckin_plugin :
+        public IKinematic,
+        public CSerialLinkRobot,
+        public TestingKinematics<Cfanuckin_plugin>
 {
 public:
 
 
 public:
     Cfanuckin_plugin();
-   ~Cfanuckin_plugin();
+    ~Cfanuckin_plugin();
     int init();
     const  std::string & getName(void){ return robot_name; }
 
@@ -46,13 +49,17 @@ public:
     }
 
     int calibrate(const std::vector<double>& joints, const tf::Pose pose);
+    int runtests(std::string filepath)
+    {
+        return TestingKinematics<Cfanuckin_plugin>::runtests(filepath);
+    }
 
 private:
 
     tf::Pose basepose;
     tf::Pose poseLocal2Wrld;
 
-   std::string DumpTransformMatrices();
+    std::string DumpTransformMatrices();
     std::string DumpUrdfJoint();
 
     bool bDebug;
@@ -73,7 +80,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  Cfanuckin_plugin kdl_plugin;
 BOOST_DLL_ALIAS(
-            RCS::Cfanuckin_plugin::create, create_plugin
+        Cfanuckin_plugin::create, create_plugin
         )
 }
 

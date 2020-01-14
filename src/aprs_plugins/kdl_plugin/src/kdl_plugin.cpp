@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <kdl_plugin/kdl_plugin.h>
 
-using namespace RCS;
+namespace RCS
+{
 //Ckdl_plugin kdl_plugin;
 static bool readFile (std::string filename, std::string & contents)
 {
@@ -35,15 +36,15 @@ static KDL::Frame tfPoseToKDLFrame(tf::Pose m)
 ////////////////////////////////////////////////////////////////////////////////
 static tf::Pose  KDLFrameToTfPose(KDL::Frame k)
 {
-//    tf::Pose m;
+    //    tf::Pose m;
 
-//    m.getOrigin().setX(k.p[0]);
-//    m.getOrigin().setY(k.p[1]);
-//    m.getOrigin().setZ(k.p[2]);
+    //    m.getOrigin().setX(k.p[0]);
+    //    m.getOrigin().setY(k.p[1]);
+    //    m.getOrigin().setZ(k.p[2]);
 
     double x,y,z,w;
     k.M.GetQuaternion(x,y,z,w);
-//    m.setRotation(tf::Quaternion(x,y,z,w));
+    //    m.setRotation(tf::Quaternion(x,y,z,w));
     tf::Pose p(tf::Quaternion(x,y,z,w), tf::Vector3(k.p[0],k.p[1],k.p[2]));
     return p;
 }
@@ -165,16 +166,16 @@ int Ckdl_plugin::init()
     }
 
     // Build Solversjnt_pos_out
-     fk_solver = new KDL::ChainFkSolverPos_recursive(chain);
-     ik_solver_vel = new KDL::ChainIkSolverVel_pinv(chain);
+    fk_solver = new KDL::ChainFkSolverPos_recursive(chain);
+    ik_solver_vel = new KDL::ChainIkSolverVel_pinv(chain);
 
-     KDL::JntArray joint_min= vectorToKdlJointArray(this->jointMin);
-     KDL::JntArray joint_max= vectorToKdlJointArray(this->jointMax);
+    KDL::JntArray joint_min= vectorToKdlJointArray(this->jointMin);
+    KDL::JntArray joint_max= vectorToKdlJointArray(this->jointMax);
 
-     ik_solver_pos = new KDL::ChainIkSolverPos_NR(chain,
-             *fk_solver, *ik_solver_vel, maxIterations, epsilon);
+    ik_solver_pos = new KDL::ChainIkSolverPos_NR(chain,
+                                                 *fk_solver, *ik_solver_vel, maxIterations, epsilon);
 
-     return 0;
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,6 +218,7 @@ int Ckdl_plugin::IK(tf::Pose pose, std::vector<double>&  joints)
     return 0;
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 int Ckdl_plugin::FK(std::vector<double> joints, tf::Pose &pose)
@@ -342,4 +344,7 @@ std::string Ckdl_plugin::set(std::string param,  std::string value)
 std::string Ckdl_plugin::set(std::string param,  void * value)
 {
     return std::string("No match for ") + param;
+}
+
+
 }

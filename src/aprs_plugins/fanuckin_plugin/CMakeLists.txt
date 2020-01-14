@@ -43,6 +43,8 @@ include_directories(
 add_library(fanuckin_plugin
     src/fanuckin_plugin.cpp 
     src/fanuc_lrmate200id.cpp
+    src/gotypes.c 
+    src/gomath.c
 )
 
 link_directories(${CATKIN_DEVEL_PREFIX}/install)

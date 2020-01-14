@@ -19,7 +19,10 @@
 namespace RCS
 {
 
-class GoKin : public IKinematic, public  CSerialLinkRobot
+class GoKin :
+        public IKinematic,
+        public CSerialLinkRobot,
+        public TestingKinematics<GoKin>
 {
 public:
 
@@ -44,10 +47,15 @@ public:
     bool isError(){ return errmsg.empty(); }
     int calibrate(const std::vector<double>& joints, const tf::Pose pose);
 
+    int runtests(std::string filepath)
+    {
+        return TestingKinematics<GoKin>::runtests(filepath);
+    }
+
     /**
-     * @brief create boost dll package factory creator
-     * @return shared pointer to new gokin instance
-     */
+      * @brief create boost dll package factory creator
+      * @return shared pointer to new gokin instance
+      */
     static boost::shared_ptr<GoKin> create()
     {
         return boost::shared_ptr<GoKin>( new GoKin());
@@ -88,7 +96,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  GoKin goserkin;
 BOOST_DLL_ALIAS(
-            RCS::GoKin::create, create_plugin
+            GoKin::create, create_plugin
         )
 
 

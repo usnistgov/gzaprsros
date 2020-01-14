@@ -1,4 +1,8 @@
 
+
+gcc -E $D -P -C  - < $world/Templates/robots_template.world
+
+
 WORKS:
 Test Pose=
 XYZ   = 0.465,0,0.695

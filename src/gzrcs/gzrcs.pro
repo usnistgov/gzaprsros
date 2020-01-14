@@ -228,7 +228,6 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/RCSPriorityQueue.h \
     ../aprs_headers/include/aprs_headers/RCSMsgQueueThread.h \
     ../aprs_headers/include/aprs_headers/RCSMsgQueue.h \
-    ../aprs_headers/include/aprs_headers/LoggerMacros.h \
     ../aprs_headers/include/aprs_headers/IRcs.h \
     ../aprs_headers/include/aprs_headers/IKinematic.h \
     ../aprs_headers/include/aprs_headers/hexdump.h \
@@ -239,7 +238,8 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/Conversions.h \
     ../aprs_headers/include/aprs_headers/Config.h \
     ../aprs_headers/include/aprs_headers/logging.h \
-    ../aprs_headers/include/aprs_headers/Path.h
+    ../aprs_headers/include/aprs_headers/Path.h\
+    ../aprs_headers/include/aprs_headers/Testing.h
 
 DISTFILES += \
     Notes.txt \
@@ -263,6 +263,15 @@ config_features.files     =    $$PWD/config/Config.ini \
 message("gzrcs install $$config_features.path")
 message("gzrcs instal files $$config_features.files")
 INSTALLS  += config_features
+
+
+test_features.path     = ../../install/lib/$$TARGET/test
+test_features.files     =  $$PWD/tests/FanucLRMate200iD_kintest.txt
+INSTALLS  += test_features
+
+buildtest_features.path     = "$$OUT_PWD/$$DESTDIR/test"
+buildtest_features.files     =   $$PWD/tests/FanucLRMate200iD_kintest.txt
+INSTALLS  += buildtest_features
 
 # Hard to make distinction between general build and command line qmake build
 build_features.path     = "$$OUT_PWD/$$DESTDIR/config"
