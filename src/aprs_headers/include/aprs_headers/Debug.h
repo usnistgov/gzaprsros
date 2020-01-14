@@ -107,14 +107,15 @@ inline std::string dumpPose(tf::Pose & pose) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @brief DumpPoseSimple generates string of xyz origin and rpy rotation from a tf pose.
+ * @brief DumpPoseSimple generatseriallinkrobotes string of xyz origin and rpy rotation from a tf pose.
  * @param pose tf pose
  * @return std::string
  */
 inline std::string dumpPoseSimple(tf::Pose pose) {
     std::stringstream s;
 
-    s << boost::format("%7.2f") % (pscale * pose.getOrigin().x()) << "," <<
+
+    s << std::setprecision(3) << boost::format("%7.2f") % (pscale * pose.getOrigin().x()) << "," <<
          boost::format("%7.2f") % (pscale * pose.getOrigin().y()) << "," <<
          boost::format("%7.2f") % (pscale * pose.getOrigin().z()) << ",";
     double roll=0, pitch=0, yaw=0;
@@ -125,13 +126,16 @@ inline std::string dumpPoseSimple(tf::Pose pose) {
 //    s << "RPY= " << boost::format("%5.2f") % Rad2Deg(roll) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(pitch) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(yaw);
-    s << pose.getRotation().x() << "," << pose.getRotation().y() << "," << pose.getRotation().z() << "," << pose.getRotation().w();
+    s << std::setprecision(3) << boost::format("%5.3f") % pose.getRotation().x() << ","
+      << boost::format("%5.3f") % pose.getRotation().y() << ","
+      << boost::format("%5.3f") % pose.getRotation().z() << ","
+      << boost::format("%5.3f") % pose.getRotation().w();
 
     return s.str();
 }
 ////////////////////////////////////////////////////////////////////////////////
 /**
-* \brief dumpEVector generates a debug string for an Eigen Vector.
+* \brief dumpEVector generates a debug string for an  Vector.
 * Can be used as std::cout << DumpEPosition(v);
 */
 template<typename T>

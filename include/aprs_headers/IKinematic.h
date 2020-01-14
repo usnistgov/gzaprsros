@@ -26,6 +26,7 @@ public:
     static const int Bad_Conversion = -9;
     static const int Robot_IK_Problem = -10;
     static const int Bad_Joints_Size = -11;
+    static const int Not_Implemented = -11;
 
     virtual int init()=0;
     //virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;
@@ -64,6 +65,18 @@ public:
      * @return
      */
     virtual int IK(const tf::Pose pose, std::vector<double>&)=0;
+
+    /**
+     * @brief calibrate take an input set of joints, with given FK pose and compute
+     * use as ground truth to compute the difference from locate plugin
+     * calculations to robot centric coordinates. THis arose after kdl amont other
+     * plugins caculated a n orientation as 1,0,0,0 when actually points
+     * at 1,0,0, 0 (axis 1,0,0, angle 0).
+     * @param jo joint valuoes (possible non-zero as this may be singulatority)ints
+     * @param pose  expected FK from joints.
+     * @return 0 if successful.
+     */
+    virtual int calibrate(const std::vector<double>& joints, const tf::Pose pose)=0;
 
     /**
      * @brief debug set the debug flat

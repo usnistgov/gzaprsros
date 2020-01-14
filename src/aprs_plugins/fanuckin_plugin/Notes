@@ -1,0 +1,6 @@
+
+
+sudo apt-get install libeigen3-dev
+
+Unsupported (copied into /usr/local/include>
+https://github.com/libigl/eigen/tree/master/unsupported

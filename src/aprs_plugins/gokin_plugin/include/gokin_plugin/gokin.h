@@ -42,11 +42,12 @@ public:
     std::string set(std::string param,  void * value);
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
+    int calibrate(const std::vector<double>& joints, const tf::Pose pose);
 
-    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
-    {
-        return 0;
-    }
+    /**
+     * @brief create boost dll package factory creator
+     * @return shared pointer to new gokin instance
+     */
     static boost::shared_ptr<GoKin> create()
     {
         return boost::shared_ptr<GoKin>( new GoKin());
@@ -57,6 +58,8 @@ public:
 private:
 
     tf::Pose basepose;
+    tf::Pose poseLocal2Wrld;
+
     bool bDebug;
     std::ofstream out;
     std::string errmsg;

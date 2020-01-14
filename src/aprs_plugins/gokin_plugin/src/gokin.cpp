@@ -41,6 +41,9 @@ static bool readFile (std::string filename, std::string & contents)
 GoKin::GoKin() : CSerialLinkRobot(this)
 {
     bDebug=false;
+    // assign calibrated local to world transform to identity
+    poseLocal2Wrld=tf::Pose::getIdentity();
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +53,17 @@ GoKin::~GoKin()
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+int GoKin::calibrate(const std::vector<double>& joints, const tf::Pose pose)
+{
+    tf::Pose myPose;
+
+    this->FK(joints, myPose);
+
+    poseLocal2Wrld=myPose.inverse()*pose;
+
+    return 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 size_t GoKin::numJoints()
@@ -285,6 +299,8 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     pose=tf::Pose(tf::Quaternion(gopose.rot.x,gopose.rot.y,gopose.rot.z,gopose.rot.s ),
                   tf::Vector3(gopose.tran.x, gopose.tran.y, gopose.tran.z) );
 
+    // translate to world axis orientation)
+    pose =  poseLocal2Wrld*pose;
 
     return Kinematics_Ok;
 }
@@ -295,6 +311,9 @@ int GoKin::IK(tf::Pose pose, std::vector<double>&  joints)
 {
 
     errmsg.clear();
+
+    pose = pose * poseLocal2Wrld.inverse();
+
     size_t n=joints.size();
     // Last joints are an estimate for next joints
     //    joints.resize(7,0.0);

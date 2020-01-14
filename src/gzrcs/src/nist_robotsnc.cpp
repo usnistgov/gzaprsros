@@ -170,9 +170,9 @@ int main(int argc, char** argv)
             Globals.DEBUG_Log_Gripper_Status()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Gripper_Status","0");
             Globals.DEBUG_Log_Cyclic_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Cyclic_Robot_Position","0");
             Globals.DEBUG_LogRobotCrcl()=RCS::robotconfig.getSymbolValue<int>("debug.LogRobotCrcl","0");
-//            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
-//            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
-//            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
+            //            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
+            //            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
+            //            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
 
             Globals.appProperties["robot"] = RCS::robotconfig.getSymbolValue<std::string>(robots[0] + ".robot.longname");
 
@@ -194,7 +194,7 @@ int main(int argc, char** argv)
             // Setup up ROS
             if(Globals.bRos)
             {
-                 Ros.init();
+                Ros.init();
             }
 #endif
 
@@ -312,27 +312,25 @@ int main(int argc, char** argv)
                     Globals.appProperties["kinsolverdllpath"] = ld_library_path+"/"+kin_plugin_dll;
 
                     creator = boost::dll::import_alias<pluginapi_create_t>(             // type of imported symbol must be explicitly specified
-                         lib_path/kin_plugin_dll,                                           // path to library
-                        "create_plugin",                                                // symbol to import
-                        boost::dll::load_mode::append_decorations                              // do append extensions and prefixes
-                    );
+                                                                                        lib_path/kin_plugin_dll,                                           // path to library
+                                                                                        "create_plugin",                                                // symbol to import
+                                                                                        boost::dll::load_mode::append_decorations                              // do append extensions and prefixes
+                                                                                        );
 
                     ncs[i]->robotKinematics() = creator();
                     std::cout << ncs[i]->robotKinematics() << "\n";
                     std::cout << ncs[i]->robotKinematics()->get("help");
 
-        #if 0
+#if 0
                     // This works for importing single instance of kin solver plugin
                     ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
-                                                                               lib_path/kin_plugin_dll,
+                                                                                lib_path/kin_plugin_dll,
                                                                                 kin_plugin_name,
                                                                                 boost::dll::load_mode::default_mode);
-       #endif
+#endif
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
-                    std::vector<double> calibrationJoints;
-                    tf::Pose calibrationPose;
                     std::vector<std::string> paramnames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".nc.kinsolver.params", ",");
                     for (size_t j = 0; j < paramnames.size(); j++)
                     {
@@ -343,7 +341,7 @@ int main(int argc, char** argv)
                             param.erase(0, sizeof("exepath"));
                             value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
                             value=Globals.appProperties["PackageSrcPath"]+ value;
-                         }
+                        }
 
                         else
                         {
@@ -363,9 +361,12 @@ int main(int argc, char** argv)
                     }
 
                     // is calibration of kinematics necessary?
-                    std::vector<double> calibJts = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationjts", ",");
-                    if(calibJts.size() > 0)
+                    //std::vector<double> calibrationJoints;
+                    //tf::Pose calibrationPose;
+
+                    if(RCS::robotconfig.exists(robots[i] + ".nc.kinsolver.calibrationjts"))
                     {
+                        std::vector<double> calibJts = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationjts", ",");
                         std::vector<double> dbls = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationpose", ",");
                         tf::Pose calibPose =ConvertDblVectorTf (dbls);
                         ncs[i]->robotKinematics()->calibrate(calibJts, calibPose);
@@ -439,7 +440,7 @@ int main(int argc, char** argv)
 
                 ncs[i]->part_list() = RCS::robotconfig.getTokens<std::string>( robots[i] + ".parts", ",");
 
-//                if(bSetupDebug)
+                //                if(bSetupDebug)
                 {
                     ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log");
                     RCS::CController::dumpRobotNC(ofsRobotURDF, ncs[i]);
@@ -498,17 +499,17 @@ int main(int argc, char** argv)
                 int clistate= cli.inputState();
 
 
-//                if(clistate==CController::NOOP)
-//                {
-//                    Globals.sleep(100);
-//                    continue;
-//                }
+                //                if(clistate==CController::NOOP)
+                //                {
+                //                    Globals.sleep(100);
+                //                    continue;
+                //                }
 
 
-               if(geardemo->isDone(demostate))
-                   demostate=0;
+                if(geardemo->isDone(demostate))
+                    demostate=0;
 
-               if(clistate==CController::EXITING)
+                if(clistate==CController::EXITING)
                 {
                     CGlobals::bRunning=false;
                     break;

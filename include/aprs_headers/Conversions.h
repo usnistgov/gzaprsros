@@ -41,6 +41,8 @@ See NIST Administration Manual 4.09.07 b and Appendix I.
 // Error at compile time for non handled convert
 #include <boost/static_assert.hpp>
 
+#define MATH_DEFINES
+#include <math.h>
 
 #ifndef Deg2Rad
 #define Deg2Rad(Ang)    ( (double) ( Ang * M_PI / 180.0 ) )

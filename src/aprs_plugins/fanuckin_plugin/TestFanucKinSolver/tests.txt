@@ -1,0 +1,27 @@
+
+
+Joints 0.306, 1.000, 0.217, 0.000,-0.787,-0.306
+Pose 0.56,  -0.18,   0.22,1.000,-0.000,-0.000,-0.000
+
+Joints -0.121, 0.935, 0.081,-0.000,-0.717,-0.121
+Pose   =   0.56,  -0.07,   0.22,1.000,-0.000,-0.000,-0.000
+
+Joints -0.412, 0.558,-0.738,-0.000,-0.275,-0.412
+Pose   =   0.32,  -0.14,   0.22,1.000,-0.000,0.000,0.000
+
+
+Threekins fwd:
+Input: 0.001, 0.001, 0.001, 0.001, 0.001, 0.001
+
+kins.t7   0.00,   0.00,   0.08,0.000,0.000,0.000,1.000
+kins.t7_inv  -0.00,  -0.00,  -0.08,0.000,0.000,0.000,1.000
+threekin FK answer   0.47,   0.00,   0.37,0.706,0.001,0.708,0.000
+
+off by .33 in z! (no base). BUT ORIENTATION IS CORRECT.
+
+
+
+std::cout << "k=" << k << " kins->a3=" << kins->a3 << " kins->d4=" << kins->d4 << "\n";
+std::cout << "th3_sub2 "   <<   kins->a3 * kins->a3 + kins->d4 * kins->d4 - k * k  << "\n";
+double th3_sub1 = atan2(kins->a3, kins->d4);
+double th3_sub2 = atan2(k, -sqrt(kins->a3 * kins->a3 + kins->d4 * kins->d4 - k * k) );
