@@ -37,6 +37,7 @@
 
 extern     std::shared_ptr<CGearDemo> geardemo;
 
+using namespace RCS;
 ////////////////////////////////////////////////////////////////////////////////
 static std::string shell(const char* cmd) {
     std::array<char, 128> buffer;

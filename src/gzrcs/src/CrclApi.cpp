@@ -22,10 +22,10 @@ std::shared_ptr<CCrclApi>  crclApi;
 
 // Simplistic Testing code
 int CCrclApi::_crclcommandnum = 1;
-RCS::IRate CCrclApi::rates;
+IRate CCrclApi::rates;
 
 ////////////////////////////////////////////////////////////////////////////////
-CCrclApi::CCrclApi(std::shared_ptr<RCS::CController> cnc) : _nc(cnc)
+CCrclApi::CCrclApi(std::shared_ptr<CController> cnc) : _nc(cnc)
 {
     _mydwell = .5;
     setVelocity(1.0);
@@ -173,7 +173,7 @@ void CCrclApi::doDwell(double dwelltime) {
 void CCrclApi::moveTo(tf::Pose pose)
 {
     if(Globals.bDebug)
-        std::cout << "moveTo=" << RCS::dumpPoseSimple(pose)  << std::endl;
+        std::cout << "moveTo=" << dumpPoseSimple(pose)  << std::endl;
 
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
@@ -193,13 +193,13 @@ void CCrclApi::moveJoints(std::vector<long unsigned int> jointnum,
                          double vel)
 {
     if(Globals.bDebug)
-        std::cout << "moveTo=" << RCS::dumpstdVector(positions)  << std::endl;
+        std::cout << "moveTo=" << dumpstdVector(positions)  << std::endl;
 
     crcl_rosmsgs::CrclCommandMsg cmd;
     CCanonCmd::setRosMsgTimestamp(cmd.header);
     cmd.crclcommandnum = _crclcommandnum++;
     cmd.crclcommand = CanonCmdType::CANON_MOVE_JOINT;
-    cmd.joints = RCS::zeroJointState(jointnum.size());
+    cmd.joints = zeroJointState(jointnum.size());
     cmd.joints.position = positions;
     cmd.jointnum=jointnum;
     cmd.eepercent=-1.0; // keep as is

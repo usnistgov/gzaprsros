@@ -36,7 +36,7 @@
 // Gazebo and Ros global interfaces
 #include "gzrcs/gazebo.h"
 #include "gzrcs/cros.h"
-
+//using namespace RCS;
 
 #ifndef MAJOR
 #define MAJOR  1
@@ -46,7 +46,6 @@
 
 
 //#include "gzrcs/assimp.h"
-using namespace RCS;
 
 //#define BOOST_DLL_USE_STD_FS
 #define BOOST_NO_CXX11_VARIADIC_TEMPLATES
@@ -216,7 +215,7 @@ int main(int argc, char** argv)
 
                 std::string robotname = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.longname");
                 double dCycleTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".nc.cycletime", "10.0");
-                ncs.push_back(std::shared_ptr<CController>(new RCS::CController(robotname, dCycleTime)));
+                ncs.push_back(std::shared_ptr<RCS::CController>(new RCS::CController(robotname, dCycleTime)));
 
                 ncs[i]->cycleTime() = dCycleTime;
                 ncs[i]->robotPrefix() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.prefix", "ERROR");
@@ -230,11 +229,11 @@ int main(int argc, char** argv)
                 // Part offsets
                 std::vector<double> offset;
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.smallgear", ",");
-                ncs[i]->gripperoffset()["sku_part_small_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_small_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.mediumgear", ",");
-                ncs[i]->gripperoffset()["sku_part_medium_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_medium_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.largegear", ",");
-                ncs[i]->gripperoffset()["sku_part_large_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_large_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
 
                 ncs[i]->graspforce()["sku_part_large_gear"]= RCS::robotconfig.getSymbolValue<double>(robots[i] + ".graspforce.largegear", "10.");
                 ncs[i]->graspforce()["sku_part_medium_gear"]= RCS::robotconfig.getSymbolValue<double>(robots[i] + ".graspforce.mediumgear", "10.");
@@ -242,7 +241,7 @@ int main(int argc, char** argv)
 
 
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.vesselslot", ",");
-                ncs[i]->slotoffset()["vessel"]=Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->slotoffset()["vessel"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
 
                 ncs[i]->rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
@@ -254,13 +253,13 @@ int main(int argc, char** argv)
                 ncs[i]->gripperName() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.gripper", ",");
                 ncs[i]->crclGripperAlgorithm() = RCS::robotconfig.getSymbolValue<std::string>( robots[i] + ".crcl.GripperAlgorithm", "percentage");
                 std::vector<double> dtool = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".xform.tool",",");
-                ncs[i]->setGripperOffset(Convert<std::vector<double>, tf::Pose> (dtool));
+                ncs[i]->setGripperOffset(RCS::Convert<std::vector<double>, tf::Pose> (dtool));
 
                 std::vector<double> dCorrection = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".correction",",");
                 if(dCorrection.size() ==0)
                     dCorrection={0,0,0,0,0,0,1.};
 
-                ncs[i]->Correction()=ConvertDblVectorTf (dCorrection);
+                ncs[i]->Correction()=RCS::ConvertDblVectorTf (dCorrection);
                 ncs[i]->CorrectionInv()=ncs[i]->Correction().inverse();
 
                 // Finger gripping contact parameters
@@ -279,7 +278,7 @@ int main(int argc, char** argv)
                 for (size_t j = 0; j < posemovenames.size(); j++) {
                     std::vector<double> ds = RCS::robotconfig.getTokens<double>(robots[i] + "." + posemovenames[j], ",");
                     std::transform(posemovenames[j].begin(), posemovenames[j].end(), posemovenames[j].begin(), ::tolower);
-                    ncs[i]->namedPoseMove()[posemovenames[j]] = ConvertDblVectorTf(ds);
+                    ncs[i]->namedPoseMove()[posemovenames[j]] = RCS::ConvertDblVectorTf(ds);
                 }
 
                 // Parse and record macro command sequences - e.g., homing, setup
@@ -331,16 +330,21 @@ int main(int argc, char** argv)
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
+                    std::string testfile;
                     std::vector<std::string> paramnames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".nc.kinsolver.params", ",");
                     for (size_t j = 0; j < paramnames.size(); j++)
                     {
                         std::string value;
                         std::string param= paramnames[j];
-                        if(param.find("exepath ",0)==0)
+                        if(param.find("urdffile",0)==0)
                         {
-                            param.erase(0, sizeof("exepath"));
-                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.urdffile", "");
                             value=Globals.appProperties["PackageSrcPath"]+ value;
+                        }
+                        else if(param.find("testfile",0)==0)
+                        {
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.testfile", "");
+                            testfile=Globals.appProperties["PackageSrcPath"]+ value;
                         }
 
                         else
@@ -368,17 +372,23 @@ int main(int argc, char** argv)
                     {
                         std::vector<double> calibJts = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationjts", ",");
                         std::vector<double> dbls = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationpose", ",");
-                        tf::Pose calibPose =ConvertDblVectorTf (dbls);
+                        tf::Pose calibPose =RCS::ConvertDblVectorTf (dbls);
                         ncs[i]->robotKinematics()->calibrate(calibJts, calibPose);
                     }
+
+
+                    if(!testfile.empty())
+                    {
+                        std::string errmsg = ncs[i]->robotKinematics()->runtests(testfile);
+                        if(errmsg.empty())
+                            errmsg="Kinsolved tested pased\n";
+                        std::cout << errmsg;
+                    }
+
 
                     if(bSetupDebug)
                         std::cout << ncs[i]->robotKinematics()->get("ALL") << "\n";
 
-                    std::vector<double> testJnts(6,0.0);
-                    tf::Pose testPose ;
-                    ncs[i]->robotKinematics()->FK(testJnts, testPose);
-                    std::cout << "Test Pose= " << RCS::dumpPose(testPose) << "\n";
 
                     std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.base", ",");
                     std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.qbend",",");
@@ -389,10 +399,10 @@ int main(int argc, char** argv)
                         throw std::runtime_error(std::string( "dbase or dbend missing values"));
 
                     }
-                    ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
+                    ncs[i]->setBaseOffset(RCS::Convert<std::vector<double>, tf::Pose> (dbase));
                     ncs[i]->QBend() = tf::Quaternion(dbend[0], dbend[1], dbend[2], dbend[3]);
 
-                    ncs[i]->Retract() =  Convert<std::vector<double>, tf::Pose>(
+                    ncs[i]->Retract() =  RCS::Convert<std::vector<double>, tf::Pose>(
                                 RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.retract", ",")
                                 );
                     ncs[i]->RetractInv()=ncs[i]->Retract().inverse();
@@ -415,7 +425,7 @@ int main(int argc, char** argv)
                 std::string traj = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.traj", "Go");
                 if(traj=="Go")
                 {
-                    ncs[i]->robotInterpreter() = std::shared_ptr<IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], ncs[i]->robotKinematics()));
+                    ncs[i]->robotInterpreter() = std::shared_ptr<RCS::IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], ncs[i]->robotKinematics()));
                 }
                 else
                 {
@@ -463,7 +473,7 @@ int main(int argc, char** argv)
         }
 
         // Setup command line interface
-        CComandLineInterface cli;
+        RCS::CComandLineInterface cli;
         for (size_t i = 0; i < ncs.size(); i++)
             cli.addController(ncs[i]);
 
@@ -485,7 +495,7 @@ int main(int argc, char** argv)
 
 
         CGlobals::bPaused=false;
-        cli.state=CController::NORMAL;
+        cli.state=RCS::CController::NORMAL;
 
         //std::thread t1(&CComandLineInterface::inputLoop, &cli);
         cli.start();
@@ -509,28 +519,28 @@ int main(int argc, char** argv)
                 if(geardemo->isDone(demostate))
                     demostate=0;
 
-                if(clistate==CController::EXITING)
+                if(clistate==RCS::CController::EXITING)
                 {
                     CGlobals::bRunning=false;
                     break;
                 }
-                if(clistate==CController::PAUSED)
+                if(clistate==RCS::CController::PAUSED)
                     CGlobals::bPaused=true;
 
-                if(clistate==CController::NORMAL)
+                if(clistate==RCS::CController::NORMAL)
                     CGlobals::bPaused=false;
 
-                if(clistate==CController::ONCE)
+                if(clistate==RCS::CController::ONCE)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(clistate==CController::AUTO)
+                if(clistate==RCS::CController::AUTO)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(clistate==CController::REPEAT)
+                if(clistate==RCS::CController::REPEAT)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
@@ -553,7 +563,7 @@ int main(int argc, char** argv)
                     }
                 }
 
-                if(clistate==CController::ONCE)
+                if(clistate==RCS::CController::ONCE)
                 {
                     CGlobals::bPaused=true;
                 }

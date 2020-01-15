@@ -30,7 +30,8 @@
 
 #include "aprs_headers/Debug.h"
 #include "aprs_headers/RCSThreadTemplate.h"
-using namespace RCS;
+namespace RCS
+{
 
 /**
  * @brief The CLI class provides a simple command line interface through
@@ -77,7 +78,7 @@ using namespace RCS;
  * where object - give pose of object
  * move x,y,z  - move to xyz (assumes last rotation)
  */
-class CComandLineInterface : public RCS::Thread
+class CComandLineInterface : public Thread
 {
 public:
 
@@ -162,5 +163,5 @@ private:
     std::vector<std::string> _robotNames;
 };
 
-
+}
 #endif // COMMANDLINEINTERFACE_H

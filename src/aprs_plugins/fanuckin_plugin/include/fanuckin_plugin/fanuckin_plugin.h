@@ -49,7 +49,7 @@ public:
     }
 
     int calibrate(const std::vector<double>& joints, const tf::Pose pose);
-    int runtests(std::string filepath)
+    std::string runtests(std::string filepath)
     {
         return TestingKinematics<Cfanuckin_plugin>::runtests(filepath);
     }

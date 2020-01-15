@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2020-01-11T18:27:06. -->
+<!-- Written by QtCreator 4.3.1, 2020-01-15T11:10:53. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{9cd3b6d9-38a0-4582-8bb5-2952a2c94e86}</value>
+  <value type="QByteArray">{a96aef48-ea83-449b-9a93-623e9d514f54}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -61,7 +61,7 @@
   <valuemap type="QVariantMap">
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Qt 5.5.1 in PATH (qt5)</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Qt 5.5.1 in PATH (qt5)</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{fca75c7f-4719-4b45-a32a-6f2d4ec0802f}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{31bc855f-1908-4cb5-a542-a2a2277f7d63}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>

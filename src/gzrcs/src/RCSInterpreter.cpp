@@ -43,18 +43,18 @@ static void LogRobotPosition(std::string message,
 #if 1
     ss << message;
     ss << "ROBOT COORDINATES\n";
-    ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
-    ss << "    Current   Pose= " << RCS::dumpPoseSimple(r_lastpose).c_str() << "\n";
-    ss << "    NextRobot Pose= " << RCS::dumpPoseSimple(r_nextpose).c_str() << "\n";
+    ss << "    GoalRobot Pose= " << dumpPoseSimple(r_goalpose).c_str() << "\n";
+    ss << "    Current   Pose= " << dumpPoseSimple(r_lastpose).c_str() << "\n";
+    ss << "    NextRobot Pose= " << dumpPoseSimple(r_nextpose).c_str() << "\n";
     ss << "ROBOT JOINTS\n";
-    ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
-    ss << "    Next joints     "  << RCS::vectorDump<double>(nextjoints) << "\n" << std::flush;
-    ss << "    Current joints  "  << RCS::vectorDump<double>(curjoints) << "\n" << std::flush;
+    ss << "    Goal joints     "  << vectorDump<double>(goaljoints) << "\n" << std::flush;
+    ss << "    Next joints     "  << vectorDump<double>(nextjoints) << "\n" << std::flush;
+    ss << "    Current joints  "  << vectorDump<double>(curjoints) << "\n" << std::flush;
     //TRAJ_LOG<< ss.str();
 #else
-    ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
-    ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
-    ss << RCS::vectorDump(nextjoints) << ","
+    ss << "    GoalRobot Pose= " << dumpPoseSimple(r_goalpose).c_str() << "\n";
+    ss << "    Goal joints     "  << vectorDump<double>(goaljoints) << "\n" << std::flush;
+    ss << vectorDump(nextjoints) << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getX() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getY() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getZ() << "\n" << std::flush;
@@ -63,8 +63,8 @@ static void LogRobotPosition(std::string message,
 
 }
 static void LogGripperStatus(std::string message,
-                             std::shared_ptr<RCS::CController>_nc,
-                             RCS::CCanonCmd &incmd,
+                             std::shared_ptr<CController>_nc,
+                             CCanonCmd &incmd,
                              bool & bFullContact
                              )
 {
@@ -73,9 +73,9 @@ static void LogGripperStatus(std::string message,
         std::stringstream ss;
         ss << message;
         ss << "Gripper JOINTS\n";
-        ss << "    Gripper Fingers "  << RCS::vectorDump<std::string>(_nc->fingerNames()) << "\n" << std::flush;
-        ss << "    CMD  joints     "  << RCS::vectorDump<double>(incmd.nextGripperGoalJoints.position) << "\n" << std::flush;
-        ss << "    Current joints  "  << RCS::vectorDump<double>(_nc->cncGripperJoints().position) << "\n" << std::flush;
+        ss << "    Gripper Fingers "  << vectorDump<std::string>(_nc->fingerNames()) << "\n" << std::flush;
+        ss << "    CMD  joints     "  << vectorDump<double>(incmd.nextGripperGoalJoints.position) << "\n" << std::flush;
+        ss << "    Current joints  "  << vectorDump<double>(_nc->cncGripperJoints().position) << "\n" << std::flush;
 
         //TRAJ_LOG<< ss.str();
         ofsMotionTrace << ss.str();
@@ -126,8 +126,8 @@ sensor_msgs::JointState CGoInterpreter::updateJointState(std::vector<uint64_t> j
 ////////////////////////////////////////////////////////////////////////////////
 ///  GoInterpreter
 /////////////////////////////////////////////////////////////////////////////
-CGoInterpreter::CGoInterpreter(std::shared_ptr<RCS::CController> nc,
-                               boost::shared_ptr<RCS::IKinematic> k)
+CGoInterpreter::CGoInterpreter(std::shared_ptr<CController> nc,
+                               boost::shared_ptr<IKinematic> k)
     :  _nc(nc)
     , _kinematics(k)
     , _lastcmdnum(-1)
@@ -141,7 +141,7 @@ CGoInterpreter::CGoInterpreter(std::shared_ptr<RCS::CController> nc,
 ////////////////////////////////////////////////////////////////////////////////
 void CGoInterpreter::init(std::vector<double> initjts)
 {
-    sensor_msgs::JointState jts = RCS::emptyJointState(initjts.size());
+    sensor_msgs::JointState jts = emptyJointState(initjts.size());
     jts.position = initjts;
     jts.name = this->_nc->robotKinematics()->jointNames;
     if(0!=_goRobot->Init(jts, this->_nc->cycleTime()))
@@ -157,8 +157,8 @@ void CGoInterpreter::init(std::vector<double> initjts)
 }
 ///////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                      RCS::CCanonCmd &outcmd,
-                                      RCS::CCanonWorldModel instatus)
+                                      CCanonCmd &outcmd,
+                                      CCanonWorldModel instatus)
 {
 
     outcmd.Set( incmd );
@@ -196,8 +196,8 @@ int CGoInterpreter::parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                         RCS::CCanonCmd &outcmd,
-                                         RCS::CCanonWorldModel instatus)
+                                         CCanonCmd &outcmd,
+                                         CCanonWorldModel instatus)
 {
 
     bool bNewCmd=false;
@@ -321,8 +321,8 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 }
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                       RCS::CCanonCmd &outcmd,
-                                       RCS::CCanonWorldModel instatus)
+                                       CCanonCmd &outcmd,
+                                       CCanonWorldModel instatus)
 {
     bool bNewCmd=false;
     tf::Pose r_goalpose;
@@ -428,7 +428,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 }
 
-int  CGoInterpreter::setGripperVelFmax(RCS::CCanonCmd &outcmd, double vel, double fmax )
+int  CGoInterpreter::setGripperVelFmax(CCanonCmd &outcmd, double vel, double fmax )
 {
     // set gazebo gripper vel/fmax
     outcmd.gripperControlAlgorithm=CanonControlType::VELOCITY_CONTROL;
@@ -448,7 +448,7 @@ int  CGoInterpreter::setGripperVelFmax(RCS::CCanonCmd &outcmd, double vel, doubl
     return 0;
 }
 
-int   CGoInterpreter::setGripperFoce(RCS::CCanonCmd &outcmd, double force )
+int   CGoInterpreter::setGripperFoce(CCanonCmd &outcmd, double force )
 {
     // set gazebo gripper vel/fmax
     outcmd.gripperControlAlgorithm=CanonControlType::VELOCITY_CONTROL;
@@ -469,8 +469,8 @@ int   CGoInterpreter::setGripperFoce(RCS::CCanonCmd &outcmd, double force )
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                               RCS::CCanonCmd &outcmd,
-                                               RCS::CCanonWorldModel instatus)
+                                               CCanonCmd &outcmd,
+                                               CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
@@ -571,8 +571,8 @@ int CGoInterpreter::gripperSpeed(crcl_rosmsgs::CrclCommandMsg &incmd)
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                        RCS::CCanonCmd &outcmd,
-                                        RCS::CCanonWorldModel instatus)
+                                        CCanonCmd &outcmd,
+                                        CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
@@ -661,8 +661,8 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                     RCS::CCanonCmd &outcmd,
-                                     RCS::CCanonWorldModel instatus) {
+                                     CCanonCmd &outcmd,
+                                     CCanonWorldModel instatus) {
 
     // FIXME: save last command type, then do until done
     if (incmd.crclcommandnum != _lastcmdnum) {
@@ -676,8 +676,8 @@ int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                 RCS::CCanonCmd &outcmd,
-                                 RCS::CCanonWorldModel instatus)
+                                 CCanonCmd &outcmd,
+                                 CCanonWorldModel instatus)
 {
     try
     {
@@ -767,8 +767,8 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                             RCS::CCanonCmd &outcmd,
-                                             RCS::CCanonWorldModel instatus)
+                                             CCanonCmd &outcmd,
+                                             CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );

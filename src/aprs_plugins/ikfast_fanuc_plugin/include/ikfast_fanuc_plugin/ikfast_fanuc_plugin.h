@@ -42,7 +42,7 @@ public:
         return 0;
     }
 
-    int runtests(std::string filepath)
+    std::string  runtests(std::string filepath)
     {
         return TestingKinematics<IKFAST_FanucKin>::runtests(filepath);
     }

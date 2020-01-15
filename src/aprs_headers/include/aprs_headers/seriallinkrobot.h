@@ -11,11 +11,13 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <sstream>
 
 // URDF
 #include <tf/tf.h>
 #include <urdf/model.h>
-
+#include <aprs_headers/File.h>
+#include <aprs_headers/Testing.h>
 
 // You must have ROS installed to use this URDF parsing.
 namespace RCS {
@@ -172,24 +174,22 @@ private:
     }
 };
 
-#include <aprs_headers/Testing.h>
 
 template <typename Derived>
 class TestingKinematics
 {
 public:
-    int  runtests(std::string filepath)
+    std::string   runtests(std::string filepath)
     {
-        int runstatus=0;
         std::string line;
+        std::stringstream errmsg;
 
-        //    if(filepath.empty() || !File(filepath).exists() )
-        //    {
-        //        std::cout << filename << "does not exist\n";
-        //        return 0;
-        //    }
+        if(filepath.empty() || !File(filepath).exists() )
+        {
+            errmsg << filepath << "does not exist\n";
+            return errmsg.str();
+        }
         std::ifstream myfile( filepath );
-        std::string summary;
         if (myfile)  // same as: if (myfile.good())
         {
             while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
@@ -240,15 +240,13 @@ public:
                     tf::Pose pose;
                     if(!static_cast<Derived*>(this)->FK(ds, pose ))
                     {
-                        summary+="FK Internal Failed:"+line;
-                        runstatus=-1;
+                        errmsg << "FK Internal Failed:" << line;
                         continue;
                     }
                     tf::Pose answerpose = tf::Pose(tf::Quaternion(answer[3], answer[4], answer[5], answer[6]), tf::Vector3(answer[0], answer[1], answer[2]));
                     if(!RCS::EQ(pose, answerpose))
                     {
-                        summary+="FK Failed:"+line;
-                        runstatus=-1;
+                        errmsg << "FK Failed:" << line;
                     }
                 }
                 else if(cmd == "ik")
@@ -258,15 +256,13 @@ public:
                     std::cout << "Run ik command\n";
                     if(!static_cast<Derived*>(this)->IK(pose, joints ))
                     {
-                        summary+="IK Internal Failed:"+line;
-                        runstatus=-1;
+                        errmsg <<"IK Internal Failed:"<<line;
                         continue;
 
                     }
                     if(!RCS::EQ<double>(joints, answer))
                     {
-                        summary+="IK Failed:"+line;
-                        runstatus=-1;
+                        errmsg <<"IK Failed:"<<line;
                     }
                 }
             }
@@ -274,10 +270,9 @@ public:
         }
         else
         {
-            summary+="File open failed";
-            runstatus=-1;
+            errmsg<<"Testing file open failed\n";
         }
-        return runstatus;
+        return errmsg.str();
     }
 };
 

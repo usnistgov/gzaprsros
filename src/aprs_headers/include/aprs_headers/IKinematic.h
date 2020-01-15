@@ -129,17 +129,17 @@ public:
      */
     virtual bool isError()=0;
 
-    // Need to set configuration flags for solution: e.g., elbow up/down
-#if 0
-    int SetWristOffset(double x);
-
-    int set_parameters(go_link *params, int num){ return 0; }
-
-    int get_parameters(go_link *params, int num){ return 0; }
-#endif
+    // FIXME: Need to set configuration flags for solution: e.g., elbow up/down
+    // maybe with set parameter...
 
 
-    virtual int runtests(std::string filename)=0;
+    /**
+     * @brief runtests accepts a test file path containing fk/ik commands and solutions
+     * and runs tests to see if the kinsolver passes.
+     * @param filename full path of test file
+     * @return string containing failed tests. Empty string if successful.
+     */
+    virtual std::string runtests(std::string filename)=0;
 };
 }
 #endif // IKINEMATIC_H

@@ -265,11 +265,11 @@ message("gzrcs instal files $$config_features.files")
 INSTALLS  += config_features
 
 
-test_features.path     = ../../install/lib/$$TARGET/test
+test_features.path     = ../../install/lib/$$TARGET/tests
 test_features.files     =  $$PWD/tests/FanucLRMate200iD_kintest.txt
 INSTALLS  += test_features
 
-buildtest_features.path     = "$$OUT_PWD/$$DESTDIR/test"
+buildtest_features.path     = "$$OUT_PWD/$$DESTDIR/tests"
 buildtest_features.files     =   $$PWD/tests/FanucLRMate200iD_kintest.txt
 INSTALLS  += buildtest_features
 

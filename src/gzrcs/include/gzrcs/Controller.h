@@ -49,12 +49,13 @@ class crclServer;
 class CRosCrclRobotHandler;
 #endif
 
+extern std::vector<std::shared_ptr<RCS::CController> > ncs;
+
 namespace RCS {
 
 class CController;
 
 extern Nist::Config robotconfig;
-extern std::vector<std::shared_ptr<CController> > ncs;
 extern std::mutex cncmutex;
 
 
@@ -65,11 +66,11 @@ extern std::mutex cncmutex;
      * control objects (e.g., kinematics, joint writer, joint reader, etc.)
      *
      */
-struct CController : public RCS::Thread,
+struct CController : public Thread,
         public KinematicRing
 {
-    typedef std::list<RCS::CCanonCmd> archive_message_list;
-    RCS::CrclMessageQueue crclcmds; /**< queue of commands interpreted from Crcl messages */
+    typedef std::list<CCanonCmd> archive_message_list;
+    CrclMessageQueue crclcmds; /**< queue of commands interpreted from Crcl messages */
 
     static const int NORMAL = 0;
     static const int EXITING = 1;
@@ -148,7 +149,7 @@ struct CController : public RCS::Thread,
      * @brief setKinematics Routine to set the kinematics reference pointer. Uses the interface class IKinematics, but can have any implementation instance.
      * @param k
      */
-    void setKinematics(boost::shared_ptr<RCS::IKinematic> k)
+    void setKinematics(boost::shared_ptr<IKinematic> k)
     {
         robotKinematics() = k;
     }
@@ -254,21 +255,21 @@ struct CController : public RCS::Thread,
     VAR(std::string, robotBaselink);  // name of base link in robot
 
     // Robot Status variables
-    RCS::CCanonWorldModel _status; /**< current status of controller */
-    RCS::CCanonWorldModel _laststatus; /**< last status of controller */
+    CCanonWorldModel _status; /**< current status of controller */
+    CCanonWorldModel _laststatus; /**< last status of controller */
     bool bInited;  /**< bool initialization flag, true means initialized */
 
 
     VAR(std::shared_ptr<IRCSInterpreter>, robotInterpreter);
-    VAR(boost::shared_ptr<RCS::IKinematic>, robotKinematics);
+    VAR(boost::shared_ptr<IKinematic>, robotKinematics);
     VAR(bool, bGrasping); /**< robot currently grasping object */
 
 
     // Robot Command  variables
     unsigned long last_crcl_command_num;  /// used to detect new commands
-    std::list<RCS::CCanonCmd> donecmds; /**< list of commands interpreted from Crcl messages that have completed*/
-    NVAR(NextCC, RCS::CCanonCmd, _nextcc);/**<  current new canon command to interpret*/
-    NVAR(LastCC, RCS::CCanonCmd, _lastcc); /**<  last canon command interpreted */
+    std::list<CCanonCmd> donecmds; /**< list of commands interpreted from Crcl messages that have completed*/
+    NVAR(NextCC, CCanonCmd, _nextcc);/**<  current new canon command to interpret*/
+    NVAR(LastCC, CCanonCmd, _lastcc); /**<  last canon command interpreted */
 
     // Saved named robot goal states
     VAR(SINGLE_ARG(std::map<std::string, std::vector<std::string>>), namedCommand);
@@ -350,7 +351,7 @@ struct CController : public RCS::Thread,
      * using the forward kinematics (FK) routine.
      * It also uses a CrclDelegate pointer reference to update the status reported by CRCL.
      */
-class RobotStatus : public RCS::Thread {
+class RobotStatus : public Thread {
 public:
 
     /*!

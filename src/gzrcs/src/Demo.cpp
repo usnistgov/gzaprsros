@@ -19,8 +19,8 @@ See NIST Administration Manual 4.09.07 b and Appendix I.
 #include "gzrcs/Globals.h"
 #include "gzrcs/Shape.h"
 #include "gzrcs/RobotControlException.h"
-#include "aprs_headers/Conversions.h"
 #include "gzrcs/CrclApi.h"
+//#include "aprs_headers/Conversions.h"
 
 using namespace RCS;
 
@@ -78,21 +78,6 @@ struct timer
 
 
 // Log once
-
-#include "boost/iostreams/stream.hpp"
-#include "boost/iostreams/device/null.hpp"
-#include <boost/iostreams/stream.hpp>
-
-boost::iostreams::stream< boost::iostreams::null_sink > nullOstream( ( boost::iostreams::null_sink() ) );
-
-#if 0
-//static std::ostream* os;
-//#define ONCE(X)  \
-//{ static int Y##__LINE__=-1;\
-//    if(++Y##__LINE__==0) os=&X; \
-//    else os=&nullOstream;}\
-//    *os
-#endif
 
 int CGearDemo::init(std::string robotName)
 {

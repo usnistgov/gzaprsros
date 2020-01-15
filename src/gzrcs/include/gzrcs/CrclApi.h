@@ -19,9 +19,7 @@
 
 #include "aprs_headers/Core.h"
 #include "aprs_headers/IRcs.h"
-#include "aprs_headers/Conversions.h"
 
-//#include "gzrcs/Kinematics.h"
 #include "gzrcs/Controller.h"
 
 /**

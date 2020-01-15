@@ -55,8 +55,8 @@ public:
      * @param nc pointer to robot controller
      * @param k pointer to robot kinematics handler
      */
-    CGoInterpreter(std::shared_ptr<RCS::CController> nc,
-                  boost::shared_ptr<RCS::IKinematic> k);
+    CGoInterpreter(std::shared_ptr<CController> nc,
+                  boost::shared_ptr<IKinematic> k);
     /**
      * @brief init intialize gotraj for robot and gripper with cycle time and initial joint values.
      * @param jnts supplied robot joints values. FIXME: Uses nc gripper joint values to initialize gotraj.
@@ -71,8 +71,8 @@ public:
      * @return
      */
     virtual int parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                             RCS::CCanonCmd& outcmd,
-                             RCS::CCanonWorldModel instatus);
+                             CCanonCmd& outcmd,
+                             CCanonWorldModel instatus);
 
     /**
      * @brief parseJointCommand accepts a CRCL joint command and translates individual joint updates into
@@ -85,8 +85,8 @@ public:
      * @return CRCL done or working
      */
     virtual int parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                  RCS::CCanonCmd &outcmd,
-                                  RCS::CCanonWorldModel instatus);
+                                  CCanonCmd &outcmd,
+                                  CCanonWorldModel instatus);
     /**
      * @brief parseMovetoCommand given a  CRCL move Cartesian command, use gotraj to generate a smooth trajectory
      * from the current position as given by instatus to the current position and crcl to determine destination position.
@@ -97,8 +97,8 @@ public:
      * @return CRCL done or working
      */
     virtual int parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                  RCS::CCanonCmd &outcmd,
-                                  RCS::CCanonWorldModel instatus);
+                                  CCanonCmd &outcmd,
+                                  CCanonWorldModel instatus);
     /**
      * @brief parseStopCommand accepts a CRCL stop command and coordinates stopping.
      * @param incmd crcl command
@@ -107,8 +107,8 @@ public:
      * @return CRCL stop
      */
     virtual int parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                 RCS::CCanonCmd &outcmd,
-                                 RCS::CCanonWorldModel instatus);
+                                 CCanonCmd &outcmd,
+                                 CCanonWorldModel instatus);
     /**
      * @brief parseGripperCommand parse CRCL open/close/percentage command.
      * @param incmd crcl
@@ -117,8 +117,8 @@ public:
      * @return CRCL done or working
      */
     virtual int parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                    RCS::CCanonCmd &outcmd,
-                                    RCS::CCanonWorldModel instatus) ;
+                                    CCanonCmd &outcmd,
+                                    CCanonWorldModel instatus) ;
 
     /**
       * @brief parsePavelGripperCommand pavel's gazebo plugin force-based open/close gripping
@@ -128,8 +128,8 @@ public:
      * @return CRCL done or working
      */
      virtual int parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                                       RCS::CCanonCmd &outcmd,
-                                                       RCS::CCanonWorldModel instatus);
+                                                       CCanonCmd &outcmd,
+                                                       CCanonWorldModel instatus);
     /**
      * @brief parseEEParamGripperCommand sets up how to interpret the CRCL gripper command. Either a percentage, position or
      * a vel/fmax algorithm is set to establish how to handle gripper commmands. This is not explicitly spelled out in CRCl but
@@ -140,8 +140,8 @@ public:
      * @return CRCL done or working
      */
     virtual int parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                                RCS::CCanonCmd &outcmd,
-                                                RCS::CCanonWorldModel instatus);
+                                                CCanonCmd &outcmd,
+                                                CCanonWorldModel instatus);
 
     /**
      * @brief parseMoveThruCommand  a Cartesian motion that uses waypoints to plan a trajectory.
@@ -154,8 +154,8 @@ public:
      * @return CRCL done or working
      */
     virtual int parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                    RCS::CCanonCmd &outcmd,
-                                    RCS::CCanonWorldModel instatus) ;
+                                    CCanonCmd &outcmd,
+                                    CCanonWorldModel instatus) ;
 
     /**
      * @brief setGripperFoce set the ROS out command to use force
@@ -163,7 +163,7 @@ public:
      * @param vel velocity of gripper motion
      * @return 0 sucessful, negative fail.
      */
-    int   setGripperFoce(RCS::CCanonCmd &outcmd,
+    int   setGripperFoce(CCanonCmd &outcmd,
                                          double vel);
     /**
      * @brief setGripperFoce set the ROS out command to use velocity and force max
@@ -172,7 +172,7 @@ public:
      * @param fmax maximum force to apply to gripper finger joints.
      * @return 0 sucessful, negative fail.
      */
-    int  setGripperVelFmax(RCS::CCanonCmd &outcmd, double vel, double fmax );
+    int  setGripperVelFmax(CCanonCmd &outcmd, double vel, double fmax );
 
     /**
      * @brief gripperSpeed increase or decrease robot motion speeds depending on whether grasp is open or close.
@@ -186,8 +186,8 @@ public:
                                         sensor_msgs::JointState newjoints) ;
 
 protected:
-    boost::shared_ptr<RCS::IKinematic> _kinematics; /**<  kinematics pointer */
-    std::shared_ptr<RCS::CController>_nc; /**<  robot controller pointer */
+    boost::shared_ptr<IKinematic> _kinematics; /**<  kinematics pointer */
+    std::shared_ptr<CController>_nc; /**<  robot controller pointer */
     uint64_t _lastcmdnum; /**<  last command num to check for new command */
     std::shared_ptr<GoTraj> _goRobot; /**<  gotraj dll  motion planning for robot Cartesian and joint motion */
     std::shared_ptr<GoTraj> _goGripper; /**<  gotraj dll for gripper joint motion */

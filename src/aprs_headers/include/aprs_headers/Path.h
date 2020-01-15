@@ -25,7 +25,7 @@ public:
         for(size_t i=0; i< folders.size(); i++)
         {
             struct stat buffer;
-            std::string filepath=folders[i]+File::PathSeparator()+filename;
+            std::string filepath=folders[i]+filename;
             if (stat (filepath.c_str(), &buffer) == 0)
             {
                 return filepath;
