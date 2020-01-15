@@ -155,7 +155,7 @@ template<typename T>
 inline std::string dumpstdVector(const T & v) {
     std::stringstream s;
     for (int i = 0; i < v.size(); i++)
-        s << boost::format("%8.5f:") % v[i];
+        s << boost::format("%8.5f,") % v[i];
     return s.str();
 }
 

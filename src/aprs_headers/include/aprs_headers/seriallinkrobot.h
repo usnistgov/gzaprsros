@@ -18,6 +18,7 @@
 #include <urdf/model.h>
 #include <aprs_headers/File.h>
 #include <aprs_headers/Testing.h>
+#include <aprs_headers/Debug.h>
 
 // You must have ROS installed to use this URDF parsing.
 namespace RCS {
@@ -236,33 +237,33 @@ public:
                 // now run command.
                 if(cmd == "fk")
                 {
-                    std::cout << "Run fk command\n";
                     tf::Pose pose;
-                    if(!static_cast<Derived*>(this)->FK(ds, pose ))
+                    if(static_cast<Derived*>(this)->FK(ds, pose ))
                     {
                         errmsg << "FK Internal Failed:" << line;
                         continue;
                     }
                     tf::Pose answerpose = tf::Pose(tf::Quaternion(answer[3], answer[4], answer[5], answer[6]), tf::Vector3(answer[0], answer[1], answer[2]));
-                    if(!RCS::EQ(pose, answerpose))
+                    if(!RCS::EQ(pose, answerpose, 0.001))
                     {
-                        errmsg << "FK Failed:" << line;
+                        errmsg << "FK Failed   =>" << line << "\n";
+                        errmsg << "   Computed  =" <<  RCS::dumpPoseSimple(pose) << "\n\n" ;
                     }
                 }
                 else if(cmd == "ik")
                 {
                     tf::Pose pose = tf::Pose(tf::Quaternion(ds[3], ds[4], ds[5], ds[6]), tf::Vector3(ds[0], ds[1], ds[2]));
                     std::vector<double> joints(numJoints);
-                    std::cout << "Run ik command\n";
-                    if(!static_cast<Derived*>(this)->IK(pose, joints ))
+                    if(static_cast<Derived*>(this)->IK(pose, joints ))
                     {
-                        errmsg <<"IK Internal Failed:"<<line;
+                        errmsg <<"IK Internal Failed:" << line << "\n" ;
                         continue;
 
                     }
-                    if(!RCS::EQ<double>(joints, answer))
+                    if(!RCS::EQ<double>(joints, answer, 0.001))
                     {
-                        errmsg <<"IK Failed:"<<line;
+                        errmsg <<"IK Failed   =>" << line << "\n";
+                        errmsg <<"   Computed = " <<  RCS::dumpstdVector<std::vector<double>>(joints) << "\n\n"; ;
                     }
                 }
             }

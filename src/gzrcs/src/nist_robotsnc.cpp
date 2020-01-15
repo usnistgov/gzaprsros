@@ -381,7 +381,7 @@ int main(int argc, char** argv)
                     {
                         std::string errmsg = ncs[i]->robotKinematics()->runtests(testfile);
                         if(errmsg.empty())
-                            errmsg="Kinsolved tested pased\n";
+                            errmsg="Kinsolver plugin test pased\n";
                         std::cout << errmsg;
                     }
 

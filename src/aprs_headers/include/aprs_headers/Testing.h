@@ -16,9 +16,10 @@ namespace RCS
 {
 inline int EQ (tf::Vector3 p1, tf::Vector3 p2, double fuzz = V_FUZZ)
 {
-    return (fabs(p1.getX()-p2.getX()) <= fuzz &&
+    int b = (fabs(p1.getX()-p2.getX()) <= fuzz &&
             fabs(p1.getY()-p2.getY()) <= fuzz &&
             fabs(p1.getZ()-p2.getZ()) <= fuzz );
+    return b;
 }
 
 inline int EQ (tf::Quaternion q1, tf::Quaternion q2, double qfuzz = Q_FUZZ)
@@ -38,8 +39,9 @@ inline int EQ (tf::Quaternion q1, tf::Quaternion q2, double qfuzz = Q_FUZZ)
 
 inline int EQ (tf::Pose p1, tf::Pose p2, double vfuzz = V_FUZZ, double qfuzz=Q_FUZZ)
 {
-    return (EQ(p1.getRotation(), p2.getRotation(), qfuzz) &&
+    int b =  (EQ(p1.getRotation(), p2.getRotation(), qfuzz) &&
             EQ(p1.getOrigin(), p2.getOrigin(), vfuzz));
+    return b;
 }
 //inline int EQ (tf::Transform t1, tf::Transform t2, double fuzz=CART_FUZZ)
 //{
@@ -57,7 +59,8 @@ inline int EQ(const std::vector<T>& a, const std::vector<T>& b,
     const auto first_mismatch = std::mismatch(
                 a.begin(), a.end(), b.begin(), [max_error](T val_a, T val_b)
     {
-            return val_a == val_b || std::abs(val_a - val_b) < max_error;
+            int b =  val_a == val_b || std::abs(val_a - val_b) < max_error;
+            return b;
 });
     if (first_mismatch.first != a.end()) {
         return 0;
