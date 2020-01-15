@@ -343,8 +343,9 @@ int CComandLineInterface::interpretFile(std::string filename)
     std::string filepath=Path::find(paths, filename);
     if(filepath.empty() || !File(filepath).exists() )
     {
-         std::cout << filename << "does not exist\n";
-         return 0;
+        std::cout << "Run file " << filename << " containing CLI commands does not exist\n";
+        std::cout << "WARNING if file failed to open - beware file name is converted to ALL LOWER CASE" << filename << "\n";
+        return 0;
     }
     std::ifstream myfile( filepath );
     if (myfile)  // same as: if (myfile.good())
