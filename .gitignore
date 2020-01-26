@@ -12,3 +12,5 @@ debug/
 *.so*
 docs/
 *.user.*
+*.pro.user.*
+*.so*
