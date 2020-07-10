@@ -5,10 +5,28 @@
 
   
 
-This document gives a brief overview of how to configure the World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, kitting models, robots, flags and the like.
+This document gives a brief overview of how the worlds were built and then how to configure the World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, kitting models, robots, flags and the like.
 
+ <a name="CAD Modeling of the World"></a>Configuration
 
+The very first step before creating SDF files was to create all the meshes to be used in our APRS virtual environment. As you know, STL encodes geometry information only, as triangle meshes and does not include material specification. On the other hand, COLLADA can encode 3D geometry as well as physics, shaders, kinematics, etc which was the reason that it was a great choice if we wanted custom material properties such as textures besides geometry. For our APRS simulation, our choice was mainly COLLADA format and we have pretty much used the meshes in the following link for our environment:
+http://data.nvision2.eecs.yorku.ca/3DGEMS/
 
+For the walls and doors, we have created them in SketchUp and exported them as COLLADA file. For the camera sensor, we have used Gazebo’s built-in camera sensor model for capturing images. We had to set the pose of the sensor accordingly with respect to our camera model, 
+
+    e.g.  <pose>0 -0.06 0 0 0 0</pose> 
+
+in which the last three digits are for orientation. Then, we created SDF file in which we incorporated a sensor model and added the following code in the world file: 
+
+    <model name="motoman_camera">
+            <include>
+                <static>true</static>
+                <uri>model://motoman_camera_test</uri>
+            </include>
+        <pose frame=' ' >0.061138  -0.719002  2.005010  0  0  0</pose> 
+    </model>
+
+Last step was to create SDF files in Gazebo database for these virtual world items so that they could be spawned once the world file is launched.
 
 
 # <a name="Configuration"></a>Configuration
