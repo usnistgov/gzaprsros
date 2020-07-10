@@ -7,7 +7,7 @@
 
 This document gives a brief overview of how the worlds were built and then how to configure the World SDF file for Gazebo. Various models of the APRS laboratory are available, with configurable selections for versions, kitting models, robots, flags and the like.
 
-# <a name="">Modeling</a>CAD Modeling of the World
+# <a name="Modeling"></a>CAD Modeling of the World
 
 The very first step before creating SDF files was to create all the meshes to be used in our APRS virtual environment. As you know, STL encodes geometry information only, as triangle meshes and does not include material specification. On the other hand, COLLADA can encode 3D geometry as well as physics, shaders, kinematics, etc which was the reason that it was a great choice if we wanted custom material properties such as textures besides geometry. For our APRS simulation, our choice was mainly COLLADA format and we have pretty much used the meshes in the following link for our environment:
 http://data.nvision2.eecs.yorku.ca/3DGEMS/
