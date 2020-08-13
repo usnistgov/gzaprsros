@@ -1,0 +1,14 @@
+
+
+Problem: Gazebo will really only work with Google protobuf 2.6
+This is easily violated installing anaconda which puts the latest 
+protobuf in its bin (for me it was 3.11!)
+
+Solution:
+REMOVED ALL ANACONDA FROM .bashrc AND PATH.
+for ubuntu xenial, installed protobuf 2.6 using source:
+
+From: https://gist.github.com/samklr/0b8a0620f82005e7f556
+libprotobuf 2.6.1: e.g. https://gist.github.com/samklr/0b8a0620f82005e7f556
+
+But it WILL NOT BUILD OTHERWISE
