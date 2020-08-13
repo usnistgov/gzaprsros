@@ -34,6 +34,7 @@ add_library(gzjointcmdplugin
 )
 add_dependencies(gzjointcmdplugin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-format-security ${CMAKE_CXX_FLAGS}")
 
 target_link_libraries(gzjointcmdplugin
   ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES}

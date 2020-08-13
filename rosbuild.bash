@@ -15,6 +15,7 @@ then
 fi
 
 catkin_make install  --only-pkg-with-deps  crcl_rosmsgs
+catkin_make install  --only-pkg-with-deps gz_custom_messages
 catkin_make install -DCATKIN_WHITELIST_PACKAGES=""
 
 

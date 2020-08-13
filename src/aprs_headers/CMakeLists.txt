@@ -61,6 +61,7 @@ include_directories(
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-format-security ${CMAKE_CXX_FLAGS}")
 
 # Debug flags to enable code
 set(CMAKE_CXX_FLAGS "-DCNC ${CMAKE_CXX_FLAGS}")

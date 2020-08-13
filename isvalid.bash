@@ -1,7 +1,10 @@
 #!/bin/bash
 p=`pwd`
 
-
+function version_gt() 
+{ 
+ test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1"; 
+}
 # fail if no ros kinetic
 if ! test -d /opt/ros/kinetic
 then
@@ -9,6 +12,15 @@ then
     echo "Remedy: sudo apt-get install ros-kinetic-desktop-full"
     echo "It is not recommeded to install two versions of ROS on the same machine - e.g., kinetic and lunar"
     exit 1
+fi
+
+first_version=`protoc --version | awk '{print $2}' `
+second_version=2.7
+if version_gt $first_version $second_version
+then
+	echo "problem: Gazebo 9 ONLY wants protobuf version 2.6"
+	echo "you have version protobuf version $first_version"
+	xit 1
 fi
 
 # Check gazebo existence and version number 

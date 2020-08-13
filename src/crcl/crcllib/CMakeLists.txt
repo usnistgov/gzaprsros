@@ -187,6 +187,7 @@ set(CMAKE_CXX_FLAGS "-Wno-unused-function ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-Wno-unused-but-set-variable ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-Wno-write-strings ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-Wno-missing-field-initializers ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-format-security ${CMAKE_CXX_FLAGS}")
 
 
 ## Specify libraries to link a library or executable target against
