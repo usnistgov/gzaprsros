@@ -1,0 +1,4 @@
+PROBLEMS PROBLEMS
+
+rosbuild does not seem to catkin buid: libgzjointcmdplugin.so
+catkin install does not seem to invoke cmakelist.txt install to copy so into plugins7

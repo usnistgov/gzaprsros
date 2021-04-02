@@ -21,6 +21,8 @@
 
 #include "aprs_headers/Debug.h"
 #include "aprs_headers/Config.h"
+#define GLOGGER GLogger
+#include "aprs_headers/LoggerMacros.h"
 #include "aprs_headers/env.h"
 
 
@@ -36,7 +38,7 @@
 // Gazebo and Ros global interfaces
 #include "gzrcs/gazebo.h"
 #include "gzrcs/cros.h"
-//using namespace RCS;
+
 
 #ifndef MAJOR
 #define MAJOR  1
@@ -46,6 +48,7 @@
 
 
 //#include "gzrcs/assimp.h"
+using namespace RCS;
 
 //#define BOOST_DLL_USE_STD_FS
 #define BOOST_NO_CXX11_VARIADIC_TEMPLATES
@@ -55,7 +58,7 @@
 
 // Globals
 std::shared_ptr<CGearDemo> geardemo;
-
+Logging::CLogger GLogger;
 static     std::string get_env(  std::string  var )
 {
     const char * val = ::getenv( var.c_str() );
@@ -65,26 +68,6 @@ static     std::string get_env(  std::string  var )
     else {
         return val;
     }
-}
-
-static void cleanup()
-{
-    // Stopping application
-    Globals.bRunning=false;
-
-    // Stop demo (i.e. testing) related activies
-    if(Globals.bGearLocations && geardemo.get() != nullptr)
-        geardemo->stop();
-
-    // ^C pressed - stop all threads or will hang
-    RCS::Thread::stopAll(); // includes thread for Controller, robotstatus
-
-
-#ifdef ROS
-    // Shutdown ROS
-    Ros.close();
-#endif
-
 }
 
 // Do not put creator where it can be destroyed or you will
@@ -116,10 +99,9 @@ int main(int argc, char** argv)
         // Find path of executable
         Globals.appProperties["ExeDirectory"] = getexefolder();
         Globals.appProperties["ConfigFile"] =config_file;
-        Globals.appProperties["appPath"] = getexepath();
         Globals.appProperties["appName"] = getexepath().substr(getexepath().find_last_of('/') + 1);
         Globals.appProperties["PackageSrcPath"] = getexefolder();
-        Globals.appProperties["version"] = std::string("")+std::to_string(MAJOR) +":"+std::to_string(MINOR) +":"+std::to_string(BUILD) ;
+        //Globals.appProperties["version"] = std::string("")+std::to_string(MAJOR) +":"+std::to_string(MINOR) +":"+std::to_string(BUILD) ;
         std::cout << Globals.appProperties["appName"] << " Version " << Globals.appProperties["version"] <<" Compiled " << __DATE__ << " " << __TIME__ << "\n" << std::flush;
 
 
@@ -145,7 +127,6 @@ int main(int argc, char** argv)
                 robots = RCS::robotconfig.getTokens<std::string>("system.robots", ",");
             if(robots.size() ==0)
                 throw "No robots defined";
-
             Globals.appProperties["robot"] = robots[0] ;
 
             // ROS configuration
@@ -167,11 +148,14 @@ int main(int argc, char** argv)
             // Debug Flags for more debugging information:
             Globals.DEBUG_World_Command()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_World_Command","0");
             Globals.DEBUG_Log_Gripper_Status()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Gripper_Status","0");
+            Globals.DEBUG_IKFAST()=RCS::robotconfig.getSymbolValue<int>("debug.Debug_IKFAST","0");
+            Globals.DEBUG_Log_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Position","0");
+            Globals.DEBUG_Log_Robot_Config()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Robot_Config","0");
             Globals.DEBUG_Log_Cyclic_Robot_Position()=RCS::robotconfig.getSymbolValue<int>("debug.Log_Cyclic_Robot_Position","0");
             Globals.DEBUG_LogRobotCrcl()=RCS::robotconfig.getSymbolValue<int>("debug.LogRobotCrcl","0");
-            //            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
-            //            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
-            //            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
+            GLogger.debugLevel()=RCS::robotconfig.getSymbolValue<int>("debug.DebugLevel","0");;
+            GLogger.isTimestamping()=RCS::robotconfig.getSymbolValue<int>("debug.Timestamping","1");;
+            GLogger.isOutputConsole()=RCS::robotconfig.getSymbolValue<int>("debug.LogConsole","1");;
 
             Globals.appProperties["robot"] = RCS::robotconfig.getSymbolValue<std::string>(robots[0] + ".robot.longname");
 
@@ -184,16 +168,16 @@ int main(int argc, char** argv)
             // Application setup of debug and logging setup of logging files
             Globals.debugSetup();
 
-            STATUS_LOG.LOG("gzrcs: Compiled %s %s\n" , __DATE__ , __TIME__ );
-            STATUS_LOG.LOG( "gzrcs: Build %d\n"  , BUILD);
-            STATUS_LOG.LOG( "gzrcs: Started %s\n" , Globals.getTimeStamp().c_str()) ;
+            logStatus( "gzrcs: Compiled %s %s\n" , __DATE__ , __TIME__ );
+            //logStatus( "gzrcs: Build %d\n" , BUILD);
+            logStatus( "gzrcs: Started %s\n" , Globals.getTimeStamp().c_str() );
 
 
 #ifdef ROS
             // Setup up ROS
             if(Globals.bRos)
             {
-                Ros.init();
+                 Ros.init();
             }
 #endif
 
@@ -215,7 +199,7 @@ int main(int argc, char** argv)
 
                 std::string robotname = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.longname");
                 double dCycleTime = RCS::robotconfig.getSymbolValue<double>(robots[i] + ".nc.cycletime", "10.0");
-                ncs.push_back(std::shared_ptr<RCS::CController>(new RCS::CController(robotname, dCycleTime)));
+                ncs.push_back(std::shared_ptr<CController>(new RCS::CController(robotname, dCycleTime)));
 
                 ncs[i]->cycleTime() = dCycleTime;
                 ncs[i]->robotPrefix() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.prefix", "ERROR");
@@ -229,11 +213,11 @@ int main(int argc, char** argv)
                 // Part offsets
                 std::vector<double> offset;
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.smallgear", ",");
-                ncs[i]->gripperoffset()["sku_part_small_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_small_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.mediumgear", ",");
-                ncs[i]->gripperoffset()["sku_part_medium_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_medium_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.gripper.largegear", ",");
-                ncs[i]->gripperoffset()["sku_part_large_gear"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->gripperoffset()["sku_part_large_gear"]=Convert<std::vector<double>, tf::Pose> (offset);
 
                 ncs[i]->graspforce()["sku_part_large_gear"]= RCS::robotconfig.getSymbolValue<double>(robots[i] + ".graspforce.largegear", "10.");
                 ncs[i]->graspforce()["sku_part_medium_gear"]= RCS::robotconfig.getSymbolValue<double>(robots[i] + ".graspforce.mediumgear", "10.");
@@ -241,7 +225,8 @@ int main(int argc, char** argv)
 
 
                 offset = RCS::robotconfig.getTokens<double>(robots[i] + ".offset.vesselslot", ",");
-                ncs[i]->slotoffset()["vessel"]=RCS::Convert<std::vector<double>, tf::Pose> (offset);
+                ncs[i]->slotoffset()["vessel"]=Convert<std::vector<double>, tf::Pose> (offset);
+
 
                 ncs[i]->rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
@@ -249,17 +234,20 @@ int main(int argc, char** argv)
                 ncs[i]->base_rotationmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.rotationmax", ",");
                 ncs[i]->base_linearmax() = RCS::robotconfig.getTokens<double>(robots[i] + ".rate.linearmax", ",");
 
+
+
+
                 // Gripper hacks.
                 ncs[i]->gripperName() = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".robot.gripper", ",");
                 ncs[i]->crclGripperAlgorithm() = RCS::robotconfig.getSymbolValue<std::string>( robots[i] + ".crcl.GripperAlgorithm", "percentage");
-                std::vector<double> dtool = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".xform.tool",",");
-                ncs[i]->setGripperOffset(RCS::Convert<std::vector<double>, tf::Pose> (dtool));
+                std::vector<double> dtool = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".tool",",");
+                ncs[i]->setGripperOffset(Convert<std::vector<double>, tf::Pose> (dtool));
 
                 std::vector<double> dCorrection = RCS::robotconfig.getTokens<double>(ncs[i]->gripperName() + ".correction",",");
                 if(dCorrection.size() ==0)
                     dCorrection={0,0,0,0,0,0,1.};
 
-                ncs[i]->Correction()=RCS::ConvertDblVectorTf (dCorrection);
+                ncs[i]->Correction()=ConvertDblVectorTf (dCorrection);
                 ncs[i]->CorrectionInv()=ncs[i]->Correction().inverse();
 
                 // Finger gripping contact parameters
@@ -278,7 +266,7 @@ int main(int argc, char** argv)
                 for (size_t j = 0; j < posemovenames.size(); j++) {
                     std::vector<double> ds = RCS::robotconfig.getTokens<double>(robots[i] + "." + posemovenames[j], ",");
                     std::transform(posemovenames[j].begin(), posemovenames[j].end(), posemovenames[j].begin(), ::tolower);
-                    ncs[i]->namedPoseMove()[posemovenames[j]] = RCS::ConvertDblVectorTf(ds);
+                    ncs[i]->namedPoseMove()[posemovenames[j]] = ConvertDblVectorTf(ds);
                 }
 
                 // Parse and record macro command sequences - e.g., homing, setup
@@ -300,53 +288,45 @@ int main(int argc, char** argv)
 
                 if(ld_library_path.empty())
                 {
-                    ld_library_path="/home/isd/michalos/src/github/nist/gzaprsros-xenial/lib";
+                    ld_library_path="/home/michalos/src/gzaprsros-xenial1/devel/lib";
                 }
 
                 // Choose kinematic solver
                 boost::filesystem::path lib_path(ld_library_path);
 
                 try {
-                    Globals.appProperties["kinsolverdll"] = kin_plugin_dll;
-                    Globals.appProperties["kinsolverdllpath"] = ld_library_path+"/"+kin_plugin_dll;
 
                     creator = boost::dll::import_alias<pluginapi_create_t>(             // type of imported symbol must be explicitly specified
-                                                                                        lib_path/kin_plugin_dll,                                           // path to library
-                                                                                        "create_plugin",                                                // symbol to import
-                                                                                        boost::dll::load_mode::append_decorations                              // do append extensions and prefixes
-                                                                                        );
+                         lib_path/kin_plugin_dll,                                           // path to library
+                        "create_plugin",                                                // symbol to import
+                        boost::dll::load_mode::append_decorations                              // do append extensions and prefixes
+                    );
 
                     ncs[i]->robotKinematics() = creator();
                     std::cout << ncs[i]->robotKinematics() << "\n";
                     std::cout << ncs[i]->robotKinematics()->get("help");
 
-#if 0
+        #if 0
                     // This works for importing single instance of kin solver plugin
                     ncs[i]->robotKinematics() = boost::dll::import<IKinematic> (//using namespace RCS;
-                                                                                lib_path/kin_plugin_dll,
+                                                                               lib_path/kin_plugin_dll,
                                                                                 kin_plugin_name,
                                                                                 boost::dll::load_mode::default_mode);
-#endif
+       #endif
                     if(ncs[i]->robotKinematics()==NULL)
                         throw std::runtime_error("Null kinematic plugin");
 
-                    std::string testfile;
                     std::vector<std::string> paramnames = RCS::robotconfig.getTokens<std::string>(robots[i] + ".nc.kinsolver.params", ",");
                     for (size_t j = 0; j < paramnames.size(); j++)
                     {
                         std::string value;
                         std::string param= paramnames[j];
-                        if(param.find("urdffile",0)==0)
+                        if(param.find("exepath ",0)==0)
                         {
-                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.urdffile", "");
+                            param.erase(0, sizeof("exepath"));
+                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
                             value=Globals.appProperties["PackageSrcPath"]+ value;
-                        }
-                        else if(param.find("testfile",0)==0)
-                        {
-                            value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver.testfile", "");
-                            testfile=Globals.appProperties["PackageSrcPath"]+ value;
-                        }
-
+                         }
                         else
                         {
                             value = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.kinsolver." + param, "");
@@ -357,52 +337,23 @@ int main(int argc, char** argv)
 
                     if(ncs[i]->robotKinematics()->init()) //urdf, ncs[i]->robotBaselink(), ncs[i]->robotTiplink())<0)
                     {
-                        std::cerr << "Kinematic plug init() failed\n";
-                        std::cerr << "errors: " <<  ncs[i]->robotKinematics()->get("error") << std::endl;
+                        std::cerr << "Urdf file: " <<  ncs[i]->robotKinematics()->get("urdffile") << std::endl;
+                        std::cerr << "errore: " <<  ncs[i]->robotKinematics()->get("error") << std::endl;
 
-                        throw std::runtime_error("robotKinematics() init() failed");
+                        throw std::runtime_error("robotKinematics() urdf parse failed");
 
                     }
-
-                    // is calibration of kinematics necessary?
-                    //std::vector<double> calibrationJoints;
-                    //tf::Pose calibrationPose;
-
-                    if(RCS::robotconfig.exists(robots[i] + ".nc.kinsolver.calibrationjts"))
-                    {
-                        std::vector<double> calibJts = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationjts", ",");
-                        std::vector<double> dbls = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.kinsolver.calibrationpose", ",");
-                        tf::Pose calibPose =RCS::ConvertDblVectorTf (dbls);
-                        ncs[i]->robotKinematics()->calibrate(calibJts, calibPose);
-                    }
-
-
-                    if(!testfile.empty())
-                    {
-                        std::string errmsg = ncs[i]->robotKinematics()->runtests(testfile);
-                        if(errmsg.empty())
-                            errmsg="Kinsolver plugin test pased\n";
-                        std::cout << errmsg;
-                    }
-
-
                     if(bSetupDebug)
-                        std::cout << ncs[i]->robotKinematics()->get("ALL") << "\n";
-
+                        std::cout << ncs[i]->robotKinematics()->get("HELP") << "\n";
 
                     std::vector<double> dbase = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.base", ",");
                     std::vector<double> dbend = RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.qbend",",");
+                    ncs[i]->setBaseOffset(Convert<std::vector<double>, tf::Pose> (dbase));
 
                     // Translate 4 doubles into quaternion
-                    if(dbase.size() < 6  || dbend.size() < 4)
-                    {
-                        throw std::runtime_error(std::string( "dbase or dbend missing values"));
-
-                    }
-                    ncs[i]->setBaseOffset(RCS::Convert<std::vector<double>, tf::Pose> (dbase));
                     ncs[i]->QBend() = tf::Quaternion(dbend[0], dbend[1], dbend[2], dbend[3]);
 
-                    ncs[i]->Retract() =  RCS::Convert<std::vector<double>, tf::Pose>(
+                    ncs[i]->Retract() =  Convert<std::vector<double>, tf::Pose>(
                                 RCS::robotconfig.getTokens<double>(robots[i] + ".nc.xform.retract", ",")
                                 );
                     ncs[i]->RetractInv()=ncs[i]->Retract().inverse();
@@ -425,7 +376,7 @@ int main(int argc, char** argv)
                 std::string traj = RCS::robotconfig.getSymbolValue<std::string>(robots[i] + ".nc.traj", "Go");
                 if(traj=="Go")
                 {
-                    ncs[i]->robotInterpreter() = std::shared_ptr<RCS::IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], ncs[i]->robotKinematics()));
+                    ncs[i]->robotInterpreter() = std::shared_ptr<IRCSInterpreter>(new RCS::CGoInterpreter(ncs[i], ncs[i]->robotKinematics()));
                 }
                 else
                 {
@@ -450,9 +401,9 @@ int main(int argc, char** argv)
 
                 ncs[i]->part_list() = RCS::robotconfig.getTokens<std::string>( robots[i] + ".parts", ",");
 
-                //                if(bSetupDebug)
+//                if(bSetupDebug)
                 {
-                    ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log");
+                    ofsRobotURDF.open(Globals.logfolder()+"RobotConfig.log", std::ofstream::app);
                     RCS::CController::dumpRobotNC(ofsRobotURDF, ncs[i]);
                     ofsRobotURDF.close();
                 }
@@ -460,7 +411,7 @@ int main(int argc, char** argv)
             }
         } catch (std::exception &e) {
             std::cerr << e.what();
-            STATUS_LOG << e.what();
+            LOG_FATAL << e.what();
             throw;
         }
 
@@ -473,7 +424,7 @@ int main(int argc, char** argv)
         }
 
         // Setup command line interface
-        RCS::CComandLineInterface cli;
+        CComandLineInterface cli;
         for (size_t i = 0; i < ncs.size(); i++)
             cli.addController(ncs[i]);
 
@@ -495,7 +446,7 @@ int main(int argc, char** argv)
 
 
         CGlobals::bPaused=false;
-        cli.state=RCS::CController::NORMAL;
+        cli.state=CController::NORMAL;
 
         //std::thread t1(&CComandLineInterface::inputLoop, &cli);
         cli.start();
@@ -509,38 +460,38 @@ int main(int argc, char** argv)
                 int clistate= cli.inputState();
 
 
-                //                if(clistate==CController::NOOP)
-                //                {
-                //                    Globals.sleep(100);
-                //                    continue;
-                //                }
+//                if(clistate==CController::NOOP)
+//                {
+//                    Globals.sleep(100);
+//                    continue;
+//                }
 
 
-                if(geardemo->isDone(demostate))
-                    demostate=0;
+               if(geardemo->isDone(demostate))
+                   demostate=0;
 
-                if(clistate==RCS::CController::EXITING)
+               if(clistate==CController::EXITING)
                 {
                     CGlobals::bRunning=false;
                     break;
                 }
-                if(clistate==RCS::CController::PAUSED)
+                if(clistate==CController::PAUSED)
                     CGlobals::bPaused=true;
 
-                if(clistate==RCS::CController::NORMAL)
+                if(clistate==CController::NORMAL)
                     CGlobals::bPaused=false;
 
-                if(clistate==RCS::CController::ONCE)
+                if(clistate==CController::ONCE)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(clistate==RCS::CController::AUTO)
+                if(clistate==CController::AUTO)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
                 }
-                if(clistate==RCS::CController::REPEAT)
+                if(clistate==CController::REPEAT)
                 {
                     CGlobals::bPaused=false;
                     Globals.bCannedDemo=true;
@@ -563,7 +514,7 @@ int main(int argc, char** argv)
                     }
                 }
 
-                if(clistate==RCS::CController::ONCE)
+                if(clistate==CController::ONCE)
                 {
                     CGlobals::bPaused=true;
                 }
@@ -575,25 +526,41 @@ int main(int argc, char** argv)
 
         std::cerr << "Cntrl C pressed  or CLI quit\n" << std::flush;
 
-        cleanup();
+        // Stopping application
+        Globals.bRunning=false;
 
+        // Stop demo (i.e. testing) related activies
+        if(Globals.bGearLocations)
+            geardemo->stop();
+
+        // ^C pressed - stop all threads or will hang
+        RCS::Thread::stopAll(); // includes thread for Controller, robotstatus
+
+
+#ifdef ROS
+        // Shutdown ROS
+        Ros.close();
+#endif
+
+        // close logging file
+        GLogger.close();
     }
     catch (std::string e)
     {
-        STATUS_LOG << Globals.strFormat("%s%s%s", "Abnormal exception end to gzrcs", e.c_str() , Globals.getTimeStamp().c_str());
-        cleanup();
+        LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.c_str());
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
     }
     catch (std::exception e)
     {
-        STATUS_LOG << Globals.strFormat("%s%s%s", "Abnormal exception end to gzrcst", e.what(), Globals.getTimeStamp().c_str());
-        cleanup();
+        LOG_FATAL << Globals.strFormat("%s%s", "Abnormal exception end to  CRCL2Robot", e.what());
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
     }
     catch (...)
     {
-        STATUS_LOG << "Abnormal exception end to  gzrcs at" <<  Globals.getTimeStamp().c_str();
-        cleanup();
+        LOG_FATAL << "Abnormal exception end to  CRCL2Robot";
+        logFatal( "gzrcs: Abnormal Stop %s\n" , Globals.getTimeStamp() );
     }
-    STATUS_LOG << "gzrcs: Stopped " << Globals.getTimeStamp().c_str() << "\n" ;
+    logFatal( "gzrcs: Stopped %s\n" , Globals.getTimeStamp() );
 }
 
 

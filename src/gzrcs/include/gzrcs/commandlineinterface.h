@@ -30,8 +30,7 @@
 
 #include "aprs_headers/Debug.h"
 #include "aprs_headers/RCSThreadTemplate.h"
-namespace RCS
-{
+using namespace RCS;
 
 /**
  * @brief The CLI class provides a simple command line interface through
@@ -78,7 +77,7 @@ namespace RCS
  * where object - give pose of object
  * move x,y,z  - move to xyz (assumes last rotation)
  */
-class CComandLineInterface : public Thread
+class CComandLineInterface : public RCS::Thread
 {
 public:
 
@@ -134,15 +133,6 @@ public:
     ///
     int interpretMacro(std::string macro_name);
 
-    /**
-     * @brief interpretFile accepts a file of CLI commands
-     * and executes each line
-     * @param filename file optionally containing path of file
-     * @return 0 if everthing ok
-     */
-    int interpretFile(std::string filename);
-
-
      /// \brief IsDone return if no more interpreting to do (quit commanded)
     /// \return true if done
     ///
@@ -163,5 +153,5 @@ private:
     std::vector<std::string> _robotNames;
 };
 
-}
+
 #endif // COMMANDLINEINTERFACE_H

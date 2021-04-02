@@ -92,7 +92,7 @@ void CGazebo::stop()
 /////////////////////////////////////////////////////////////////////////////
 std::map<std::string, long> CGzModelReader::gzModelName2Id;
 std::map<std::string, long> CGzModelReader::gzLinkName2Id;
-std::map<std::string, ignition::math::Vector3d> CGzModelReader::gzModelBoundingBox;
+//std::map<std::string, ignition::math::Vector3d> CGzModelReader::gzModelBoundingBox;
 
 CGzModelReader::CGzModelReader()
 {
@@ -146,13 +146,10 @@ void CGzModelReader::start()
 /////////////////////////////////////////////////////////////////////////////
 void CGzModelReader::stop()
 {
-    if(_sub.get()!=nullptr)
-        _sub->Unsubscribe();
-    if(modelPub.get()!=nullptr)
-        modelPub->Fini();
+    _sub->Unsubscribe();
+    modelPub->Fini();
     // want to kill gazebo update of model callback
-    if(_sub.get()!=nullptr)
-        _sub.reset();
+    _sub.reset();
     std::cout << "Gazebo model reader subscriber stopped\n";
 }
 
@@ -223,7 +220,7 @@ void CGzModelReader::onUpdate(ConstModelPtr &_msg)
     // Dont really for link id after all models are read once.
     if(Globals.bReadAllInstances)
         return;
-
+#ifdef BOUNDINGBOX
     ignition::math::Vector3d bbox(0,0,0);
     if(_msg->visual_size()>0)
     {
@@ -246,7 +243,7 @@ void CGzModelReader::onUpdate(ConstModelPtr &_msg)
         std::string fullyInstantiatedName = name + "::" + link.name();
         gzLinkName2Id[fullyInstantiatedName] =link.id();
     }
-
+#endif
 }
 
 

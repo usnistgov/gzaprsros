@@ -1,10 +1,7 @@
 #!/bin/bash
 p=`pwd`
 
-function version_gt() 
-{ 
- test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1"; 
-}
+
 # fail if no ros kinetic
 if ! test -d /opt/ros/kinetic
 then
@@ -14,59 +11,49 @@ then
     exit 1
 fi
 
-first_version=`protoc --version | awk '{print $2}' `
-second_version=2.7
-if version_gt $first_version $second_version
-then
-	echo "problem: Gazebo 9 ONLY wants protobuf version 2.6"
-	echo "you have version protobuf version $first_version"
-	xit 1
-fi
-
 # Check gazebo existence and version number 
-if which gazebo >/dev/null
-then
-	v=`gazebo -v`
-	num=`echo $v | sed "s/^.*version \([0-9.]*\).*/\1/"`
-	major=${num:0:1}
-	minor=${num:1:1}
-	if [ $major != "9" ]
-	then
-	    echo "error: Gazebo 9 must be installed for this build to work."
-	    echo "Use: sudo apt-get install *gazebo*"
-	    echo "It is not recommended to have two versions of gazebo installed"
-	    echo "Most likely: check where build directory is, and run 'make uninstall'"
-	    exit 1
-	fi
-else
-	echo "Gazebo needs to be installed - continue (Y/N)?"
-	read confirm
-	declare -u  confirm
-	if [ "$confirm" == "Y" ]
-	then	
-		# gazebo9
-		sudo /usr/bin/apt-get install --assume-yes gazebo9
-		# Install gazebo development
-		sudo /usr/bin/apt-get install --assume-yes libgazebo9-dev
-	fi
-
-fi
+# if which gazebo >/dev/null
+# then
+# 	v=`gazebo -v`
+# 	num=`echo $v | sed "s/^.*version \([0-9.]*\).*/\1/"`
+# 	major=${num:0:1}
+# 	minor=${num:1:1}
+# 	if [ $major != "9" ]
+# 	then
+# 	    echo "error: Gazebo 9 must be installed for this build to work."
+# 	    echo "Use: sudo apt-get install *gazebo*"
+# 	    echo "It is not recommended to have two versions of gazebo installed"
+# 	    echo "Most likely: check where build directory is, and run 'make uninstall'"
+# 	    exit 1
+# 	fi
+# else
+# 	echo "Gazebo needs to be installed - continue (Y/N)?"
+# 	read confirm
+# 	declare -u  confirm
+# 	if [ "$confirm" == "Y" ]
+# 	then	
+# 		# gazebo9
+# 		sudo /usr/bin/apt-get install --assume-yes gazebo9
+# 		# Install gazebo development
+# 		sudo /usr/bin/apt-get install --assume-yes libgazebo9-dev
+# 	fi
+# fi
 
 # check that another version of gazebo is not installed WARN IF SO
-dup=`ldconfig -p | grep -E libgazebo.*\.so\.[0-9]+ | grep -v -E libgazebo.*\.so\.9`
-if [ "$dup" != "" ]
-then
-	echo "warning: APPEARS AS IF MULTIPLE Gazebo ARE INSTALLED."
-	echo $dup
-fi
+#dup=`ldconfig -p | grep -E libgazebo.*\.so\.[0-9]+ | grep -v -E libgazebo.*\.so\.9`
+#if [ "$dup" != "" ]
+#then
+#	echo "warning: APPEARS AS IF MULTIPLE Gazebo ARE INSTALLED."
+#	echo $dup
+#fi
 
 # Test for eigen3
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' gazebo9|grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-  echo "error: gazebo9 must be installed for this build to work."
-  echo "Installing gazebo9"
-  sudo apt-get --force-yes --yes install gazebo9*
-fi
+#PKG_OK=$(dpkg-query -W --showformat='${Status}\n' gazebo9|grep "install ok installed")
+#if [ "" == "$PKG_OK" ]; then
+#  echo "error: gazebo9 must be installed for this build to work."
+#  echo "Installing gazebo9"
+#  sudo apt-get --force-yes --yes install gazebo9*
+#fi
 
 
 
@@ -122,6 +109,12 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' libreadline6-dev|grep "install
 if [ "" == "$PKG_OK" ]; then
   echo "No readline. Installing readline version 6."
   sudo apt-get install libreadline6-dev  
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' doxygen|grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo "No doxygen. Installing doxygen."
+  sudo apt-get install doxygen  
 fi
 
 # Copy gzrcs headers to appropriate include subdirectory

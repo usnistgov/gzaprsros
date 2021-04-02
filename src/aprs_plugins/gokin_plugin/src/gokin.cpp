@@ -41,9 +41,6 @@ static bool readFile (std::string filename, std::string & contents)
 GoKin::GoKin() : CSerialLinkRobot(this)
 {
     bDebug=false;
-    // assign calibrated local to world transform to identity
-    poseLocal2Wrld=tf::Pose::getIdentity();
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,17 +50,6 @@ GoKin::~GoKin()
 
 }
 
-////////////////////////////////////////////////////////////////////////////////
-int GoKin::calibrate(const std::vector<double>& joints, const tf::Pose pose)
-{
-    tf::Pose myPose;
-
-    this->FK(joints, myPose);
-
-    poseLocal2Wrld=myPose.inverse()*pose;
-
-    return 0;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 size_t GoKin::numJoints()
@@ -157,7 +143,7 @@ int GoKin::init()
         ini +="NAME="+robot_name+"\n";
         ini +="VERSION=1.0\n";
         ini +="EXT_INIT_STRING=\n";
-        ini +="LENGTH_UNITS_PER_M=1000\n";
+        ini +="LENGTH_UNITS_PER_M=1000\std::vector<std::string>n";
         ini +="ANGLE_UNITS_PER_RAD=57.2957795130823\n";
 
         ini +="\n[TRAJ]\n";
@@ -290,7 +276,7 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     errmsg.clear();
     go_pose gopose;
 
-    //go_result genser_kin_fGoKinwd(void * kins, const go_real *joints,  go_pose * pos)
+    //go_result genser_kin_fwd(void * kins, const go_real *joints,  go_pose * pos)
     if (GO_RESULT_OK != genser_kin_fwd(&kins, &joints[0], &gopose)) {
         errmsg= "Can't run general serial forward kinematics\n";
         return -1;
@@ -299,8 +285,6 @@ int GoKin::FK(std::vector<double> joints, tf::Pose &pose)
     pose=tf::Pose(tf::Quaternion(gopose.rot.x,gopose.rot.y,gopose.rot.z,gopose.rot.s ),
                   tf::Vector3(gopose.tran.x, gopose.tran.y, gopose.tran.z) );
 
-    // translate to world axis orientation)
-    pose =  poseLocal2Wrld*pose;
 
     return Kinematics_Ok;
 }
@@ -311,9 +295,6 @@ int GoKin::IK(tf::Pose pose, std::vector<double>&  joints)
 {
 
     errmsg.clear();
-
-    pose = pose * poseLocal2Wrld.inverse();
-
     size_t n=joints.size();
     // Last joints are an estimate for next joints
     //    joints.resize(7,0.0);

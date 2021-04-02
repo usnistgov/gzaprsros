@@ -28,18 +28,22 @@
 #include "gzrcs/cros.h"
 #include "aprs_headers/Debug.h"
 
+#define GLOGGER GLogger
+#include "aprs_headers/LoggerMacros.h"
 
 #ifdef CRCL_DLL
 #include <crcllib/nistcrcl.h>
 #endif
 
-std::vector<std::shared_ptr<RCS::CController> > ncs;
 
 
 // RCS namespace declarations
 namespace RCS {
 
+std::vector<std::shared_ptr<CController> > ncs;
+
 Nist::Config robotconfig;
+
 std::mutex cncmutex;
 
 
@@ -48,7 +52,7 @@ std::mutex cncmutex;
 
 CController::CController(std::string name, double cycletime) :
     _robotName(name)
-  , Thread(cycletime, name)
+  , RCS::Thread(cycletime, name)
 {
     //IfDebug(LOG_DEBUG << "CController::CController"); // not initialized until after main :()
     bGrasping() = false;
@@ -83,12 +87,12 @@ bool CController::verify()
 {
     if(robotKinematics() == NULL)
     {
-        STATUS_LOG << "Controller has no kinematic element\n";
+        logFatal("Controller has no kinematic element\n");
         return false;
     }
     if(robotInterpreter() == NULL)
     {
-        STATUS_LOG << "Controller has no robotInterpreter element\n";
+        logFatal("Controller has no robotInterpreter element\n");
         return false;
     }
     return true;
@@ -101,7 +105,7 @@ void CController::setup()
 
     // Save thread name
     name() = prefix + "controller";
-    crclLastUpdateTime() = Timer::etime();
+    crclLastUpdateTime() = RCS::Timer::etime();
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Gripper
@@ -156,7 +160,7 @@ void CController::setup()
     // This was removed at was assumed 2 communication cycles were too large an overhead
     {
         pRosCrcl()= std::shared_ptr<CRosCrclRobotHandler>(new CRosCrclRobotHandler() );
-        pRosCrcl()->Init(std::shared_ptr<CController>(this), prefix);
+        pRosCrcl()->Init(std::shared_ptr<RCS::CController>(this), prefix);
         pRosCrcl()->Start();
     }
 #endif
@@ -175,10 +179,8 @@ void CController::setup()
                                                             robotKinematics()->end_link ));
 
         pCrclServer()->setCmdQueue(&crclcmds);
-#ifdef FIXME
         if(Globals.DEBUG_LogRobotCrcl())
             pCrclServer()->setDebugStream(&ofsRobotCrcl);
-#endif
         pCrclServer()->start();
         std::cout << "Crcl server connected port=" << crclPort() << "\n";
     }
@@ -211,7 +213,7 @@ void CController::setup()
     std::cout << "\n" << std::flush;
     // Initialize robot and robot joint values - simulation
     // assume zero for now. Fixme: read joint state and set this value
-    _status.robotjoints = _writer.robotStatus(); // zeroJointState(robotKinematics()->jointNames().size());
+    _status.robotjoints = _writer.robotStatus(); // RCS::zeroJointState(robotKinematics()->jointNames().size());
 //    _status.robotjoints.name = robotKinematics()->jointNames();
 //    _status.robotjoints.position.resize(_status.robotjoints.name.size(), 0.0);
 
@@ -285,9 +287,9 @@ void CController::publishStatus()
 
     }
 #if defined(CRCL_ROS_TOPIC)
-    RCS_Time current_time = Timer::etime();
+    RCS_Time current_time = RCS::Timer::etime();
 
-    double seconds_since_last_update = ToSeconds( current_time - crclLastUpdateTime() );
+    double seconds_since_last_update = RCS::ToSeconds( current_time - crclLastUpdateTime() );
 
     if ( seconds_since_last_update < crclPublishStatusRate() )
     {
@@ -371,7 +373,7 @@ bool CController::updateRobot()
     // Update robot position based on output from RCSInterpreter
     // Note crcl command may have not update of position (e.g., dwell).
     // FIXME: /?? only update if position changed?
-    if (hasMotion(_nextcc.joints))
+    if (RCS::hasMotion(_nextcc.joints))
     {
         _status.robotControlAlgorithm = _nextcc.robotControlAlgorithm;
         _status.robotjoints = _nextcc.joints;   // <<< THIS IS WHERE POSITION UPDATE HAPPENS - should do position or velocity
@@ -424,10 +426,10 @@ bool CController::updateRobot()
         static tf::Pose lastpose=tf::Identity();
         if(!(lastpose == _status.currentpose) )
         {
-            if(ofsMotionTrace.isEnabled())
+            if(Globals.DEBUG_Log_Cyclic_Robot_Position())
             {
                 ofsMotionTrace << name().c_str() << " UPDATED ROBOT\n";
-                ofsMotionTrace << "  Robot Pose    =" << dumpPoseSimple(_status.currentpose).c_str() << "\n";
+                ofsMotionTrace << "  Robot Pose    =" << RCS::dumpPoseSimple(_status.currentpose).c_str() << "\n";
                 ofsMotionTrace << "  Goal Joints   =" << vectorDump<double>(_nextcc.joints.position).c_str() << "\n" << std::flush;
             }
 
@@ -459,7 +461,7 @@ int CController::action() {
             bNoCommands=false;
             // Translate into Cnc.cmds
             // FIXME: this is an upcast
-            //CanonCmd nextcc;
+            //RCS::CanonCmd nextcc;
             _laststatus = _status;
             crcl_rosmsgs::CrclCommandMsg msg = crclcmds.peek();
 nextposition:
@@ -468,11 +470,12 @@ nextposition:
             if(msg.crclcommandnum != last_crcl_command_num)
             {
                 std::unique_lock<std::mutex> lock(cncmutex);
-                CCanonCmd cc;
+                RCS::CCanonCmd cc;
                 cc.Set(msg);
 
                 // write to "robot"_nc_crcl.log
-                ofsRobotCrcl << Globals.getTimeStamp() << " " << cc.toString() << "\n" << std::flush;
+                if(Globals.DEBUG_LogRobotCrcl())
+                    ofsRobotCrcl << Logging::CLogger::strTimestamp() << " " << cc.toString() << "\n" << std::flush;
             }
             // Save command number for comparison next time
             last_crcl_command_num=msg.crclcommandnum;
@@ -537,7 +540,7 @@ nextposition:
             }
             else
             {
-                STATUS_LOG << "Command not handled";
+                LOG_DEBUG << "Command not handled";
             }
 
             updateRobot();
@@ -577,21 +580,19 @@ nextposition:
 void CController::dumpRobotNC(std::ostream & ofsRobotURDF, std::shared_ptr<CController> nc)
 {
 
-//    ofsRobotURDF << "============================================================\n";
+    ofsRobotURDF << "============================================================\n";
     ofsRobotURDF << "NC " << nc->name().c_str() << "\n";
-    ofsRobotURDF << "Robot= " << nc->robotKinematics()->get("ROBOTNAME") << "\n";
-    ofsRobotURDF << "base link= " << nc->robotKinematics()->get("baselink") << "\n";
-    ofsRobotURDF << "ee link= " << nc->robotKinematics()->get("tiplink") << "\n";
-    ofsRobotURDF << "num joints= " << nc->robotKinematics()->numJoints() << "\n";
-    ofsRobotURDF << "baseoffset= " << dumpPoseSimple(nc->basePose()).c_str() << "\n";
-    ofsRobotURDF << "tooloffset= " << dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
-    ofsRobotURDF << "qbend= " << dumpQuaterion(nc->QBend()).c_str() << "\n";
-
-    ofsRobotURDF << "Joint names= " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
+    ofsRobotURDF << "base link " << nc->robotKinematics()->get("help") << "\n";
+    ofsRobotURDF << "base link " << nc->robotKinematics()->get("base") << "\n";
+    ofsRobotURDF << "ee link " << nc->robotKinematics()->get("tip") << "\n";
+    ofsRobotURDF << "num joints " << nc->robotKinematics()->numJoints() << "\n";
+    ofsRobotURDF << "baseoffset " << RCS::dumpPoseSimple(nc->basePose()).c_str() << "\n";
+    ofsRobotURDF << "tooloffset " << RCS::dumpPoseSimple(nc->gripperPose()).c_str() << "\n";
+    ofsRobotURDF << "Joint names " << vectorDump<std::string>(nc->robotKinematics()->jointNames).c_str() << "\n" << std::flush;
 
     for (std::map<std::string, std::vector<double>>::iterator it = nc->namedJointMove().begin(); it != nc->namedJointMove().end(); it++)
         ofsRobotURDF << (*it).first << "=" << vectorDump<double>(nc->namedJointMove()[(*it).first]).c_str() << "\n";
-    ofsRobotURDF << "Cycletime=   " << nc->cycleTime() << "\n";
+    ofsRobotURDF << "Cycletime   " << nc->cycleTime() << "\n";
 
     ofsRobotURDF << std::flush;
 }

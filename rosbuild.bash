@@ -14,8 +14,8 @@ then
     exit 1
 fi
 
-catkin_make install  --only-pkg-with-deps  crcl_rosmsgs
-catkin_make install  --only-pkg-with-deps gz_custom_messages
-catkin_make install -DCATKIN_WHITELIST_PACKAGES=""
+catkin build   crcl_rosmsgs
+catkin build -DCMAKE_BUILD_TYPE=Debug
+catkin install
 
 

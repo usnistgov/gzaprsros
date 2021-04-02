@@ -15,7 +15,7 @@ message("Compiling gzparallelgripperplugin")
 DEFINES += GZPARALLELGRIPPERPLUGIN_LIBRARY
 CONFIG += c++11
 
-gzversion=9
+gzversion=7
 
 
 release: DESTDIR = release
@@ -57,6 +57,8 @@ message("Compiling for gazebo 7")
 INCLUDEPATH += "/usr/include/ignition/math2"
 INCLUDEPATH += "/usr/include/sdformat-4.2"
 INCLUDEPATH += "/usr/include/gazebo-7"
+INCLUDEPATH += "/usr/include/sdformat-4.4"
+
 LIBS += -lgazebo_math
 }
 

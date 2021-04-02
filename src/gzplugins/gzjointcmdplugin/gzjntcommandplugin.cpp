@@ -200,12 +200,22 @@ void gzJntCmdPlugin::updateJointStatus()
     for(size_t i=0; i< joint_names.size(); i++)
     {
         jnt_readings.add_name(joint_names[i]);
-        double pos = this->model->GetJoint(joint_names[i])->Position();
+        double pos,vel,acc;
+#if GAZEBO_MAJOR_VERSION >= 8
+        pos = this->model->GetJoint(joint_names[i])->Position();
         jnt_readings.add_position(pos);
-        double vel = this->model->GetJoint(joint_names[i])->GetVelocity(0);
+        vel = this->model->GetJoint(joint_names[i])->GetVelocity(0);
         jnt_readings.add_velocity(vel);
-        double acc = this->model->GetJoint(joint_names[i])->GetForce(0);
+        acc = this->model->GetJoint(joint_names[i])->GetForce(0);
         jnt_readings.add_effort(acc);
+#else
+        pos = this->model->GetJoint(joint_names[i])->GetAngle(0).Radian();
+        jnt_readings.add_position(pos);
+        vel = this->model->GetJoint(joint_names[i])->GetVelocity(0);
+        jnt_readings.add_velocity(vel);
+        acc = this->model->GetJoint(joint_names[i])->GetForce(0);
+        jnt_readings.add_effort(acc);
+#endif
     }
 #ifdef STATUS_ECHO
     if(b_debug && _nstatus==0)

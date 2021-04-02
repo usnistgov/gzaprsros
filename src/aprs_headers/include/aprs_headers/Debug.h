@@ -107,17 +107,16 @@ inline std::string dumpPose(tf::Pose & pose) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
- * @brief DumpPoseSimple generatseriallinkrobotes string of xyz origin and rpy rotation from a tf pose.
+ * @brief DumpPoseSimple generates string of xyz origin and rpy rotation from a tf pose.
  * @param pose tf pose
  * @return std::string
  */
 inline std::string dumpPoseSimple(tf::Pose pose) {
     std::stringstream s;
 
-
-    s << std::setprecision(3) << boost::format("%7.2f") % (pscale * pose.getOrigin().x()) << "," <<
+    s << boost::format("%7.2f") % (pscale * pose.getOrigin().x()) << "," <<
          boost::format("%7.2f") % (pscale * pose.getOrigin().y()) << "," <<
-         boost::format("%7.2f") % (pscale * pose.getOrigin().z()) << ",";
+         boost::format("%7.2f") % (pscale * pose.getOrigin().z()) << "|";
     double roll=0, pitch=0, yaw=0;
     //getRPY(pose, roll, pitch, yaw);
     //tf::Matrix3x3(pose.getRotation()).getRPY(roll, pitch, yaw);
@@ -126,16 +125,13 @@ inline std::string dumpPoseSimple(tf::Pose pose) {
 //    s << "RPY= " << boost::format("%5.2f") % Rad2Deg(roll) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(pitch) << "," <<
 //         boost::format("%5.2f") % Rad2Deg(yaw);
-    s << std::setprecision(3) << boost::format("%5.3f") % pose.getRotation().x() << ","
-      << boost::format("%5.3f") % pose.getRotation().y() << ","
-      << boost::format("%5.3f") % pose.getRotation().z() << ","
-      << boost::format("%5.3f") % pose.getRotation().w();
+    s << "Q= " << pose.getRotation().x() << "," << pose.getRotation().y() << "," << pose.getRotation().z() << "," << pose.getRotation().w();
 
     return s.str();
 }
 ////////////////////////////////////////////////////////////////////////////////
 /**
-* \brief dumpEVector generates a debug string for an  Vector.
+* \brief dumpEVector generates a debug string for an Eigen Vector.
 * Can be used as std::cout << DumpEPosition(v);
 */
 template<typename T>
@@ -155,7 +151,7 @@ template<typename T>
 inline std::string dumpstdVector(const T & v) {
     std::stringstream s;
     for (int i = 0; i < v.size(); i++)
-        s << boost::format("%8.5f,") % v[i];
+        s << boost::format("%8.5f:") % v[i];
     return s.str();
 }
 
@@ -181,7 +177,7 @@ inline std::ostream & operator<<(std::ostream & os, tf::Pose & pose) {
 * \brief dumpQuaterion takes a urdf quaterion  and generates a string describing x,y,z,w coordinates.
 * Can be used as std::cout << DumpQuaterion(urdf::rotation);
 */
-inline std::string dumpQuaterion(const tf::Quaternion & rot) {
+inline std::string dumpQuaterion(std::ostream & os, const tf::Quaternion & rot) {
     std::stringstream s;
     s << "[Quaterion = ]";
     s << boost::format("X=%8.4f") % rot.x() << ",";

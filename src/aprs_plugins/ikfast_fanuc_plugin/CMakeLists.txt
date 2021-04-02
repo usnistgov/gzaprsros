@@ -44,7 +44,6 @@ link_directories(${CATKIN_DEVEL_PREFIX}/devel/lib)
 add_dependencies(ikfast_fanuc_plugin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-Wno-format-security ${CMAKE_CXX_FLAGS}")
 
 target_link_libraries(ikfast_fanuc_plugin
   ${catkin_LIBRARIES} 

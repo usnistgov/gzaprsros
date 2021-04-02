@@ -10,12 +10,6 @@
                     <finger>fanuc_lrmate200id::fanuc_prism1</finger>
                     <finger>fanuc_lrmate200id::fanuc_prism2</finger>
                 <cmdtopic> ~/fanuc/jtscmd </cmdtopic>
-            </plugin>
-            <plugin filename="libgzjointcmdplugin.so" name="fanuc_jnts">
-                     <finger>fanuc_lrmate200id::fanuc_prism1</finger>
-                    <finger>fanuc_lrmate200id::fanuc_prism2</finger>
-                <cmdtopic> ~/fanuc/robotcmd </cmdtopic>
-                <statustopic> ~/fanuc/robotstatus </statustopic>
                 <debug> 0 </debug>
             </plugin>
             <plugin name="ParallelGripperPlugin" filename="libgzparallelgripperplugin.so">
@@ -54,12 +48,13 @@
                     <xyz>0 0 1</xyz>
                 </axis>
             </joint>
-          <plugin filename="libgzjointcmdplugin.so" name="moto_jnts">
-                <cmdtopic> ~/motoman/robotcmd </cmdtopic>
-                <statustopic> ~/motoman/robotstatus </statustopic>
+            <plugin filename="libgzjointcmdplugin.so" name="moto_jnts">
+                <topic>~/motoman/joints</topic>
+                <cmdtopic> ~/motoman/jtscmd </cmdtopic>
                 <finger>motoman_sia20d::motoman_right_finger_joint</finger>
                 <finger>motoman_sia20d::motoman_left_finger_joint</finger>
                 <debug> 0 </debug>
+            </plugin>
             <plugin name="ParallelGripperPlugin" filename="libgzparallelgripperplugin.so">
             <grip_force_close>5</grip_force_close>
             <joint1>motoman_sia20d::motoman_left_finger_joint</joint1>

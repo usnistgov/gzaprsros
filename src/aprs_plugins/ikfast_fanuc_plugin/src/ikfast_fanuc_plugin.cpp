@@ -1,9 +1,19 @@
 
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 #include <ikfast_fanuc_plugin/ikfast_fanuc_plugin.h>
 #include <aprs_headers/Debug.h>
 
-//using namespace RCS;
+using namespace RCS;
 
 //IKFAST_FanucKin ikfast_fanuc_kin;
 
@@ -31,14 +41,14 @@ static bool readFile (std::string filename, std::string & contents)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-RCS::IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
+IKFAST_FanucKin::IKFAST_FanucKin() : CSerialLinkRobot((ISerialLinkRobot*) this)
 {
     bDebug=false;
     bHandleExceptions=false;
     debugStream(std::cout);
 }
 ////////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::debugStream(std::ostream& o)
+int IKFAST_FanucKin::debugStream(std::ostream& o)
 {
     out.copyfmt(o); //1
     out.clear(o.rdstate()); //2
@@ -46,18 +56,18 @@ int RCS::IKFAST_FanucKin::debugStream(std::ostream& o)
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-size_t RCS::IKFAST_FanucKin::numJoints()
+size_t IKFAST_FanucKin::numJoints()
 {
     return GetNumJoints ( );
 }
 ////////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::debug(bool flag)
+int IKFAST_FanucKin::debug(bool flag)
 {
     bDebug=flag;
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::init()
+int IKFAST_FanucKin::init()
 {
     errmsg.clear();
     int hr=0;
@@ -88,7 +98,7 @@ int RCS::IKFAST_FanucKin::init()
     return hr;
 }
 ////////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
+int IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
 {
     errmsg.clear();
     // DO NOT Handle gearing of joints
@@ -116,7 +126,7 @@ int RCS::IKFAST_FanucKin::FK(std::vector<double> joints, tf::Pose &pose)
 //http://docs.ros.org/hydro/api/ric_mc/html/GetPositionIK_8h_source.html
 
 //////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints)
+int IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints)
 {
 
     // Inverse kinematics
@@ -144,7 +154,7 @@ int RCS::IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>
     //TODO(Fix Singularity issue in FanucLRMate200idFastKinematics::AllPoseToJoints)
     if (!bSuccess) {
         std::stringstream ss;
-        ss <<"Failed to get ik solution:"<<dumpPoseSimple(pose)<<"\n"<< std::flush;
+        ss <<"Failed to get ik solution:"<<RCS::dumpPoseSimple(pose)<<"\n"<< std::flush;
         IKFAST_FanucKin::out << ss.str();
         errmsg=ss.str();
 
@@ -161,7 +171,7 @@ int RCS::IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>
     // There are no redundant joints, so no free dof
     std::vector<double> solvalues(GetNumJoints());
     if(bDebug)
-        IKFAST_FanucKin::out << "IKFAST IK Solve: " << dumpPoseSimple(pose).c_str()<<"\n";
+        IKFAST_FanucKin::out << "IKFAST IK Solve: " << RCS::dumpPoseSimple(pose).c_str()<<"\n";
 
     for (std::size_t i = 0; i < solutions.GetNumSolutions(); ++i) {
         const ikfast::IkSolutionBase<double> & sol = solutions.GetSolution(i);
@@ -184,7 +194,7 @@ int RCS::IKFAST_FanucKin::allIK(tf::Pose & pose, std::vector<std::vector<double>
 
 
 //////////////////////////////////////////////////////////////////////////////
-std::vector<double> RCS::IKFAST_FanucKin::nearestJoints(
+std::vector<double> IKFAST_FanucKin::nearestJoints(
         std::vector<double> oldjoints,
         std::vector<std::vector<double>> &newjoints)
 {
@@ -210,7 +220,7 @@ std::vector<double> RCS::IKFAST_FanucKin::nearestJoints(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int RCS::IKFAST_FanucKin::IK(tf::Pose pose,
+int IKFAST_FanucKin::IK(tf::Pose pose,
          std::vector<double>& newjoints)
 {
     // Clear error message
@@ -235,7 +245,7 @@ int RCS::IKFAST_FanucKin::IK(tf::Pose pose,
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-std::string RCS::IKFAST_FanucKin::get(std::string param)
+std::string IKFAST_FanucKin::get(std::string param)
 {
     const char* ws = " \t\n\r";
 
@@ -282,33 +292,12 @@ std::string RCS::IKFAST_FanucKin::get(std::string param)
     {
         return _tiplink;
     }
-    else if(param == "ALL")
-    {
-        std::stringstream ss;
-        ss << "ROBOTNAME="<< robot_name << std::endl;
-        ss << "NUMJOINTS="<< std::to_string(numJoints())<< std::endl;
-        ss << "JOINTS=";
-        for(size_t i=0; i< jointNames.size(); i++)
-        {
-            if(i>0)
-                ss<< ",";
-            ss << jointNames[i];
-        }
-        ss<< std::endl;
-        ss << "INIFILE="<< _inifilename << std::endl;
-        ss << "TIPLINK="<< _tiplink << std::endl;
-        ss << "BASELINK="<< _baselink << std::endl;
-        ss << "URDFFILE="<< _urdffile << std::endl;
-        ss << "ERROR="<< errmsg << std::endl;
-
-        return ss.str();
-    }
     return std::string("No get for parameter ") + param;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string RCS::IKFAST_FanucKin::set(std::string param,  std::string value)
+std::string IKFAST_FanucKin::set(std::string param,  std::string value)
 {
     const char* ws = " \t\n\r";
     errmsg.clear();
@@ -350,7 +339,7 @@ std::string RCS::IKFAST_FanucKin::set(std::string param,  std::string value)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string RCS::IKFAST_FanucKin::set(std::string param,  void * value)
+std::string IKFAST_FanucKin::set(std::string param,  void * value)
 {
     return std::string("No match for ") + param;
 }

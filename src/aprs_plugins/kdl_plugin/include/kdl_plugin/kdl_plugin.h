@@ -1,6 +1,16 @@
 #ifndef KDL_PLUGIN
 #define KDL_PLUGIN
 
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 
 #include <tf/tf.h>
@@ -19,18 +29,16 @@
 #include <kdl/jacobian.hpp>
 #include <kdl/chainiksolverpos_nr_jl.hpp>
 #include <kdl/chainiksolvervel_pinv.hpp>
-#include <kdl/chainiksolverpos_nr.hpp>
 
 #include <aprs_headers/IKinematic.h>
 #include <aprs_headers/seriallinkrobot.h>
-#include <aprs_headers/Testing.h>
 
 #include <boost/dll/alias.hpp>
 #include <boost/config.hpp>
 namespace RCS
 {
 
-class Ckdl_plugin : public IKinematic, public  CSerialLinkRobot, public TestingKinematics<Ckdl_plugin>
+class Ckdl_plugin : public IKinematic, public  CSerialLinkRobot
 {
 public:
 
@@ -56,21 +64,14 @@ public:
         return boost::shared_ptr<Ckdl_plugin>( new Ckdl_plugin());
     }
 
-    int calibrate(const std::vector<double>& joints, const tf::Pose pose);
-    std::string  runtests(std::string filepath)
-    {
-        return TestingKinematics<Ckdl_plugin>::runtests(filepath);
-    }
-
 private:
     KDL::Tree tree;
     KDL::Chain chain;
     KDL::ChainFkSolverPos_recursive* fk_solver;
-    KDL::ChainIkSolverPos_NR *ik_solver_pos;
+    KDL::ChainIkSolverPos_NR_JL *ik_solver_pos;
     KDL::ChainIkSolverVel_pinv * ik_solver_vel;
 
     tf::Pose basepose;
-    tf::Pose poseLocal2Wrld;
 
     bool bDebug;
     bool bHandleExceptions;
@@ -88,7 +89,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  Ckdl_plugin kdl_plugin;
 BOOST_DLL_ALIAS(
-            Ckdl_plugin::create, create_plugin
+            RCS::Ckdl_plugin::create, create_plugin
         )
 }
 

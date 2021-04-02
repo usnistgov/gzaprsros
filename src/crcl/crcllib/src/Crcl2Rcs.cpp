@@ -17,6 +17,10 @@
 #include <aprs_headers/Debug.h>
 #include <crcllib/nistcrcl.h>
 
+#define GLOGGER CrclLogger
+#include <aprs_headers/LoggerMacros.h>
+
+
 using namespace urdf;
 using namespace RCS;
 namespace RCS {
@@ -150,7 +154,7 @@ void CCrcl2RosMsg::statusUpdate(const crcl_rosmsgs::CrclStatusMsg::ConstPtr& sta
     }
     catch(...)
     {
-        CrclLogger.LOG("crclwm command status failed\n");
+        logFatal("crclwm command status failed\n");
     }
 }
 
@@ -203,10 +207,10 @@ int CCrcl2RosMsg::action()
 
                 if(crcl::crclServer::bDebugCrclStatusMsg)
                 {
-                    CrclLogger.LOG("===========================================================\n"
+                    logDebug("===========================================================\n"
                               "Status:\n%s\n",
                               sStatus.c_str());
-                    CrclLogger.LOG("===========================================================\n");
+                    logDebug("===========================================================\n");
                 }
 
             }
@@ -290,7 +294,7 @@ int CCrcl2RosMsg::action()
                     //cc.stoptype; // fixme: add stoptype to crcl messages
                 }            // publish ros message if found corresponding crcl command
                 if (rosmsg.crclcommand != CanonCmdType::CANON_NOOP) {
-                    CrclLogger.LOG("ROS command: [%d] ", rosmsg.crclcommand);
+                    logInform("ROS command: [%d] ", rosmsg.crclcommand);
                     crclcmdsq->addMsgQueue(rosmsg);
                 }
              }
@@ -332,13 +336,13 @@ int CCrcl2RosMsg::action()
 
             // publish ros message if found corresponding crcl command
             if (rosmsg.crclcommand != CanonCmdType::CANON_NOOP) {
-                CrclLogger.LOG("ROS command: [%d] ", rosmsg.crclcommand);
+                logStatus("ROS command: [%d] ", rosmsg.crclcommand);
                 crclcmdsq->addMsgQueue(rosmsg);
             }
 
             // publish ros message if found corresponding crcl command
             if (crcl::crclServer::bDebugCrclCommandMsg) {
-                CrclLogger.LOG("ROS command: %s\n", CCanonCmd().Set(rosmsg).toString().c_str());
+                logStatus("ROS command: %s\n", CCanonCmd().Set(rosmsg).toString().c_str());
             }
 
             if(crcl::crclServer::bFlywheel)

@@ -23,21 +23,20 @@
 #include <readline/history.h>
 
 #include <boost/algorithm/string.hpp>
-#include <gazebo/gazebo_config.h>
 
 #include "gzrcs/commandlineinterface.h"
 #include "aprs_headers/Conversions.h"
 #include "aprs_headers/Debug.h"
-#include "aprs_headers/env.h"
-#include "aprs_headers/Path.h"
 
 // THanks to: http://cc.byexamples.com/2007/04/08/non-blocking-user-input-in-loop-without-ncurses/
 #define NB_ENABLE 1
 #define NB_DISABLE 2
 
 extern     std::shared_ptr<CGearDemo> geardemo;
+static  double toRadian(double ang) {
+    return ang * M_PI /  180.0 ;
+}
 
-using namespace RCS;
 ////////////////////////////////////////////////////////////////////////////////
 static std::string shell(const char* cmd) {
     std::array<char, 128> buffer;
@@ -332,33 +331,6 @@ int CComandLineInterface::interpretMacro(std::string macro_name)
     return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-int CComandLineInterface::interpretFile(std::string filename)
-{
-    std::string line;
-    std::vector<std::string> paths= {Globals.appProperties["ExeDirectory"]};
-    if(!Globals.appProperties["CurDirectory"].empty())
-        paths.push_back(Globals.appProperties["CurDirectory"]);
-
-    std::string filepath=Path::find(paths, filename);
-    if(filepath.empty() || !File(filepath).exists() )
-    {
-        std::cout << "Run file " << filename << " containing CLI commands does not exist\n";
-        std::cout << "WARNING if file failed to open - beware file name is converted to ALL LOWER CASE" << filename << "\n";
-        return 0;
-    }
-    std::ifstream myfile( filepath );
-    if (myfile)  // same as: if (myfile.good())
-    {
-        while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
-        {
-            interpretLine(line);
-        }
-        myfile.close();
-    }
-    return 0;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -422,78 +394,21 @@ int CComandLineInterface::interpretLine(std::string line)
     else if (msg.compare("config") == 0)
     {
         std::string filename = Globals.appProperties["ConfigFile"];
-
-        try
-        {
-            std::cout << "============================================================\n";
-            std::cout << "Host name = " << Globals.exec("hostname") ;
-            std::cout << "OS version = " << Globals.exec("cat /etc/*release  | grep DISTRIB_D | sed 's/.*=//'") ;
-            std::cout << "Compiler version = " << __GNUC__ << "."<< __GNUC_MINOR__ << "\n";
-            std::cout << "Gazebo Version " << (int) GAZEBO_MAJOR_VERSION << "." <<GAZEBO_MINOR_VERSION << "\n" ;
-
-            std::cout << "ROS version = " << Env::get_env("ROS_DISTRO") ;
-
-            std::cout << "App name = " << Globals.appProperties["appName"] << "\n";
-            std::cout << "App path = " << Globals.appProperties["appPath"]  << "\n";
-            std::cout << "App version = " << Globals.appProperties["version"] << "\n";
-            boost::filesystem::path apppath = Globals.appProperties["appPath"];
-            std::time_t appt = last_write_time(apppath);
-            std::cout << "App modification time = " << std::ctime(&appt);
-
-
-            // Gotraj dll
-            std::vector<std::string> v = { "LD_LIBRARY_PATH","GZRCS_LIBRARY_PATH" };
-            boost::filesystem::path gotrajdll = Env::findPath(v, "libgotraj.so");
-            std::time_t gotrajt = last_write_time(gotrajdll);
-            std::cout << "Gotraj dll modification time = " << std::ctime(&gotrajt) ;
-
-            // kinsolver plugin
-            boost::filesystem::path kinsolverdllpath = Globals.appProperties["kinsolverdllpath"];
-            std::time_t t = last_write_time(kinsolverdllpath);
-            std::cout << "Kinsolver "  << Globals.appProperties["kinsolverdll"]  << " plugin modification time = " << std::ctime(&t) << '\n';
-        }
-        catch (boost::filesystem::filesystem_error &e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-
-        RCS::CController::dumpRobotNC(std::cout, ncs[0]);
-
     }
-    else if (msg.compare( 0, strlen("kinsolver"),"kinsolver") == 0)
-    {
-        msg=msg.erase(0,std::string("kinsolver").size());
-        msg=Globals.trim(msg);
-        std::cout << ncs[0]->robotKinematics()->get(msg) << "\n";
-    }
-    else if (msg.compare( 0, strlen("setcwd"),"setcwd") == 0)
-    {
-        msg=msg.erase(0,std::string("setcwd").size());
-        msg=Globals.trim(msg);
-        Globals.appProperties["CurDirectory"]=msg;
-    }
-    else if (msg.compare( 0, strlen("run"),"run") == 0)
-    {
-        msg=msg.erase(0,std::string("run").size());
-        msg=Globals.trim(msg);
-        interpretFile(msg);
-    }
-
-
     else if (msg.compare("timing") == 0)
     {
         std::cout << RCS::Thread::cpuLoads();
     }
-    else if (msg.compare( 0, strlen("bbox"),"bbox") == 0)
-    {
-        msg=msg.erase(0,std::string("bbox").size());
-        std::map<std::string, ignition::math::Vector3d >::iterator it= CGzModelReader::gzModelBoundingBox.begin();
-        for(; it!= CGzModelReader::gzModelBoundingBox.end(); ++it)
-        {
-            ignition::math::Vector3d bbox = (*it).second;
-            std::cout << (*it).first << "=" << bbox.X() << " " << bbox.Y() << " " << bbox.Z() << std::endl << std::flush;
-        }
-    }
+//    else if (msg.compare( 0, strlen("bbox"),"bbox") == 0)
+//    {
+//        msg=msg.erase(0,std::string("bbox").size());
+//        std::map<std::string, ignition::math::Vector3d >::iterator it= CGzModelReader::gzModelBoundingBox.begin();
+//        for(; it!= CGzModelReader::gzModelBoundingBox.end(); ++it)
+//        {
+//            ignition::math::Vector3d bbox = (*it).second;
+//            std::cout << (*it).first << "=" << bbox.X() << " " << bbox.Y() << " " << bbox.Z() << std::endl << std::flush;
+//        }
+//    }
     else if (msg.compare( 0, strlen("instances"),"instances") == 0)
     {
         msg=msg.erase(0,std::string("instances").size());
@@ -540,39 +455,7 @@ int CComandLineInterface::interpretLine(std::string line)
         std::string echo = shell(msg.c_str());
         std::cout << echo << std::flush;
     }
-    else if (msg.compare( 0, strlen("debug"), "debug") == 0)
-    {
-        msg=msg.erase(0,std::string("debug").size());
-        msg=Globals.trim(msg);
-        if(msg.empty())
-        {
-            std::cout << "debug turn on or off console logging\n";
-            std::cout << "debug {traj|crcl} {on|off}\n";
-        }
-        else
-        {
-            if(msg.compare( 0, strlen("traj"), "traj") == 0)
-            {
-                // turn on/off stdout echo
-                msg=msg.erase(0,std::string("traj").size());
-                msg=Globals.trim(msg);
-                if(msg.compare( 0, strlen("on"), "on") == 0)
-                    ofsMotionTrace.enable() = 1;
-                else
-                    ofsMotionTrace.enable() = 0;
-            }
-            if(msg.compare( 0, strlen("crcl"), "crcl") == 0)
-            {
-                msg=msg.erase(0,std::string("crcl").size());
-                msg=Globals.trim(msg);
-                if(msg.compare( 0, strlen("on"), "on") == 0)
-                    ofsRobotCrcl.enable()=1;
-                else
-                    ofsRobotCrcl.enable()=0;
-            }
-        }
 
-    }
 
     else if (msg.compare( 0, strlen("robot "), "robot ") == 0)
     {
@@ -590,8 +473,6 @@ int CComandLineInterface::interpretLine(std::string line)
         std::cout << "Robot match not found for " << msg << "\n>"<< std::flush;
 
     }
-
-
     else if (msg.compare("speeds") == 0)
     {
         std::cout << "speed:\n\trobot joint vel=" << ncs[_ncindex]->currentRobotJointSpeed()
@@ -868,11 +749,10 @@ int CComandLineInterface::interpretLine(std::string line)
         // message should now contain object - can't really detect if exists
         crclApi->moveTo(msg);
     }
-
-    else if (msg.compare( 0, strlen("kinsolve "), "kinsolve ") == 0 )
+    else if (msg.compare( 0, strlen("ik "), "ik ") == 0 )
     {
 
-        msg=msg.erase(0,std::string("kinsolve ").size());
+        msg=msg.erase(0,std::string("ik ").size());
         msg=Globals.trim(msg);
 
         // IK of a given object position
@@ -898,7 +778,6 @@ int CComandLineInterface::interpretLine(std::string line)
         std::cout << "\n" << std::flush;
         return CController::NORMAL;
     }
-
 #ifdef GAZEBO
     else if (msg.compare( 0, strlen("where "), "where ") == 0 )
     {
@@ -951,52 +830,52 @@ int CComandLineInterface::interpretLine(std::string line)
             recordFile.close();
         }
     }
-    else if (msg.compare( 0, strlen("ik "), "ik ") == 0 )
+    else if (msg.compare( 0, strlen("rotate"), "rotate") == 0 )
     {
-        msg=msg.erase(0,std::string("ik ").size());
-        msg=Globals.trim(msg); // now have name of where?
+        // rotate a rpy
 
-        std::vector<std::string> str_dbls = Globals.split(msg, ',');
-        std::vector<double> dbls= ConvertStringVector<double>(str_dbls);
-        tf::Pose pose = Convert<std::vector<double>, tf::Pose> (dbls);
+        // erase rotate from commmand line
+        msg=msg.erase(0,std::string("rotate ").size());
 
-        size_t n = ncs[_ncindex]->robotKinematics()->numJoints();
-        std::vector<double> joints(n, 0.001);
-        if(ncs[_ncindex]->robotKinematics()->IK(pose, joints))
-        {
-            std::cout << "Seed Joints = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
-            std::cout << ncs[_ncindex]->robotKinematics()->get("error") << "\n" << std::flush;
+        // Find current position - get joints, compute FK (most reliable)
+        std::vector<double> joints = ncs[_ncindex]->_status.robotjoints.position;
+        std::cout << "Status Joints   =" << vectorDump(joints, ",", "%6.3f") << "\n" ;
+        tf::Pose r_curpose;
+        ncs[_ncindex]->robotKinematics()->FK(joints, r_curpose);
 
-        }
-        else
-        {
-            std::cout << "Solve IK    = " << RCS::dumpPoseSimple(pose) << "\n";
-            std::cout << "IK Joints   = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
-        }
-        std::cout << "\n" << std::flush;
-    }
-    else if (msg.compare( 0, strlen("fk "), "fk ") == 0 )
-    {
-        msg=msg.erase(0,std::string("fk ").size());
-        msg=Globals.trim(msg); // now have name of where?
+        // add in the gripper as its subtracted off. Not included in FK
+        r_curpose= r_curpose * ncs[_ncindex]->gripperPose();
 
-        std::vector<std::string> str_dbls = Globals.split(msg, ',');
-        std::vector<double>joints = ConvertStringVector<double>(str_dbls);
+        std::cout << "Rotate FK Robot Pose   =" << RCS::dumpPoseSimple(r_curpose) << "\n";
 
-        // joint names - must be filled in by kinsolver init
+        tf::Pose pose;
+        tf::Vector3 v = r_curpose.getOrigin();
+        tf::Quaternion q = r_curpose.getRotation();
+        tf::Quaternion inq;
 
-        tf::Pose r_pose;
-        if(ncs[_ncindex]->robotKinematics()->FK(joints, r_pose))
-        {
-            std::cout << "Seed  Joints = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
-            std::cout << ncs[_ncindex]->robotKinematics()->get("error") << "\n" << std::flush;
-        }
-        else
-        {
-            std::cout << "Solve FK     = " << vectorDump<double>(joints).c_str()<< "\n" << std::flush;
-            std::cout << "FK Pose      = " << RCS::dumpPoseSimple(r_pose) << "\n";
-        }
-        std::cout << "\n" << std::flush;
+        // read rpy from  command line IN DEGREES
+        double roll, pitch, yaw;
+        int n = sscanf(msg.c_str(), "%lf %lf %lf", &roll, &pitch, &yaw);
+        roll=toRadian(roll);
+        pitch=toRadian(pitch);
+        yaw=toRadian(yaw);
+
+        /// create quaternion from roll, pitch, yaw
+        /// // ISSUE: rpy is not the same in tf as in eigen?
+        inq.setRPY( roll, pitch,yaw);
+
+        // multiple existing quaternion rotation by rpy
+        q=q*inq;
+
+        // Create pose from old origin, new rotation.
+        pose=tf::Pose(q, v);
+        std::cout << "Rotate New Robot Pose   =" << RCS::dumpPoseSimple(pose) << "\n";
+
+//        pose=tf::Pose(tf::Quaternion(0.0, 0.0, 0.707107, 0.707107),
+ //                     tf::Vector3(0,0,1.50));
+
+        crclApi->moveTo(pose);
+
     }
     else if (msg.compare( 0, strlen("where"), "where") == 0 )
     {

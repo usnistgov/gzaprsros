@@ -189,11 +189,20 @@ void gzParallelGripperPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _s
                                       &gzParallelGripperPlugin::onMsg,
                                       this);
 
+#if GAZEBO_MAJOR_VERSION >= 8
     // setup contact manager
     this->contactManager = _parent->GetWorld()->Physics()->GetContactManager();
-
     // If set to true, SetNeverDropContacts will always add contacts even if there are no subscribers.
     this->contactManager->SetNeverDropContacts(true);
+#else
+    // setup contact manager
+    this->contactManager = _parent->GetWorld()->GetPhysicsEngine()->GetContactManager();
+
+    // FIXME: ???????????????
+    // If set to true, SetNeverDropContacts will always add contacts even if there are no subscribers.
+    //this->contactManager->->SetNeverDropContacts(true);
+
+#endif
 
     // determine collision link for each finger
     if(bCollisions)
@@ -313,8 +322,11 @@ void gzParallelGripperPlugin::onUpdate ( const common::UpdateInfo & /*_info*/ )
             gzdbg << "Gripper closing " << std::endl;
 
         //Additional force modifier to ensure symmetrical finger positions
+#if GAZEBO_MAJOR_VERSION >= 8
         double force_modifier = (joint1->Position(0) - joint2->Position(0)) * grip_kp;
-
+#else
+        double force_modifier = (joint1->GetAngle(0).Radian() - joint2->GetAngle(0).Radian()) * grip_kp;
+#endif
         joint1->SetForce(0, grip_force_close - force_modifier);
         joint2->SetForce(0, grip_force_close + force_modifier);
         this->model->SetLinearVel(linear_velocity);
@@ -375,11 +387,18 @@ int gzParallelGripperPlugin::CheckAttach()
 
     for (auto _contact : this->contacts)
     {
+#if GAZEBO_MAJOR_VERSION >= 8
         physics::CollisionPtr internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
-                this->world->EntityByName(_contact.collision1()));
+                    this->world->EntityByName(_contact.collision1()));
         physics::CollisionPtr externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
-                this->world->EntityByName(_contact.collision2()));
+                    this->world->EntityByName(_contact.collision2()));
+#else
+        physics::CollisionPtr internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                    this->world->GetEntity(_contact.collision1()));
+        physics::CollisionPtr externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                    this->world->GetEntity(_contact.collision2()));
 
+#endif
         if(internalCollision.get() == NULL)
             continue;
         if(externalCollision.get() == NULL)
@@ -391,18 +410,34 @@ int gzParallelGripperPlugin::CheckAttach()
 
         if (std::find(this->collisionNames.begin(), this->collisionNames.end(), collision1) != this->collisionNames.end())
         {
+#if GAZEBO_MAJOR_VERSION >= 8
             internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
                    this->world->EntityByName(_contact.collision1()));
             externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
                    this->world->EntityByName(_contact.collision2()));
+#else
+            internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                   this->world->GetEntity(_contact.collision1()));
+            externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                   this->world->GetEntity(_contact.collision2()));
+
+#endif
             foundCollision = true;
         }
         else if (std::find(this->collisionNames.begin(), this->collisionNames.end(), collision2) != this->collisionNames.end())
         {
+#if GAZEBO_MAJOR_VERSION >= 8
             internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
                    this->world->EntityByName(_contact.collision2()));
             externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
                    this->world->EntityByName(_contact.collision1()));
+#else
+            internalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                   this->world->GetEntity(_contact.collision2()));
+            externalCollision = boost::dynamic_pointer_cast<physics::Collision>(
+                   this->world->GetEntity(_contact.collision1()));
+
+#endif
             foundCollision = true;
         }
         if (foundCollision)
@@ -416,7 +451,12 @@ int gzParallelGripperPlugin::CheckAttach()
                 gzdbg << "Create virtual joint " << jointName << std::endl;
 
             joint->SetProvideFeedback(true);
+#if GAZEBO_MAJOR_VERSION >= 8
             auto offset = internalCollision->WorldPose() - externalCollision->WorldPose();
+#else
+            auto offset = internalCollision->GetWorldPose() - externalCollision->GetWorldPose();
+
+#endif
             joint->Load(externalCollision->GetLink(), internalCollision->GetLink(), offset);
             joint->Init();
 
@@ -446,6 +486,5 @@ void gzParallelGripperPlugin::SetLinksGravityFlag(physics::ModelPtr objmodel, bo
     }
 }
 }
-
 
 

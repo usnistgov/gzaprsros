@@ -14,7 +14,7 @@ DEFINES += GZMODELPLUGIN_LIBRARY
 
 CONFIG += c++11
 
-gzversion=9
+gzversion=7
 
 release: DESTDIR = release
 debug:   DESTDIR = debug
@@ -55,6 +55,8 @@ INCLUDEPATH += "/usr/include/ignition/msgs1"
 INCLUDEPATH += "/usr/include/ignition/transport4"
 INCLUDEPATH += "/usr/include/sdformat-6.2"
 INCLUDEPATH += "/usr/local/include/gazebo-11"
+
+
 }
 
 
@@ -64,6 +66,7 @@ INCLUDEPATH += "/usr/include/ignition/math2"
 INCLUDEPATH += "/usr/include/sdformat-4.0"
 INCLUDEPATH += "/usr/include/gazebo-7"
 INCLUDEPATH += "/usr/local/include/ignition"
+INCLUDEPATH += "/usr/include/sdformat-4.4"
 LIBS += -lgazebo_math
 }
 

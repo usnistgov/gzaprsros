@@ -22,18 +22,26 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#define GLOGGER GLogger
+#include "aprs_headers/LoggerMacros.h"
 
 #include "aprs_headers/File.h"
 
-
+#ifndef DEBUG
+#include "boost/iostreams/stream.hpp"
+#include "boost/iostreams/device/null.hpp"
+#endif
 CGlobals Globals;
-Logger   ofsRobotURDF;
-Logger   ofsMotionTrace;
-Logger   STATUS_LOG;
-Logger   ofsRobotCrcl;
-Logger   ofsGnuPlotCart;
-Logger   ofsGnuPlotJnt;
-
+std::ofstream   ofsRobotURDF;
+std::ofstream   ofsMotionTrace;
+std::ofstream   ofsIkFast;
+std::ofstream   LOG_FATAL;
+std::ofstream   ofsRobotCrcl;
+std::ofstream   ofsGnuPlotCart;
+std::ofstream   ofsGnuPlotJnt;
+#ifndef DEBUG
+boost::iostreams::stream< boost::iostreams::null_sink > LOG_DEBUG( ( boost::iostreams::null_sink() ) );
+#endif
 
 
 #include <signal.h>
@@ -104,17 +112,24 @@ CGlobals::CGlobals()
 
     // Global debugging files
     DEBUG_World_Command()=0; // Log controller action loop for robot servo of world cartesian move
+    DEBUG_IKFAST()=0; //  Debug IK Fast information
     DEBUG_Log_Gripper_Status()=0;
+    DEBUG_Log_Robot_Position()=0;
+    DEBUG_Log_Robot_Config()=0;
     DEBUG_GnuPlot()=0;
     DEBUG_Log_Cyclic_Robot_Position()=0;
+    Globals.DEBUG_LogRobotCrcl()=0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 CGlobals::~CGlobals() {
     // Doesn't matter if never opened
 
+    if(Globals.DEBUG_Log_Robot_Config())
+        ofsRobotURDF.close();
     ofsMotionTrace.close();
-    STATUS_LOG.close();
+    ofsIkFast.close();
+    LOG_FATAL.close();
     ofsRobotCrcl.close();
     ofsGnuPlotCart.close();
     ofsGnuPlotJnt.close();
@@ -226,32 +241,45 @@ void CGlobals::logfilesSetup()
     logfolder() = getexefolder()+"Log_"+ robotname+"-"+getTimeStamp(LOGFILE)+"/";
     File lf(logfolder());
     lf.mkpath(logfolder().c_str(), 0777);
-//    GLogger.loggerFolder()=logfolder();
+    GLogger.loggerFolder()=logfolder();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void CGlobals::debugSetup()
 {
-    // Setup folder for logging files
     logfilesSetup();
 
-    STATUS_LOG.enable()=1;
-    STATUS_LOG.open(Globals.logfolder()+"/" + Globals.appProperties["robot"] + ".log");
+    // Generic logging setup for now
+    GLogger.open(Globals.logfolder()+"/" + Globals.appProperties["robot"] + ".log");
 
-//    LOG_FATAL.copyfmt(GLogger.ofsDebugFile);
-//    LOG_FATAL.clear(GLogger.ofsDebugFile.rdstate()); //2
-//    LOG_FATAL.basic_ios<char>::rdbuf(GLogger.ofsDebugFile.rdbuf());           //3
+    LOG_FATAL.copyfmt(GLogger.ofsDebugFile);
+    LOG_FATAL.clear(GLogger.ofsDebugFile.rdstate()); //2
+    LOG_FATAL.basic_ios<char>::rdbuf(GLogger.ofsDebugFile.rdbuf());           //3
 
-    ofsRobotCrcl.open(logfolder()+Globals.appProperties["robot"]+"_nc_crcl.log");
+    if(Globals.DEBUG_LogRobotCrcl())
+        ofsRobotCrcl.open(logfolder()+Globals.appProperties["robot"]+"_nc_crcl.log", std::ofstream::out);
+
+    if(Globals.DEBUG_Log_Robot_Config())
+        ofsRobotURDF.open(logfolder()+"RobotUrdf.log", std::ofstream::out);
 
     if(DEBUG_GnuPlot())
     {
-        ofsGnuPlotCart.open(logfolder()+"CartXYZPlot.log");
-        ofsGnuPlotJnt.open(logfolder()+"JntPlot.log");
+        ofsGnuPlotCart.open(logfolder()+"CartXYZPlot.log", std::ofstream::out);
+        ofsGnuPlotJnt.open(logfolder()+"JntPlot.log", std::ofstream::out);
     }
 
-    ofsMotionTrace.open(logfolder() + "MotionTrace.log");
+    if(Globals.DEBUG_Log_Robot_Position() ||
+            Globals.DEBUG_Log_Cyclic_Robot_Position() ||
+            Globals.DEBUG_Log_Gripper_Status())
+        ofsMotionTrace.open(logfolder() + "MotionTrace.log", std::ofstream::out);
 
+    if(DEBUG_IKFAST())
+    {
+        ofsIkFast.copyfmt(ofsMotionTrace);
+        ofsIkFast.clear(ofsMotionTrace.rdstate()); //2
+        ofsIkFast.basic_ios<char>::rdbuf(ofsMotionTrace.rdbuf());           //3
+    }
+   
 }
 ////////////////////////////////////////////////////////////////////////////////
 void CGlobals::assignOfs(std::ostream *inOfs, std::ostream *replacementOfs)
@@ -276,7 +304,7 @@ bool CGlobals::readFile (std::string filename, std::string & contents)
 
     if(!in.is_open())
     {
-        STATUS_LOG << "CGlobals::ReadFile failed file does not exist" << filename << "\n" << std::flush;
+        LOG_FATAL << "CGlobals::ReadFile failed file does not exist" << filename << "\n" << std::flush;
 
     }
     buffer << in.rdbuf( );

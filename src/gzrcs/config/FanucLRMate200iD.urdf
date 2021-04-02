@@ -11,6 +11,10 @@
        Kinetic.
   -->
   <link name="fanuc_base_link">
+    <inertial>
+      <mass value="4"/>
+      <inertia ixx="0.0216667" ixy="0.0" ixz="0.0" iyy="0.0216667" iyz="0.0" izz="0.0240667"/>
+    </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>

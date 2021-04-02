@@ -26,13 +26,6 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
-
 
 #ifndef DEBUG
 #include "boost/iostreams/stream.hpp"
@@ -51,7 +44,6 @@
 #include <tf/tf.h>
 
 #include <aprs_headers/Core.h>
-#include <aprs_headers/logging.h>
 
 
 #ifndef ROSPACKAGENAME
@@ -182,27 +174,6 @@ public:
       * \brief destructor. Closes all output debug streams.
       * */
     ~CGlobals();
-
-
-
-    /**
-     * @brief exec execute a shell command and return output
-     * @param cmd shell command
-     * @return  string containing output
-    */
-    std::string exec(const char* cmd)
-    {
-        std::array<char, 128> buffer;
-        std::string result;
-        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-        if (!pipe) {
-            throw std::runtime_error("popen() failed!");
-        }
-        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-            result += buffer.data();
-        }
-        return result;
-    }
 
     /**
      * @brief catch_control_c provides a Linux mechanism to catch a console control c.
@@ -403,11 +374,14 @@ public:
     VAR(std::string, logfolder);
 
     // Debug Flags for more debugging information:
-    VAR(int, DEBUG_World_Command); // Log controller action loop for robot servo of world cartesian move
-    VAR(int, DEBUG_Log_Gripper_Status);
-    VAR(int, DEBUG_GnuPlot);
-    VAR(int, DEBUG_Log_Cyclic_Robot_Position);
-    VAR(int, DEBUG_LogRobotCrcl);
+    VAR(bool, DEBUG_World_Command); // Log controller action loop for robot servo of world cartesian move
+    VAR(bool, DEBUG_IKFAST); //  Debug IK Fast information
+    VAR(bool, DEBUG_Log_Gripper_Status);
+    VAR(bool, DEBUG_Log_Robot_Position);
+    VAR(bool, DEBUG_Log_Robot_Config);
+    VAR(bool, DEBUG_GnuPlot);
+    VAR(bool, DEBUG_Log_Cyclic_Robot_Position);
+    VAR(bool, DEBUG_LogRobotCrcl);
 
 };
 extern CGlobals Globals; /**< global definition of globals  */
@@ -415,15 +389,16 @@ extern CGlobals Globals; /**< global definition of globals  */
 extern void DebugBreak(); /**< global definition of windows DebugBreak equivalent.  */
 #endif
 
-extern Logger ofsRobotCrcl;
-extern Logger ofsRobotURDF;
-extern Logger ofsMotionTrace;
-extern Logger ofsGnuPlotCart;
-extern Logger ofsGnuPlotJnt;
-extern Logger STATUS_LOG;
-//#ifdef DEBUG
-//#define LOG_DEBUG LOG_FATAL
-//#else
-//extern boost::iostreams::stream< boost::iostreams::null_sink > LOG_DEBUG;
-//#endif
+extern std::ofstream ofsRobotCrcl;
+extern std::ofstream ofsRobotURDF;
+extern std::ofstream ofsMotionTrace;
+extern std::ofstream ofsGnuPlotCart;
+extern std::ofstream ofsGnuPlotJnt;
+extern std::ofstream ofsIkFast;
+extern std::ofstream LOG_FATAL;
+#ifdef DEBUG
+#define LOG_DEBUG LOG_FATAL
+#else
+extern boost::iostreams::stream< boost::iostreams::null_sink > LOG_DEBUG;
+#endif
 #endif

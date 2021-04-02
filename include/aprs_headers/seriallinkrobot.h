@@ -1,6 +1,17 @@
 #ifndef SERIALLINKROBOT_H
 #define SERIALLINKROBOT_H
 
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 // /home/isd/michalos/src/github/nist/gzaprsros/include/aprs_headers/seriallinkrobot.h
 // seriallinkrobot.h
 //
@@ -11,14 +22,10 @@
 #include <string>
 #include <map>
 #include <algorithm>
-#include <sstream>
 
 // URDF
 #include <tf/tf.h>
 #include <urdf/model.h>
-#include <aprs_headers/File.h>
-#include <aprs_headers/Testing.h>
-#include <aprs_headers/Debug.h>
 
 // You must have ROS installed to use this URDF parsing.
 namespace RCS {
@@ -174,109 +181,6 @@ private:
         return tf::Vector3(v.x, v.y, v.z);
     }
 };
-
-
-template <typename Derived>
-class TestingKinematics
-{
-public:
-    std::string   runtests(std::string filepath)
-    {
-        std::string line;
-        std::stringstream errmsg;
-
-        if(filepath.empty() || !File(filepath).exists() )
-        {
-            errmsg << filepath << "does not exist\n";
-            return errmsg.str();
-        }
-        std::ifstream myfile( filepath );
-        if (myfile)  // same as: if (myfile.good())
-        {
-            while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
-            {
-                size_t numJoints =static_cast<Derived*>(this)->numJoints();
-                if(line.empty())
-                    continue;
-
-                size_t n;
-                if((n=line.find("="))==std::string::npos)
-                    continue;
-
-                // split between =
-                std::string test = line.substr(0, n); // cmd
-                std::string eq = line.substr(n+1); // answer
-                boost::trim(test);
-                boost::trim(eq);
-
-                std::vector<std::string> result;
-                boost::split( result, test, boost::is_any_of(" "), boost::token_compress_on );
-                std::string cmd(*(result.begin()));
-                boost::trim(cmd);
-                test=test.erase(0,std::string(cmd + " ").length());
-
-                std::vector<double> ds;
-                boost::split( result, test, boost::is_any_of(","), boost::token_compress_on );
-                ds.resize(result.size());
-                std::transform(result.begin(), result.end(), ds.begin(), [](const std::string& val)
-                {
-                    std::string tval = boost::trim_copy(val);
-                    return std::stod(tval);
-                });
-
-                std::vector<double> answer;
-                result.clear();
-                boost::split( result, eq, boost::is_any_of(","), boost::token_compress_on );
-                answer.resize(result.size());
-                std::transform(result.begin(), result.end(), answer.begin(), [](const std::string& val)
-                {
-                    std::string tval = boost::trim_copy(val);
-                    return std::stod(tval);
-                });
-
-                // now run command.
-                if(cmd == "fk")
-                {
-                    tf::Pose pose;
-                    if(static_cast<Derived*>(this)->FK(ds, pose ))
-                    {
-                        errmsg << "FK Internal Failed:" << line;
-                        continue;
-                    }
-                    tf::Pose answerpose = tf::Pose(tf::Quaternion(answer[3], answer[4], answer[5], answer[6]), tf::Vector3(answer[0], answer[1], answer[2]));
-                    if(!RCS::EQ(pose, answerpose, 0.001))
-                    {
-                        errmsg << "FK Failed   =>" << line << "\n";
-                        errmsg << "   Computed  =" <<  RCS::dumpPoseSimple(pose) << "\n\n" ;
-                    }
-                }
-                else if(cmd == "ik")
-                {
-                    tf::Pose pose = tf::Pose(tf::Quaternion(ds[3], ds[4], ds[5], ds[6]), tf::Vector3(ds[0], ds[1], ds[2]));
-                    std::vector<double> joints(numJoints);
-                    if(static_cast<Derived*>(this)->IK(pose, joints ))
-                    {
-                        errmsg <<"IK Internal Failed:" << line << "\n" ;
-                        continue;
-
-                    }
-                    if(!RCS::EQ<double>(joints, answer, 0.001))
-                    {
-                        errmsg <<"IK Failed   =>" << line << "\n";
-                        errmsg <<"   Computed = " <<  RCS::dumpstdVector<std::vector<double>>(joints) << "\n\n"; ;
-                    }
-                }
-            }
-            myfile.close();
-        }
-        else
-        {
-            errmsg<<"Testing file open failed\n";
-        }
-        return errmsg.str();
-    }
-};
-
 
 }
 #endif // SERIALLINKROBOT_H

@@ -23,13 +23,6 @@
 #include <gazebo/gazebo_client.hh>
 #endif
 
-
-#if GAZEBO_MAJOR_VERSION < 8
-#include <gazebo/math/Pose.hh>
-#else
-
-#endif
-
 #include "aprs_headers/Config.h"
 #include <sensor_msgs/JointState.h>
 #include <unordered_set>

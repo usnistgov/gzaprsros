@@ -1,0 +1,28 @@
+
+
+safe
+close
+open
+approach sku_part_large_gear5
+moveto sku_part_large_gear5
+close
+
+grasp sku_part_smalapproach sku_part_large_gear5l_gear13
+moveto sku_part_small_gear13
+retract sku_part_small_gear13
+equal to:
+pick  sku_part_small_gear13
+moveto sku_part_large_gear5
+
+grasp_free_gear
+place_free_gear
+
+
+
+# Fanuc
+safe
+close
+open
+approach sku_part_medium_gear17
+moveto sku_part_medium_gear17
+close

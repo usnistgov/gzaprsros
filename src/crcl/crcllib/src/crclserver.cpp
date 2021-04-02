@@ -28,7 +28,8 @@
 #include "crcllib/crclserver.h"
 #include "crcllib/Crcl2Rcs.h"
 #include "crcllib/nistcrcl.h"
-#include <aprs_headers/logging.h>
+#define GLOGGER CrclLogger
+#include <aprs_headers/LoggerMacros.h>
 
 bool CBufferHandler::_bTrace;
 
@@ -75,7 +76,7 @@ void CBufferHandler::AppendBuffer(std::string read)
 void CBufferHandler::SaveMessage(std::string xmlmessage) {
     if (CBufferHandler::_bTrace)
     {
-                CrclLogger.LOG("===========================================================\n"
+                logStatus("===========================================================\n"
                 "%s\n",
                         xmlmessage.c_str());
         //        //Globals.AppendFile(Globals.ExeDirectory + "xmltrace.txt", xmlmessage);

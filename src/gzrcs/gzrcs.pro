@@ -10,21 +10,11 @@ message("Compiling gzrcs")
 
 # You have to add gzversion to Projects "Build Environment"
 # for this to work in qmake
-gzversion=9
+gzversion=7
 
 message(GZ Version  $$gzversion)
 
-# Version handling
-versionpath="$$_PRO_FILE_PWD_/version.bash"
-dummy=$$system($$versionpath )
 
-versionnum=$$cat(version)
-major=$$member(versionnum,0)
-minor=$$member(versionnum,1)
-build=$$member(versionnum,2)
-message(major number $$major)
-message(minor number $$minor)
-message(build number $$build)
 
 #CONFIG +=  c++11 gokin
 CONFIG +=  c++11
@@ -101,7 +91,10 @@ INCLUDEPATH += "/usr/include/ignition/math2"
 INCLUDEPATH += "/usr/include/sdformat-4.0"
 INCLUDEPATH += "/usr/include/gazebo-7"
 INCLUDEPATH += "/usr/local/include/ignition"
+INCLUDEPATH += "/usr/include/sdformat-4.4"
 LIBS += -lgazebo_math
+#LIBS += -lignition-math4
+LIBS += -lignition-math2
 }
 
 QMAKE_CXXFLAGS +=-std=c++11
@@ -146,7 +139,8 @@ LIBS += -lassimp
 
 
 # Local ROS libs
-LIBS += -L$$PWD/../../lib
+LIBS += -L$$PWD/../../devel/lib
+#LIBS += -L$$PWD/../../lib
 LIBS +=  -lgotraj
 LIBS +=  -lcrcllib
 LIBS +=  -ldl
@@ -228,6 +222,8 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/RCSPriorityQueue.h \
     ../aprs_headers/include/aprs_headers/RCSMsgQueueThread.h \
     ../aprs_headers/include/aprs_headers/RCSMsgQueue.h \
+    ../aprs_headers/include/aprs_headers/LoggerMacros.h \
+    ../aprs_headers/include/aprs_headers/Logger.h \
     ../aprs_headers/include/aprs_headers/IRcs.h \
     ../aprs_headers/include/aprs_headers/IKinematic.h \
     ../aprs_headers/include/aprs_headers/hexdump.h \
@@ -236,10 +232,7 @@ HEADERS += \
     ../aprs_headers/include/aprs_headers/Debug.h \
     ../aprs_headers/include/aprs_headers/Core.h \
     ../aprs_headers/include/aprs_headers/Conversions.h \
-    ../aprs_headers/include/aprs_headers/Config.h \
-    ../aprs_headers/include/aprs_headers/logging.h \
-    ../aprs_headers/include/aprs_headers/Path.h\
-    ../aprs_headers/include/aprs_headers/Testing.h
+    ../aprs_headers/include/aprs_headers/Config.h
 
 DISTFILES += \
     Notes.txt \
@@ -256,22 +249,11 @@ config_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/MotomanSia20d.urdf\
    $$PWD/config/FanucLRMate200iD.urdf\
    $$PWD/config/lrmate200id.urdf\
-   $$PWD/config/motoman_sia20d.ini\
-   $$PWD/config/fanuc-lrmate-200id.ini\
-   $$PWD/config/kintest.txt
+   $$PWD/config/motoman_sia20d.ini
 
 message("gzrcs install $$config_features.path")
 message("gzrcs instal files $$config_features.files")
 INSTALLS  += config_features
-
-
-test_features.path     = ../../install/lib/$$TARGET/tests
-test_features.files     =  $$PWD/tests/FanucLRMate200iD_kintest.txt
-INSTALLS  += test_features
-
-buildtest_features.path     = "$$OUT_PWD/$$DESTDIR/tests"
-buildtest_features.files     =   $$PWD/tests/FanucLRMate200iD_kintest.txt
-INSTALLS  += buildtest_features
 
 # Hard to make distinction between general build and command line qmake build
 build_features.path     = "$$OUT_PWD/$$DESTDIR/config"
@@ -279,10 +261,7 @@ build_features.files     =    $$PWD/config/Config.ini \
    $$PWD/config/MotomanSia20d.urdf\
    $$PWD/config/FanucLRMate200iD.urdf\
    $$PWD/config/lrmate200id.urdf\
-   $$PWD/config/motoman_sia20d.ini\
-   $$PWD/config/fanuc-lrmate-200id.ini\
-   $$PWD/config/kintest.txt
-
+   $$PWD/config/motoman_sia20d.ini
 INSTALLS  += build_features
 
 target.path = ../../install/lib/$$TARGET/

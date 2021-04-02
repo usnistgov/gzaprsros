@@ -38,10 +38,7 @@ public:
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
 
-    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
-    {
-        return 0;
-    }    /**
+    /**
      * @brief create boost dll factory method. Creates gokin_fanuc instances.
      * @return  wrapped shared pointer to new gokin_fanuc instance.
      */

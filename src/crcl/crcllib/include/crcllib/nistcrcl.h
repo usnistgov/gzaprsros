@@ -24,7 +24,6 @@
 #include <aprs_headers/IRcs.h>
 #include <aprs_headers/RCSThreadTemplate.h>
 #include <aprs_headers/RCSMsgQueue.h>
-#include <aprs_headers/logging.h>
 
 #include <mutex>
 
@@ -45,8 +44,8 @@ struct crclServer //: public RCS::Thread
     virtual void setCmdQueue(RCS::CrclMessageQueue *crclcmdsq);
     virtual void start ( );
     virtual void stop ( );
-    static std::ostream *debugstream;
-    virtual void setDebugStream(std::ostream *dstream)
+    static std::ofstream *debugstream;
+    virtual void setDebugStream(std::ofstream *dstream)
     {
         debugstream=dstream;
     }
@@ -75,6 +74,4 @@ protected:
     double _cycletime;                                 /**< cycletime of thread in seconds */
 };
 }
-extern Logger CrclLogger;
-
 #endif // NISTCRCL_H

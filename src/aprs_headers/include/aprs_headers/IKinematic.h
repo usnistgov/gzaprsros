@@ -1,5 +1,15 @@
 #ifndef IKINEMATIC_H
 #define IKINEMATIC_H
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
 
 #include <tf/tf.h>
 #include <vector>
@@ -26,7 +36,6 @@ public:
     static const int Bad_Conversion = -9;
     static const int Robot_IK_Problem = -10;
     static const int Bad_Joints_Size = -11;
-    static const int Not_Implemented = -11;
 
     virtual int init()=0;
     //virtual int init(std::string urdf, std::string baselink, std::string tiplink)=0;
@@ -65,18 +74,6 @@ public:
      * @return
      */
     virtual int IK(const tf::Pose pose, std::vector<double>&)=0;
-
-    /**
-     * @brief calibrate take an input set of joints, with given FK pose and compute
-     * use as ground truth to compute the difference from locate plugin
-     * calculations to robot centric coordinates. THis arose after kdl amont other
-     * plugins caculated a n orientation as 1,0,0,0 when actually points
-     * at 1,0,0, 0 (axis 1,0,0, angle 0).
-     * @param jo joint valuoes (possible non-zero as this may be singulatority)ints
-     * @param pose  expected FK from joints.
-     * @return 0 if successful.
-     */
-    virtual int calibrate(const std::vector<double>& joints, const tf::Pose pose)=0;
 
     /**
      * @brief debug set the debug flat
@@ -129,17 +126,16 @@ public:
      */
     virtual bool isError()=0;
 
-    // FIXME: Need to set configuration flags for solution: e.g., elbow up/down
-    // maybe with set parameter...
+    // Need to set configuration flags for solution: e.g., elbow up/down
+#if 0
+    int SetWristOffset(double x);
+
+    int set_parameters(go_link *params, int num){ return 0; }
+
+    int get_parameters(go_link *params, int num){ return 0; }
+#endif
 
 
-    /**
-     * @brief runtests accepts a test file path containing fk/ik commands and solutions
-     * and runs tests to see if the kinsolver passes.
-     * @param filename full path of test file
-     * @return string containing failed tests. Empty string if successful.
-     */
-    virtual std::string runtests(std::string filename)=0;
 };
 }
 #endif // IKINEMATIC_H

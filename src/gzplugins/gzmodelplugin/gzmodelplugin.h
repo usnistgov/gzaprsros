@@ -28,6 +28,14 @@
 typedef ignition::math::Pose3d Pose;
 typedef ignition::math::Vector3d Vector3d;
 typedef ignition::math::Quaterniond Quaterniond;
+#else
+#include <gazebo/math/Pose.hh>
+#include <gazebo/math/Vector3.hh>
+#include <gazebo/math/Quaternion.hh>
+typedef ignition::math::Pose3d  Pose;
+typedef ignition::math::Vector3d  Vector3d;
+typedef ignition::math::Quaterniond   Quaterniond;
+
 #endif
 
 namespace gazebo

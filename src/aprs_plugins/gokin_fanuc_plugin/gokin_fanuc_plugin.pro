@@ -11,7 +11,8 @@ message("Compiling go_infanuc_plugin")
 TARGET = gokin_fanuc_plugin
 TEMPLATE = lib
 
-CONFIG += c++11
+CONFIG QT +=
++= c++11
 
 gzversion=9
 

@@ -21,6 +21,15 @@
 
 #include "aprs_headers/Conversions.h"
 #include "aprs_headers/Debug.h"
+#include "aprs_headers/Logger.h"
+#include "aprs_headers/LoggerMacros.h"
+
+// Debug flags are set in Debug.h
+// Depending on what is defined, you will log certain information
+
+
+#define TRAJ_LOG  std::cout
+//#define TRAJ_LOG  ofsRobotMoveTo
 
 using namespace RCS;
 using namespace sensor_msgs;
@@ -36,35 +45,35 @@ static void LogRobotPosition(std::string message,
 
 {
 
-    if(!ofsMotionTrace.isEnabled())
+    if(!Globals.DEBUG_Log_Robot_Position())
         return;
 
     std::stringstream ss;
-#if 1
+#if 0
     ss << message;
     ss << "ROBOT COORDINATES\n";
-    ss << "    GoalRobot Pose= " << dumpPoseSimple(r_goalpose).c_str() << "\n";
-    ss << "    Current   Pose= " << dumpPoseSimple(r_lastpose).c_str() << "\n";
-    ss << "    NextRobot Pose= " << dumpPoseSimple(r_nextpose).c_str() << "\n";
+    ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
+    ss << "    Current   Pose= " << RCS::dumpPoseSimple(r_lastpose).c_str() << "\n";
+    ss << "    NextRobot Pose= " << RCS::dumpPoseSimple(r_nextpose).c_str() << "\n";
     ss << "ROBOT JOINTS\n";
-    ss << "    Goal joints     "  << vectorDump<double>(goaljoints) << "\n" << std::flush;
-    ss << "    Next joints     "  << vectorDump<double>(nextjoints) << "\n" << std::flush;
-    ss << "    Current joints  "  << vectorDump<double>(curjoints) << "\n" << std::flush;
+    ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
+    ss << "    Next joints     "  << RCS::vectorDump<double>(nextjoints) << "\n" << std::flush;
+    ss << "    Current joints  "  << RCS::vectorDump<double>(curjoints) << "\n" << std::flush;
     //TRAJ_LOG<< ss.str();
-#else
-    ss << "    GoalRobot Pose= " << dumpPoseSimple(r_goalpose).c_str() << "\n";
-    ss << "    Goal joints     "  << vectorDump<double>(goaljoints) << "\n" << std::flush;
-    ss << vectorDump(nextjoints) << ","
+
+#endif
+    ss << "    GoalRobot Pose= " << RCS::dumpPoseSimple(r_goalpose).c_str() << "\n";
+    ss << "    Goal joints     "  << RCS::vectorDump<double>(goaljoints) << "\n" << std::flush;
+    ss << RCS::vectorDump(nextjoints) << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getX() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getY() << ","
        << boost::format("%5.2f") % r_nextpose.getOrigin().getZ() << "\n" << std::flush;
-#endif
     ofsMotionTrace << ss.str();
 
 }
 static void LogGripperStatus(std::string message,
-                             std::shared_ptr<CController>_nc,
-                             CCanonCmd &incmd,
+                             std::shared_ptr<RCS::CController>_nc,
+                             RCS::CCanonCmd &incmd,
                              bool & bFullContact
                              )
 {
@@ -73,9 +82,9 @@ static void LogGripperStatus(std::string message,
         std::stringstream ss;
         ss << message;
         ss << "Gripper JOINTS\n";
-        ss << "    Gripper Fingers "  << vectorDump<std::string>(_nc->fingerNames()) << "\n" << std::flush;
-        ss << "    CMD  joints     "  << vectorDump<double>(incmd.nextGripperGoalJoints.position) << "\n" << std::flush;
-        ss << "    Current joints  "  << vectorDump<double>(_nc->cncGripperJoints().position) << "\n" << std::flush;
+        ss << "    Gripper Fingers "  << RCS::vectorDump<std::string>(_nc->fingerNames()) << "\n" << std::flush;
+        ss << "    CMD  joints     "  << RCS::vectorDump<double>(incmd.nextGripperGoalJoints.position) << "\n" << std::flush;
+        ss << "    Current joints  "  << RCS::vectorDump<double>(_nc->cncGripperJoints().position) << "\n" << std::flush;
 
         //TRAJ_LOG<< ss.str();
         ofsMotionTrace << ss.str();
@@ -126,8 +135,8 @@ sensor_msgs::JointState CGoInterpreter::updateJointState(std::vector<uint64_t> j
 ////////////////////////////////////////////////////////////////////////////////
 ///  GoInterpreter
 /////////////////////////////////////////////////////////////////////////////
-CGoInterpreter::CGoInterpreter(std::shared_ptr<CController> nc,
-                               boost::shared_ptr<IKinematic> k)
+CGoInterpreter::CGoInterpreter(std::shared_ptr<RCS::CController> nc,
+                               boost::shared_ptr<RCS::IKinematic> k)
     :  _nc(nc)
     , _kinematics(k)
     , _lastcmdnum(-1)
@@ -141,24 +150,24 @@ CGoInterpreter::CGoInterpreter(std::shared_ptr<CController> nc,
 ////////////////////////////////////////////////////////////////////////////////
 void CGoInterpreter::init(std::vector<double> initjts)
 {
-    sensor_msgs::JointState jts = emptyJointState(initjts.size());
+    sensor_msgs::JointState jts = RCS::emptyJointState(initjts.size());
     jts.position = initjts;
     jts.name = this->_nc->robotKinematics()->jointNames;
     if(0!=_goRobot->Init(jts, this->_nc->cycleTime()))
     {
-        STATUS_LOG << "Go robot init failed\n" ;
+        logFatal( "Go robot init failed\n") ;
     }
 
     jts=_nc->cncGripperJoints();
     if(0!=_goGripper->Init(jts, this->_nc->cycleTime()))
     {
-        STATUS_LOG << "Go gripper init failed\n" ;
+        logFatal( "Go gripper init failed\n") ;
     }
 }
 ///////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                      CCanonCmd &outcmd,
-                                      CCanonWorldModel instatus)
+                                      RCS::CCanonCmd &outcmd,
+                                      RCS::CCanonWorldModel instatus)
 {
 
     outcmd.Set( incmd );
@@ -196,8 +205,8 @@ int CGoInterpreter::parseJointCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                         CCanonCmd &outcmd,
-                                         CCanonWorldModel instatus)
+                                         RCS::CCanonCmd &outcmd,
+                                         RCS::CCanonWorldModel instatus)
 {
 
     bool bNewCmd=false;
@@ -256,7 +265,7 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
                                  _nc->linearParams(),
                                  _nc->rotationalParams()))
         {
-            STATUS_LOG <<"Go init pose failed\n";
+            logFatal("Go init pose failed\n");
         }
 
         for(size_t i=1; i<  waypoints.size(); i++)
@@ -321,8 +330,8 @@ int CGoInterpreter::parseMoveThruCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 }
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                       CCanonCmd &outcmd,
-                                       CCanonWorldModel instatus)
+                                       RCS::CCanonCmd &outcmd,
+                                       RCS::CCanonWorldModel instatus)
 {
     bool bNewCmd=false;
     tf::Pose r_goalpose;
@@ -366,7 +375,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
                                  _nc->linearParams(),
                                  _nc->rotationalParams()))
         {
-            STATUS_LOG << "go init pose failed goal pose= "<< dumpPoseSimple(r_goalpose) << "\n";
+            logFatal("go init pose failed goal pose= %s\n", dumpPoseSimple(r_goalpose).c_str());
         }
 
         bNewCmd=true;
@@ -390,7 +399,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     outcmd.joints.position=hint; // use hint as seed
     if(_kinematics->IK(r_nextpose, outcmd.joints.position))
     {
-        STATUS_LOG << "IK failed next pose= " << dumpPoseSimple(r_nextpose)<< "\n";
+        logStatus("IK failed next pose= %s\n", dumpPoseSimple(r_nextpose).c_str());
         return CanonStatusType::CANON_ERROR;
     }
 
@@ -428,7 +437,7 @@ int CGoInterpreter::parseMovetoCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 }
 
-int  CGoInterpreter::setGripperVelFmax(CCanonCmd &outcmd, double vel, double fmax )
+int  CGoInterpreter::setGripperVelFmax(RCS::CCanonCmd &outcmd, double vel, double fmax )
 {
     // set gazebo gripper vel/fmax
     outcmd.gripperControlAlgorithm=CanonControlType::VELOCITY_CONTROL;
@@ -448,7 +457,7 @@ int  CGoInterpreter::setGripperVelFmax(CCanonCmd &outcmd, double vel, double fma
     return 0;
 }
 
-int   CGoInterpreter::setGripperFoce(CCanonCmd &outcmd, double force )
+int   CGoInterpreter::setGripperFoce(RCS::CCanonCmd &outcmd, double force )
 {
     // set gazebo gripper vel/fmax
     outcmd.gripperControlAlgorithm=CanonControlType::VELOCITY_CONTROL;
@@ -469,8 +478,8 @@ int   CGoInterpreter::setGripperFoce(CCanonCmd &outcmd, double force )
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                               CCanonCmd &outcmd,
-                                               CCanonWorldModel instatus)
+                                               RCS::CCanonCmd &outcmd,
+                                               RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
@@ -486,7 +495,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
         size_t index = std::distance(incmd.parameter_names.begin(), iter);
         if(index == incmd.parameter_names.size())
         {
-            STATUS_LOG << "Error: bad parameter names - no leading action\n";
+            logFatal("Error: bad parameter names - no leading action\n");
             return CanonStatusType::CANON_ERROR;
         }
 
@@ -536,7 +545,7 @@ int CGoInterpreter::parseEEParamGripperCommand(crcl_rosmsgs::CrclCommandMsg &inc
         }
         else
         {
-            STATUS_LOG <<"Unknown gripper action paramter setting\n";
+            logFatal("Unknown gripper action paramter setting\n");
         }
     }
     _lastcmdnum=-1;
@@ -571,8 +580,8 @@ int CGoInterpreter::gripperSpeed(crcl_rosmsgs::CrclCommandMsg &incmd)
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                        CCanonCmd &outcmd,
-                                        CCanonWorldModel instatus)
+                                        RCS::CCanonCmd &outcmd,
+                                        RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );
@@ -661,8 +670,8 @@ int CGoInterpreter::parseGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                     CCanonCmd &outcmd,
-                                     CCanonWorldModel instatus) {
+                                     RCS::CCanonCmd &outcmd,
+                                     RCS::CCanonWorldModel instatus) {
 
     // FIXME: save last command type, then do until done
     if (incmd.crclcommandnum != _lastcmdnum) {
@@ -676,8 +685,8 @@ int CGoInterpreter::parseStopCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                 CCanonCmd &outcmd,
-                                 CCanonWorldModel instatus)
+                                 RCS::CCanonCmd &outcmd,
+                                 RCS::CCanonWorldModel instatus)
 {
     try
     {
@@ -753,7 +762,7 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
     }
     catch (RobotControlException & e)
     {
-        STATUS_LOG << "Exception in  GoInterpreter::ParseCommand() thread: " << e.what() << "\n";
+        LOG_DEBUG << "Exception in  GoInterpreter::ParseCommand() thread: " << e.what() << "\n";
         outcmd.crclcommand = CanonCmdType::CANON_STOP_MOTION;
         outcmd.opmessage = e.what();
         outcmd.stoptype = CanonStopMotionType::NORMAL;
@@ -767,8 +776,8 @@ int CGoInterpreter::parseCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
 
 ////////////////////////////////////////////////////////////////////////////////
 int CGoInterpreter::parsePavelGripperCommand(crcl_rosmsgs::CrclCommandMsg &incmd,
-                                             CCanonCmd &outcmd,
-                                             CCanonWorldModel instatus)
+                                             RCS::CCanonCmd &outcmd,
+                                             RCS::CCanonWorldModel instatus)
 {
     // return updated command and status
     outcmd.Set( incmd );

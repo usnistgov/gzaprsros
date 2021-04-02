@@ -10,7 +10,7 @@
  */
 
 #include "gzmodelplugin.h"
-
+//using namespace gazebo::math;
 
 /////////////////////////////////////////////////////////////////////////////
 static std::string replaceAll(std::string subject, const std::string& search,
@@ -229,7 +229,11 @@ void gzModelPlugin::onWorldUpdate()
     last_update_time_+= common::Time ( d_update_period );
 
     //  Model_V === std::vector<ModelPtr>
+#if GAZEBO_MAJOR_VERSION >= 8
     physics::Model_V models=world->Models();
+#else
+      physics::Model_V models=world->GetModels();
+#endif
     physics::Model_V::iterator m_it;
     std::string model_name;
 
@@ -249,14 +253,22 @@ void gzModelPlugin::onWorldUpdate()
 
             physics::Link_V links = model->GetLinks(); // (*m_it)->GetLinks();
             if(links.size() > 0 )
+#if GAZEBO_MAJOR_VERSION >= 8
                 mpose = links[0]->WorldPose();
+#else
+                mpose = links[0]->GetWorldPose().Ign();
+#endif
             else
                 mpose=Pose(Vector3d(0,0,0), Quaterniond(1,0,0,0));
 
             if(b_debug)
                 std::cout << "Compute pose " << model_name <<"\n";
 
+#if GAZEBO_MAJOR_VERSION >= 8
             wpose= model->WorldPose();
+#else
+            wpose= model->GetWorldPose().Ign();
+#endif
             pose=mpose;
             pose.CoordPositionAdd(wpose);
 
@@ -279,7 +291,16 @@ void gzModelPlugin::onWorldUpdate()
             gazebo::msgs::Model msg;
             msg.set_name(model_name.c_str());
             msg.set_id(model->GetId());
+#if GAZEBO_MAJOR_VERSION >= 8
             msg.set_allocated_pose(new gazebo::msgs::Pose(gazebo::msgs::Convert (pose)) );
+#else
+            msg.set_allocated_pose(new gazebo::msgs::Pose(gazebo::msgs::Convert (pose)) );
+#endif
+
+
+            // At one point this worked but is so convoluted and prone to yavc (yet
+            // another version change) not worth it.
+#ifdef BOUNDING_BOX
 
             // Yet another way to return bounding box. Below is done using mesh.
             // return bounding box of model inside visual[0]
@@ -373,6 +394,7 @@ void gzModelPlugin::onWorldUpdate()
                     break; // since no more links
 
                 }
+
                 continue;
             }
             catch(...)
@@ -382,6 +404,8 @@ void gzModelPlugin::onWorldUpdate()
 
 
 #endif
+#endif
+
 
 #if 0
             for(size_t j=0; j< links.size(); j++)

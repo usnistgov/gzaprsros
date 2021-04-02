@@ -12,9 +12,7 @@ maintenance, and subsequent redistribution.
 
 See NIST Administration Manual 4.09.07 b and Appendix I.
  */
-#ifndef _RCS_ThreadTemplate_H
-#define _RCS_ThreadTemplate_H
-
+#pragma once
 #include "RCSTimer.h"
 #include <boost/thread.hpp>
 #include <functional>
@@ -286,8 +284,8 @@ protected:
         int _debugLevel;                                   /**< debug level of thread */
         bool _bThread;                                     /**< boolean loop thread */
         bool _bDone;                                       /**< boolean indicating whether thread has finished */
-        Timer  _timer;                                     /**< RCS timer for coordinating wait and duration of thread */
+        RCS::Timer
+            _timer;                                        /**< RCS timer for coordinating wait and duration of thread */
         boost::thread m_thread;                            /**< boost thread*/
     };
 }
-#endif

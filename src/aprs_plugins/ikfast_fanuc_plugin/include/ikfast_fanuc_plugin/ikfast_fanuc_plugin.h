@@ -1,6 +1,17 @@
 #ifndef IKFAST_FANUC_H
 #define IKFAST_FANUC_H
 
+/*
+ * DISCLAIMER:
+ * This software was produced by the National Institute of Standards
+ * and Technology (NIST), an agency of the U.S. government, and by statute is
+ * not subject to copyright in the United States.  Recipients of this software
+ * assume all responsibility associated with its operation, modification,
+ * maintenance, and subsequent redistribution.
+ *
+ * See NIST Administration Manual 4.09.07 b and Appendix I.
+ */
+
 
 
 #include <tf/tf.h>
@@ -17,7 +28,7 @@
 
 namespace RCS
 {
-class IKFAST_FanucKin :  public IKinematic, public  CSerialLinkRobot, public TestingKinematics<IKFAST_FanucKin>
+class IKFAST_FanucKin :  public IKinematic, public  CSerialLinkRobot
 {
 public:
 
@@ -36,16 +47,6 @@ public:
     std::string set(std::string param,  void * value);
     std::string get(std::string param);
     bool isError(){ return errmsg.empty(); }
-    int calibrate(const std::vector<double>& joints, const tf::Pose pose)
-    {
-        // no need to calibrate
-        return 0;
-    }
-
-    std::string  runtests(std::string filepath)
-    {
-        return TestingKinematics<IKFAST_FanucKin>::runtests(filepath);
-    }
 
     /**
      * @brief create boost dll factory method. Creates IKFAST_FanucKin instances.
@@ -65,7 +66,6 @@ private:
     std::string _urdffile;
     std::string _baselink;
     std::string  _tiplink;
-    std::string _inifilename;
 
 
     int allIK(tf::Pose & pose, std::vector<std::vector<double>> &joints);
@@ -128,7 +128,7 @@ private:
 
 //extern "C" BOOST_SYMBOL_EXPORT  IKFAST_FanucKin ikfast_fanuc_kin;
 BOOST_DLL_ALIAS(
-            IKFAST_FanucKin::create, create_plugin
+            RCS::IKFAST_FanucKin::create, create_plugin
         )
 
 }
